@@ -1,0 +1,15 @@
+{
+  "name": "statico",
+  "version": "1.0.0",
+  "description": "Nodejs based cms",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cms"
+  ],
+  "author": "Nimrod Galor",
+  "license": "ISC"
+}
