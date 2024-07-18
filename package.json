@@ -2,9 +2,11 @@
   "name": "statico",
   "version": "1.0.0",
   "description": "Nodejs based cms",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
+    "start": "node server",
+    "dev": "nodemon server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,6 +15,13 @@
   "author": "Nimrod Galor",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
