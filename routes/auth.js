@@ -2,6 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import crypto from 'crypto'
+import ensureLogIn from 'connect-ensure-login'
 
 const router = express.Router();
 
@@ -106,7 +107,7 @@ passport.deserializeUser(function(user, cb) {
 })
 
 /** GET /login */
-router.get('/login', function(req, res, next) {
+router.get('/login', ensureLogIn.ensureLoggedOut('/'), function(req, res, next) {
     res.render('login')
 })
 
