@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partial/head', { title: 'Error - ' + error.status }) -%>
+<body>
+    <%- include('partial/header') -%>
+
+    <div id="page-container" class="page-container">
+
+        <main id="main-wrapper" class="main-wrapper">
+            <article id="main-article" class="main-article">
+                <div id="main-article-innerDiv" class="main-article-innerDiv">
+                    <h2><%= message %></h2>
+                    <h2><%= error.status %></h2>
+                    <pre><%= error.stack %></pre>
+                </div>
+            </article>
+        </main>
+
+        <%- include('partial/footer') -%>
+
+    </div>
+</body>
+</html>
+

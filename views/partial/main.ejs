@@ -1,0 +1,14 @@
+<main id="main-wrapper" class="main-wrapper">
+    <section id="hero" class="hero" <%= locals.heroTitle || locals.heroBody ? '' : 'style=display:none;' %>>
+        <div id="hero-innerDiv" class="hero-innerDiv">
+            <h1><%- locals.heroTitle %></h1>
+            <%- locals.heroBody %>
+        </div>
+    </section>
+    <article id="main-article" class="main-article">
+        <div id="main-article-innerDiv" class="main-article-innerDiv">
+            <h2><%- locals.mainTitle %></h2>
+            <%- locals.mainBody %>
+        </div>
+    </article>
+</main>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partial/head', { title: 'Login' }) -%>
+<body>
+    <%- include('partial/header') -%>
+
+
+    <div id="page-container" class="page-container">
+
+        <main id="main-wrapper" class="main-wrapper">
+            <article id="main-article" class="main-article">
+                <% if(hasMessages) {  %>
+                    <%- include('partial/alert', { message: locals.messages }) %>
+                <% } %>
+                <div id="main-article-innerDiv" class="main-article-innerDiv">
+                    <h2>Login</h2>
+                    <form method="post" action="/login">
+                        <p>
+                            <label for="email">Email:</label>
+                            <input type="text" name="email" id="email">
+                        </p>
+                        <p>
+                            <label for="password">Password:</label>
+                            <input type="text" name="password" id="password">
+                        </p>
+                        <p>
+                            <input type="submit" value="Login">
+                        </p>
+                    </form>
+                </div>
+            </article>
+        </main>
+
+        <%- include('partial/footer') -%>
+
+    </div>
+</body>
+</html>
