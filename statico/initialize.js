@@ -4,24 +4,6 @@ import crypto from 'crypto'
 import getBy, {createRow, getAll} from '../db.js'
 
 export default async function initialize(){
-    console.log('initialize')
-    let settingsFileName = 'config.json';
-    // check if settings file exists
-    // if(fs.existsSync(settingsFileName)){
-    //     // load settings 
-    //     const data = await fs.readFile(settingsFileName, { encoding: 'utf8' });
-    // }else{
-    //     //create settings
-    // }
-
-
-    // fs.readFile(settingsFileName, "utf8", (error, data) => {
-    //     if (error) {
-    //         // file not exists
-    //     }
-    //     console.log(JSON.parse(data));
-    // })
-
     // check for defaul roles
     const roles = await getAll('role')
     if(roles.length === 0){

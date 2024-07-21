@@ -7,13 +7,20 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import passport from 'passport'
 import logger  from 'morgan'
+import isConfigurationDone from './statico/configuration.js'
 
 import initialize from './statico/initialize.js'
 
 // routes
+import configRouter from './routes/configuration.js'
+import pagesRouter from './routes/pages.js'
 import userRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './routes/admin.js'
+
+// In-memory flag
+let configurationDone = await isConfigurationDone();
+console.log('configurationDone', configurationDone)
 
 const app = express()
 const PORT = process.env.port | 3000
@@ -63,8 +70,15 @@ app.use(function(req, res, next){
     next()
 })
 
-
+function configMiddle(req, res, next){
+    if(!configurationDone){
+        return res.redirect('/configuration');
+    }
+    next()
+}
 // Routes
+app.use('/configuration', configRouter)
+app.use('/', configMiddle, pagesRouter)
 app.use('/admin', adminRouter)
 app.use('/users', userRouter)
 app.use('/', authRouter)
