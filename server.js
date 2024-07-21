@@ -8,6 +8,7 @@ import session from 'express-session'
 import passport from 'passport'
 import logger  from 'morgan'
 
+import initialize from './statico/initialize.js'
 
 // routes
 import userRouter from './routes/users.js'
@@ -86,3 +87,6 @@ app.use(function(err, req, res, next) {
 
 
 app.listen(PORT)
+
+
+initialize()

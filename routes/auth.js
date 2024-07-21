@@ -4,6 +4,32 @@ import LocalStrategy from 'passport-local'
 import crypto from 'crypto'
 import ensureLogIn from 'connect-ensure-login'
 
+import getBy, {createRow} from '../db.js'
+
+
+
+// // create super administrator user
+// const superUser = {
+//   email : 'admin@admin.com',
+//   password: 'admin',
+//   salt: crypto.randomBytes(16),
+//   userName: 'administrator',
+//   role: {
+//     connect: {id: '669cc898fa925b0b2cd1d129'}
+//   }
+// }
+
+// crypto.pbkdf2(superUser.password, superUser.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+//   superUser.password = hashedPassword
+// })
+
+// superUser.salt = superUser.salt.toString('hex')
+
+// const superAdminUser = await createRow('user', superUser)
+
+// console.log('superAdminUser', superAdminUser)
+
+
 const router = express.Router();
 
 /* Configure password authentication strategy.
@@ -169,24 +195,55 @@ router.get('/signup', function(req, res, next) {
 * successfully created, the user is logged in.
 */
 router.post('/signup', function(req, res, next) {
+  const { email, userName, password } = req.body
+
+
+  // validate data
+  const isValidPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
+  const isValidUserName = /^([a-zA-Z0-9_\-\.]).{4,12}$/
+  const isValidEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  
+  if(!isValidEmail.test(email)
+    || !isValidUserName.test(userName)
+    || !isValidPassword.test(password)
+  ){
+    return next(err)
+  }
+
+
   var salt = crypto.randomBytes(16)
-  crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-    if (err) { return next(err)}
-    db.run('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
-      req.body.username,
-      hashedPassword,
-      salt
-    ], function(err) {
-      if (err) { return next(err)}
-      var user = {
-        id: this.lastID,
-        username: req.body.username
-      }
+  crypto.pbkdf2(password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+    if (err) {
+      return next(err)
+    }
+    // db.run('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
+    //   req.body.username,
+    //   hashedPassword,
+    //   salt
+    // ], function(err) {
+    //   if (err) { return next(err)}
+    //   var user = {
+    //     id: this.lastID,
+    //     username: req.body.username
+    //   }
+    //   req.login(user, function(err) {
+    //     if (err) { return next(err)}
+    //     res.redirect('/')
+    //   })
+    // })
+    createUser(email, String(hashedPassword), String(salt), userName)
+    .then(user => {
       req.login(user, function(err) {
         if (err) { return next(err)}
         res.redirect('/')
       })
     })
+    .catch(async (e) => {
+      console.error(e)
+      // process.exit(1)
+      return next(err)
+    })
+    
   })
 })
 

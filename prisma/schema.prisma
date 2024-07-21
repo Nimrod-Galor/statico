@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// after change to schems run: npx prisma generate
+// npx prisma format
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime @default(now())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  password      String
+  salt          String
+  userName      String?
+  posts         Post[]
+  role          Role     @relation(fields: [roleId], references: [id])
+  roleId        String   @db.ObjectId
+}
+
+model Post {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String
+  body      String
+  published Boolean   @default(false)
+  viewCount Int       @default(0)
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String    @db.ObjectId
+  comments  Comment[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  comment   String
+  published Boolean  @default(true)
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String   @db.ObjectId
+}
+
+model Role {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String @unique @default("user")
+  description String
+  User        User[]
+}

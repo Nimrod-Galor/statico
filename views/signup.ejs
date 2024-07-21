@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partial/head', { title: 'Signup' }) -%>
+<body>
+    <%- include('partial/header') -%>
+
+
+    <div id="page-container" class="page-container">
+
+        <main id="main-wrapper" class="main-wrapper">
+            <article id="main-article" class="main-article">
+                
+                <%- include('partial/alert') %>
+                
+                <div id="main-article-innerDiv" class="main-article-innerDiv">
+                    <h2>Signup</h2>
+                    <form method="post" action="/signup" onsubmit="return validateForm()">
+                        <p>
+                            <label for="email">Email:</label>
+                            <input type="text" name="email" id="email">
+                        </p>
+                        <p>
+                            <label for="userName">User Name:</label>
+                            <input type="text" name="userName" id="userName">
+                        </p>
+                        <p>
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" id="password">
+                        </p>
+                        <p>
+                            <label for="repassword">Re Password:</label>
+                            <input type="password" name="repassword" id="repassword">
+                        </p>
+                        <p>
+                            <input type="submit" value="Login">
+                        </p>
+                    </form>
+                </div>
+            </article>
+        </main>
+
+        <%- include('partial/footer') -%>
+
+    </div>
+
+    <script type="text/javascript">
+        function validateForm(){
+            const errors = []
+
+            const password = document.getElementById('password')
+            const repassword = document.getElementById('repassword')
+            const isValidPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
+            if(!isValidPassword.test(String(repassword.value)) || password.value != repassword.value){
+                errors.push('Invalid Re Password!')
+                repassword.focus()
+            }
+
+            if(!isValidPassword.test(String(password.value))){
+                errors.push('Invalid Password!')
+                password.focus()
+            }
+
+            const userName = document.getElementById('userName')
+            const isValidUserName = /^([a-zA-Z0-9_\-\.]).{4,12}$/
+            if(!isValidUserName.test(String(userName.value))){
+                errors.push('Invalid user Name!')
+                userName.focus()
+            }
+
+            const email = document.getElementById('email')
+            const isValidEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            if(!isValidEmail.test(String(email.value).toLowerCase())){
+                errors.push('Invalid email address!')
+                email.focus()
+            }
+
+            if(errors.length > 0){
+                const errorBody = "<ul><li>" + errors.reverse().join("</li><li>") + "</li></ul>"
+                topAlert("warning", "Error", errorBody)
+                return false
+            }
+
+            return true
+        }
+    </script>
+</body>
+</html>
