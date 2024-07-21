@@ -18,9 +18,6 @@ import userRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './routes/admin.js'
 
-// In-memory flag
-let configurationDone = await isConfigurationDone();
-console.log('configurationDone', configurationDone)
 
 const app = express()
 const PORT = process.env.port | 3000
@@ -71,7 +68,7 @@ app.use(function(req, res, next){
 })
 
 // Routes
-
+app.use('/', pagesRouter)
 app.use('/admin', adminRouter)
 app.use('/users', userRouter)
 app.use('/', authRouter)

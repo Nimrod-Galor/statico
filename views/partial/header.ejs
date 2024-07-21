@@ -15,8 +15,19 @@
             <div id="main-search-btn" class="main-search-btn" onclick="toggleClass('main-search', 'open')">
                 <div class="search-btn"></div>
             </div>
-            <div id="login" class="login cursorPoint">
-                <div class="person"></div>
+            <div id="login" class="login">
+                <% if (locals.user) { %>
+                    <%= user.name %> 
+                  <% } %>
+                <div class="person" onclick="profileDropdownClick()"></div>
+                <div id="profileDropdown" class="dropdown-content">
+                    <% if (locals.user) { %>
+                        <a href="/profile">My Profile</a>
+                        <a href="/logout">Logout</a>
+                    <% } else { %>
+                    <a href="/login">Login</a>
+                    <% } %>
+                </div>
             </div>
         </div>
         
@@ -33,9 +44,9 @@
         <nav id="primary-menu" class="primary-menu" role="navigation">
             <div>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
                 </ul>
             </div>
         </nav>

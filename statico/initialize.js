@@ -48,7 +48,7 @@ export default async function initialize(){
         // create super administrator user
         const superUser = {
             email : 'admin@admin.com',
-            password: 'admin',
+            password: 'password',
             salt: crypto.randomBytes(16),
             userName: 'administrator',
             role: {

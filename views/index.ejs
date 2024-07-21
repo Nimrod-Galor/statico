@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+    <%- include('partial/head', { title: 'Login' }) -%>
 <body>
-    <h1>Home page</h1>
-    ejs <%= locals.text || "default" %>
+    <div id="page-container" class="page-container">
+        <%- include('partial/header') -%>
+        <%- include('partial/alert') -%>
+        <%- include('partial/main', {"mainTitle": "Home Page", "mainBody": "Body"}) -%>
+        <%- include('partial/footer') -%>
+    </div>
 </body>
 </html>

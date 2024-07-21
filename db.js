@@ -19,7 +19,6 @@ async function getAll(collectionName) {
   .finally(async () => {
     await prisma.$disconnect()
   })
-  console.log('getAll', res)
   return res
 }
 
