@@ -76,9 +76,6 @@ body{
     background-color: var(--background-color);
 }
 
-.cursorPoint{
-    cursor: pointer;
-}
 
 .close-btn{
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%235f6368"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>');
@@ -111,6 +108,11 @@ body{
 }
 
 /* Top Alert */
+.alert-small-wrapper{
+    max-width: 60%;
+    margin: auto;
+}
+
 .top-alert{
     display: grid;
     grid-template-rows: 0fr;
@@ -125,6 +127,7 @@ body{
     padding: var(--spacing-sm);
     border: 1px solid #000;
     border-radius: var(--border-radius);
+    text-align: left;
 }
 
 .top-alert.info .top-alert-innerDiv{
@@ -170,6 +173,13 @@ body{
 
 .top-alert-closebtn{
     float: right;
+    transition: all 0.1s;
+}
+
+.top-alert-closebtn:hover{
+    border: 1px solid var(--border-color);
+    box-shadow: 5px 5px 5px #212529;
+    transition: all 0.1s;
 }
 
 .top-alert-title{
@@ -403,6 +413,10 @@ body{
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
+    .top-alert-body{
+        padding: 25px;
+    }
+
     .primary-menu-toggle{
         display: none;
         flex-basis: unset;
@@ -441,8 +455,9 @@ body{
 /* X-Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
     .top-alert > div{
-        width: var(--max-width);
+        max-width: var(--max-width);
         margin: 0 auto;
+        width:100%;
     }
 
     .top-alert .innerDiv{
@@ -479,4 +494,16 @@ body{
     
 }
 
+.cursorPoint{
+    cursor: pointer;
+}
+
 .show {display: block;}
+
+.center-container .main-article-innerDiv{
+        border: 3px solid var(--info-color);
+        padding: 1rem 0 3rem;
+        text-align: center;
+        border-radius: var(--border-radius-lg);
+        background-color: var(--info-bgcolor);
+}

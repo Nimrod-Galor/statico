@@ -5,19 +5,26 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
+import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import logger  from 'morgan'
 
-
+// Statico
 import initialize from './statico/initialize.js'
 
 // routes
-
 import pagesRouter from './routes/pages.js'
 import userRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './routes/admin.js'
 
+/* Test prisma */
+// import getBy, {createRow} from './db.js'
+
+// getBy('role', {"name": "subscriber2"})
+// .then((role) => console.log('test prisma', role))
+// .catch((err) => console.error('test prisma err', err))
+/* Test prisma END*/
 
 const app = express()
 const PORT = process.env.port | 3000
@@ -39,33 +46,33 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
-    // store: new SQLiteStore({ db: 'sessions.db', dir: './var/db' })
+    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })//'mongodb://localhost/test-app'
 }))
-// app.use(passport.session)
 app.use(passport.authenticate('session'))
+// Session-persisted message middleware
 app.use(function(req, res, next) {
-  var msgs = req.session.messages?.join('<br>') || []
-// var msgs = req.session.messages ? req.session.messages.join('<br>') : ''
-  res.locals.messages = {type: 'warning', title: 'Login Failed', body: msgs}
-  res.locals.hasMessages = !! msgs.length
-  req.session.messages = []
-  next()
-})
+    var msgs = req.session.messages || [];
+    res.locals.messages = msgs;
+    res.locals.hasMessages = !! msgs.length;
+    req.session.messages = [];
+    next();
+});
 
-app.use(function(req, res, next){
-    var err = req.session.error
-    var msg = req.session.success
-    delete req.session.error
-    delete req.session.success
-    res.locals.message = ''
-    if (err){
-        res.locals.message = err
-    }
-    if (msg){
-        res.locals.message = '<p class="msg success">' + msg + '</p>'
-    }
-    next()
-})
+// Session-persisted message middleware
+// app.use(function(req, res, next){
+//     var err = req.session.error
+//     var msg = req.session.success
+//     delete req.session.error
+//     delete req.session.success
+//     res.locals.message = ''
+//     if (err){
+//         res.locals.message = err
+//     }
+//     if (msg){
+//         res.locals.message = '<p class="msg success">' + msg + '</p>'
+//     }
+//     next()
+// })
 
 // Routes
 app.use('/', pagesRouter)

@@ -7,100 +7,32 @@ import ensureLogIn from 'connect-ensure-login'
 import getBy, {createRow} from '../db.js'
 
 
-
-// // create super administrator user
-// const superUser = {
-//   email : 'admin@admin.com',
-//   password: 'admin',
-//   salt: crypto.randomBytes(16),
-//   userName: 'administrator',
-//   role: {
-//     connect: {id: '669cc898fa925b0b2cd1d129'}
-//   }
-// }
-
-// crypto.pbkdf2(superUser.password, superUser.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-//   superUser.password = hashedPassword
-// })
-
-// superUser.salt = superUser.salt.toString('hex')
-
-// const superAdminUser = await createRow('user', superUser)
-
-// console.log('superAdminUser', superAdminUser)
-
-
 const router = express.Router();
 
-/* Configure password authentication strategy.
- *
- * The `LocalStrategy` authenticates users by verifying a username and password.
- * The strategy parses the username and password from the request and calls the
- * `verify` function.
- *
- * The `verify` function queries the database for the user record and verifies
- * the password by hashing the password supplied by the user and comparing it to
- * the hashed password stored in the database.  If the comparison succeeds, the
- * user is authenticated; otherwise, not.
- */
-// passport.use(new LocalStrategy(
-//     function verify(username, password, cb) {
-//     db.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
-//         if (err) {
-//             return cb(err)
-//         }
-//         if (!row) {
-//             return cb(null, false, { message: 'Incorrect username or password.' })
-//         }
-        
-//         crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-//             if (err) {
-//                 return cb(err)
-//             }
-//             if (!crypto.timingSafeEqual(row.hashed_password, hashedPassword)) {
-//                 return cb(null, false, { message: 'Incorrect username or password.' })
-//             }
-//             return cb(null, row)
-//         })
-//     })
-// }))
 
-const dummyUser = {email: 'test@hotmail.com', password: 'password'}
-var salt = crypto.randomBytes(16)
-crypto.pbkdf2(dummyUser.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-  dummyUser.hashedPassword = hashedPassword
-})
+async function authenticateUser(email, password, done) {
+  try{
+    const user = await getBy('user', {email})
+    
+    if (email != user.email) {
+      return done(null, false, { message: 'Incorrect username or password.' })
+    }
 
+    const newPassword = crypto.pbkdf2Sync(password, Buffer.from(user.salt, 'hex'), 100000, 64, 'sha512')
+    const oldPassword = Buffer.from(user.password, 'hex')
+    
+    if (!crypto.timingSafeEqual(oldPassword, newPassword)) {
+        return done(null, false, { message: 'Incorrect username or password.' })
+    }
 
-function authenticateUser(email, password, done) {
-  
-      // if (err) {
-      //     return done(err)
-      // }
-      // if (!row) {
-      //     return done(null, false, { message: 'Incorrect username or password.' })
-      // }
-
-      if (email != dummyUser.email) {
-          return done(null, false, { message: 'Incorrect username or password.' })
-      }
-      
-      crypto.pbkdf2(password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-          if (err) {
-              return done(err)
-          }
-          if (!crypto.timingSafeEqual(dummyUser.hashedPassword, hashedPassword)) {
-              return done(null, false, { message: 'Incorrect username or password.' })
-          }
-          return done(null, dummyUser)
-      })
-  
+    return done(null, user)
+    
+  }catch(err){//NotFoundError: No User found
+    return done(null, false, { message: 'Incorrect username or password.' })
+  }
 }
 
-passport.use(new LocalStrategy(
-  {
-    usernameField: 'email',
-  },
+passport.use(new LocalStrategy({usernameField: 'email'},
   authenticateUser
 ))
 
@@ -182,6 +114,8 @@ router.get('/logout', function(req, res, next) {
  * will be sent to the `POST /signup` route.
  */
 router.get('/signup', function(req, res, next) {
+  res.locals.title = 'Signup'
+  res.locals.action = '/signup'
   res.render('signup')
 })
 
@@ -194,57 +128,83 @@ router.get('/signup', function(req, res, next) {
 * then a new user record is inserted into the database.  If the record is
 * successfully created, the user is logged in.
 */
-router.post('/signup', function(req, res, next) {
+router.post('/signup', async function(req, res, next) {
   const { email, userName, password } = req.body
-
 
   // validate data
   const isValidPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
   const isValidUserName = /^([a-zA-Z0-9_\-\.]).{4,12}$/
   const isValidEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   
-  if(!isValidEmail.test(email)
-    || !isValidUserName.test(userName)
-    || !isValidPassword.test(password)
-  ){
+  if( !isValidEmail.test(email) || 
+      !isValidUserName.test(userName) || 
+      !isValidPassword.test(password) ){
     return next(err)
   }
 
+  try{
+    // check if use exist
+    try{
+      const existsUser = await getBy('user', {email})
+      // console.log('existsUser', existsUser)
+      if(existsUser){// user exist
+        // res.locals.message = {"type": 'warning',
+        //   "title": 'An account with that email address already exists.',
+        //   "body": '<p>Please log in to continue.</p>'}
 
-  var salt = crypto.randomBytes(16)
-  crypto.pbkdf2(password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-    if (err) {
-      return next(err)
+        res.locals.messages = ['An account with that email address already exists. Please log in to continue.']
+        res.locals.hasMessages = true
+          
+        res.render('signup')
+
+        // req.session.messages.push('An account with that email address already exists. Please log in to continue.')
+        // res.redirect('/login')
+        return
+      }
+    }catch(err){
+      // Error: NotFoundError: No User found
+      // this is good. continue script...
     }
-    // db.run('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
-    //   req.body.username,
-    //   hashedPassword,
-    //   salt
-    // ], function(err) {
-    //   if (err) { return next(err)}
-    //   var user = {
-    //     id: this.lastID,
-    //     username: req.body.username
-    //   }
-    //   req.login(user, function(err) {
-    //     if (err) { return next(err)}
-    //     res.redirect('/')
-    //   })
+
+    // get subscriber role
+    const subscriberRole = await getBy('role', {"name": 'subscriber'})
+
+    // create new user
+    const tmpUser = {
+      email,
+      password,
+      salt: crypto.randomBytes(16),
+      userName,
+      role: {
+          connect: {id: subscriberRole.id}
+        }
+    }
+
+    const key = crypto.pbkdf2Sync(tmpUser.password, tmpUser.salt, 100000, 64, 'sha512');
+    tmpUser.password = key.toString('hex')
+    // crypto.pbkdf2(tmpUser.password, tmpUser.salt, 310000, 32, 'sha256', function(err, derivedKey) {
+    //     tmpUser.password = derivedKey.toString('hex')
     // })
-    createUser(email, String(hashedPassword), String(salt), userName)
-    .then(user => {
-      req.login(user, function(err) {
-        if (err) { return next(err)}
-        res.redirect('/')
-      })
-    })
-    .catch(async (e) => {
-      console.error(e)
-      // process.exit(1)
-      return next(err)
-    })
+
+    tmpUser.salt = tmpUser.salt.toString('hex')
+
+    const user = await createRow('user', tmpUser)
     
-  })
+    // res.locals.message = {
+    //   "type": 'success',
+    //   "title": 'Your account has been successfully created.',
+    //   "body": '<p>An email with a verification code was just sent to: ' + user.email + '</p>'
+    // }
+
+    res.locals.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + user.email]
+    res.locals.hasMessages = true
+    // res.redirect('/login')
+    res.render('index')
+
+  }catch(err){
+    console.error(err)
+    return next(err)
+  }
 })
 
 export default router

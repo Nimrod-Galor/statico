@@ -5,7 +5,7 @@
     <%- include('partial/header') -%>
 
 
-    <div id="page-container" class="page-container">
+    <div id="page-container" class="page-container center-container">
 
         <main id="main-wrapper" class="main-wrapper">
             <article id="main-article" class="main-article">
@@ -13,8 +13,8 @@
                 <%- include('partial/alert') %>
                 
                 <div id="main-article-innerDiv" class="main-article-innerDiv">
-                    <h2>Signup</h2>
-                    <form method="post" action="/signup" onsubmit="return validateForm()">
+                    <h2><%- locals.title %></h2>
+                    <form method="post" action="<%- locals.action %>" onsubmit="return validateForm()">
                         <p>
                             <label for="email">Email:</label>
                             <input type="text" name="email" id="email">
@@ -32,9 +32,12 @@
                             <input type="password" name="repassword" id="repassword">
                         </p>
                         <p>
-                            <input type="submit" value="Login">
+                            <input type="submit" value="Signup">
                         </p>
                     </form>
+                    <div>
+                        You already have an account? <a href="/login">Login</a>.
+                    </div>
                 </div>
             </article>
         </main>

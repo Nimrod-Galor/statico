@@ -5,15 +5,17 @@
     <%- include('partial/header') -%>
 
 
-    <div id="page-container" class="page-container">
+    <div id="page-container" class="page-container center-container">
 
         <main id="main-wrapper" class="main-wrapper">
             <article id="main-article" class="main-article">
-                <% if(hasMessages) {  %>
-                    <%- include('partial/alert', { message: locals.messages }) %>
-                <% } %>
+                
+                
                 <div id="main-article-innerDiv" class="main-article-innerDiv">
                     <h2>Login</h2>
+                    <div class="alert-small-wrapper">
+                        <%- include('partial/alert') %>
+                    </div>
                     <form method="post" action="/login">
                         <p>
                             <label for="email">Email:</label>
@@ -27,6 +29,9 @@
                             <input type="submit" value="Login">
                         </p>
                     </form>
+                    <div>
+                        You don't have an account yet? <a href="/signup">sign up</a>.
+                    </div>
                 </div>
             </article>
         </main>

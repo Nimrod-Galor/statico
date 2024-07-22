@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 async function createRow(collectionName, data){
   console.log("create row")
   const res = await prisma[collectionName].create({data})
-  .catch(err => console.log(err))
+  .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
   })
@@ -15,7 +15,7 @@ async function createRow(collectionName, data){
 
 async function getAll(collectionName) {
   const res = await prisma[collectionName].findMany()
-  .catch(err => console.log(err))
+  .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
   })
@@ -29,7 +29,7 @@ export default async function getBy(collectionName, filter){
     //   email: email
     // }
   })
-  .catch(err => console.log(err))
+  .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
   })
@@ -41,7 +41,7 @@ async function updateRow(collectionName, filter, data){
     where: filter,
     data
   })
-  .catch(err => console.log(err))
+  .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
   })
@@ -53,7 +53,7 @@ async function deleteRow(collectionName, filter){
   await prisma[collectionName].update({
     where: filter
   })
-  .catch(err => console.log(err))
+  .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
   })
