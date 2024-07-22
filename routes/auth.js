@@ -66,7 +66,7 @@ passport.deserializeUser(function(user, cb) {
 
 /** GET /login */
 router.get('/login', ensureLogIn.ensureLoggedOut('/'), function(req, res, next) {
-    res.render('login')
+    res.render('login', { user: null })
 })
 
 /** POST /login/password
@@ -116,7 +116,7 @@ router.get('/logout', function(req, res, next) {
 router.get('/signup', function(req, res, next) {
   res.locals.title = 'Signup'
   res.locals.action = '/signup'
-  res.render('signup')
+  res.render('signup', { user: null })
 })
 
 /* POST /signup
