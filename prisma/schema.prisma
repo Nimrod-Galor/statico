@@ -21,8 +21,8 @@ model User {
   createdAt     DateTime @default(now())
   email         String   @unique
   emailVerified Boolean  @default(false)
-  password      String
-  salt          String
+  password      String //@hide
+  salt          String //@hide
   userName      String?
   posts         Post[]
   role          Role     @relation(fields: [roleId], references: [id])

@@ -16,7 +16,7 @@ import initialize from './statico/initialize.js'
 import pagesRouter from './routes/pages.js'
 import userRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
-import adminRouter from './routes/admin.js'
+import adminRouter from './statico/routes/admin.js'
 
 /* Test prisma */
 // import getBy, {createRow} from './db.js'
@@ -32,7 +32,7 @@ const PORT = process.env.port | 3000
 // view engine setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'statico/admin/theme/views')])
 app.set('view engine', 'ejs')
 
 
@@ -40,7 +40,10 @@ app.set('view engine', 'ejs')
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+// public
 app.use(express.static(path.join(__dirname, 'public')))
+// admin
+app.use(express.static(path.join(__dirname, 'statico/admin/theme')))
 app.use(cookieParser())
 app.use(session({
     secret: process.env.SESSION_SECRET,

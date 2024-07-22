@@ -36,6 +36,21 @@ export default async function getBy(collectionName, filter){
   return res
 }
 
+async function getPagination(collectionName, skip, take, select, where = {}, orderBy = {}){
+  const res = await prisma[collectionName].findMany({
+    skip,
+    take,
+    where,
+    select,
+    orderBy
+  })
+  .catch(err => {throw new Error(err)})
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+  return res
+}
+
 async function updateRow(collectionName, filter, data){
   const res = await prisma[collectionName].update({
     where: filter,
@@ -59,4 +74,4 @@ async function deleteRow(collectionName, filter){
   })
 }
 
-export {getAll, getBy, createRow, updateRow, deleteRow}
+export {getAll, getBy, createRow, updateRow, deleteRow, getPagination}

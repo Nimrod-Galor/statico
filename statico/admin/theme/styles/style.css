@@ -1,0 +1,9 @@
+.pointer{cursor: pointer;}
+
+.boxShadow{
+    box-shadow: 3px 3px 3px #aeaeae;
+}
+
+.modelAddBtn svg:hover{
+    background-color: RGBA(var(--bs-warning-rgb));
+}
