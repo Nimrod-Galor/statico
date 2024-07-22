@@ -16,12 +16,12 @@
                 <div class="search-btn"></div>
             </div>
             <div id="login" class="login">
-                <% if (locals.user) { %>
-                    <%= user.name %> 
+                <% if (user) { %>
+                    <%= user.username %> 
                   <% } %>
                 <div class="person" onclick="profileDropdownClick()"></div>
                 <div id="profileDropdown" class="dropdown-content">
-                    <% if (locals.user) { %>
+                    <% if (user) { %>
                         <a href="/profile">My Profile</a>
                         <a href="/logout">Logout</a>
                     <% } else { %>
