@@ -11,7 +11,7 @@
 </head>
 <body class="d-flex flex-column h-100">
    
-    <header>
+    <!-- <header>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
 
@@ -42,7 +42,7 @@
                         <li class="nav-item">
                             <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                         </li>
-                    </ul> -->
+                    </ul> -- >
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -50,20 +50,25 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header> -->
 
     
         <div class="row">
             <div class="sidebar col-md-3 col-lg-2">
                 <ul class="list-group list-group-flush">
                     <% prismaModels.forEach((model) => { %>
-                        <li class="list-group-item list-group-item-action d-flex flex-row pointer <%- model.name == contentType ? 'active' : '' %>">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">
+                        <li class="list-group-item list-group-item-action d-flex flex-row <%- model.name == contentType ? 'active' : '' %>">
+                            <% if(model.name == contentType){%>
+                                <div class="w-100 me-2 fw-bold">
                                     <span class="badge text-bg-warning rounded-pill me-2 boxShadow"><%= model.count %></span>
-                                    <%= model.plural %>
+                                    <%=model.plural%>
                                 </div>
-                            </div>
+                            <%}else{%>
+                                <a href="/admin/<%-model.name%>" class="d-block w-100 me-2 text-decoration-none fw-bold">
+                                    <span class="badge text-bg-warning rounded-pill me-2 boxShadow"><%= model.count %></span>
+                                    <%=model.plural%>
+                                </a>
+                            <%}%>
                             <div class="pointer modelAddBtn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
@@ -72,19 +77,36 @@
                             </div>
                         </li>
                     <%})%>
-                </ul>
+                    </ul>
             </div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <% modelData.forEach((data) => {%>
-                    <div class="row">
-                        <%- JSON.stringify(data) %>
-                        <!-- < % data.fields.forEach((field) => {%>
-                            <div class="col-lg-2">
-                                
-                            </div>
-                        < %})%> -->
-                    </div>
-                <%})%>
+                <header>
+
+                </header>
+                <table class="table caption-top">
+                    <caption>List of <%-contentType%></caption>
+                    <thead class="table-dark">
+                        <tr>
+                            <% headers.forEach((header) => {%>
+                                <th scope="col">
+                                    <%-header%>
+                                </th>
+                            <%})%>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <% modelData.forEach((data) => {%>
+                            <tr>
+                                <!-- < %- JSON.stringify(data) %> -->
+                                <% headers.forEach((key) => {%>
+                                    <td>
+                                        <%-data[key]%>
+                                    </td>
+                                <%})%>
+                            </tr>
+                        <%})%>
+                    </tbody>
+                </table>
             </main>
         </div>
     

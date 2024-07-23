@@ -27,12 +27,15 @@ function parseModels(schema){
             const [name, type] = line.trim().split(/\s+/)
             const isUnique = line.includes('@unique')
             const isObjectId = line.includes('@db.ObjectId');
+            const ignoreField = line.includes('//@ignore');
             const hideField = line.includes('//@hide');
+            const countField = line.includes('//@count');
+            const relationField = line.includes('//@relation') ? line.match(/\b(\w+)$/)[0] : false;
 
             if (name.includes('@@')) {
                 return null
             }
-            return { name, type, isUnique, isObjectId, hideField }
+            return { name, type, isUnique, isObjectId, ignoreField, hideField, countField, relationField }
         }).filter(field => field !== null)
 
         // Extract table mapping
@@ -80,17 +83,22 @@ async function updateModelsCount(){
 
 updateModelsCount()
 
+function getSelectFields(contentType, cb){
+    const select = prismaModels.find(i => i.name == contentType).fields.filter(cb).reduce((o, key) => ({ ...o, [key.name]: true}), {})
+
+    return select
+}
+
 
 // console.log('models',JSON.stringify(prismaModels))
 
 router.get("/:contentType?", ensureLoggedIn('/login'), async (req, res) => {
     const contentType = req.params.contentType || prismaModels[0].name
     // get initial Data
-    const select = prismaModels.find(i => i.name == contentType).fields.filter((field) => {
-        return !field.hideField
-    }).reduce((o, key) => ({ ...o, [key.name]: true}), {})
+    const select = getSelectFields(contentType, (field) => {return !field.ignoreField})
+    const headers = Object.keys(getSelectFields(contentType, (field) => {return !field.ignoreField && !field.hideField}))
     const modelData = await getPagination(contentType, 0, 10, select)
-    res.render('dashboard', {prismaModels, contentType, modelData})
+    res.render('dashboard', {prismaModels, contentType, modelData, headers })
 })
 
 export default router
