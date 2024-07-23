@@ -21,7 +21,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="me-auto"></div>
-                    <!-- <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    < !-- <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
@@ -61,12 +61,12 @@
                             <% if(model.name == contentType){%>
                                 <div class="w-100 me-2 fw-bold">
                                     <span class="badge text-bg-warning rounded-pill me-2 boxShadow"><%= model.count %></span>
-                                    <%=model.plural%>
+                                    <%=model.header%>
                                 </div>
                             <%}else{%>
                                 <a href="/admin/<%-model.name%>" class="d-block w-100 me-2 text-decoration-none fw-bold">
                                     <span class="badge text-bg-warning rounded-pill me-2 boxShadow"><%= model.count %></span>
-                                    <%=model.plural%>
+                                    <%=model.header%>
                                 </a>
                             <%}%>
                             <div class="pointer modelAddBtn">

@@ -1,11 +1,11 @@
 // import fs from 'fs'
 // import path from 'path'
 import crypto from 'crypto'
-import getBy, {createRow, getAll} from '../db.js'
+import readRows, {createRow} from '../db.js'
 
 export default async function initialize(){
     // check for defaul roles
-    const roles = await getAll('role')
+    const roles = await readRows('role')
     if(roles.length === 0){
         console.log('Start create role')
         // create subscriber role

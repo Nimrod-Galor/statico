@@ -17,16 +17,16 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId //@hide
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt     DateTime @default(now())
   email         String   @unique
   emailVerified Boolean  @default(false)
-  password      String //@ignore
-  salt          String //@ignore
+  password      String
+  salt          String
   userName      String?
-  posts         Post[] //@count
-  role          Role     @relation(fields: [roleId], references: [id]) //@relation name
-  roleId        String   @db.ObjectId //@hide
+  posts         Post[]
+  role          Role     @relation(fields: [roleId], references: [id])
+  roleId        String   @db.ObjectId
 }
 
 model Post {

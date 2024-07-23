@@ -4,7 +4,7 @@ import LocalStrategy from 'passport-local'
 import crypto from 'crypto'
 import ensureLogIn from 'connect-ensure-login'
 
-import getBy, {createRow} from '../db.js'
+import readRows, {readRow, createRow} from '../db.js'
 
 
 const router = express.Router();
@@ -12,7 +12,8 @@ const router = express.Router();
 
 async function authenticateUser(email, password, done) {
   try{
-    const user = await getBy('user', {email})
+    // const user = await getBy('user', {email})
+    const user = await readRow('user', {where:{email}})
     
     if (email != user.email) {
       return done(null, false, { message: 'Incorrect username or password.' })
@@ -145,7 +146,8 @@ router.post('/signup', async function(req, res, next) {
   try{
     // check if use exist
     try{
-      const existsUser = await getBy('user', {email})
+      // const existsUser = await getBy('user', {email})
+      const user = await readRow('user', {where:{email}})
       // console.log('existsUser', existsUser)
       if(existsUser){// user exist
         // res.locals.message = {"type": 'warning',
@@ -167,7 +169,8 @@ router.post('/signup', async function(req, res, next) {
     }
 
     // get subscriber role
-    const subscriberRole = await getBy('role', {"name": 'subscriber'})
+    // const subscriberRole = await getBy('role', {"name": 'subscriber'})
+    const subscriberRole = await readRow('user', {where:{"name": 'subscriber'}})
 
     // create new user
     const tmpUser = {
