@@ -105,4 +105,20 @@ async function countRows(collectionName){
   return res
 }
 
-export {readRow, createRow, updateRow, deleteRow, countRows}
+
+// Multiple Counta Rows
+async function countsRows(collectionsName){
+  //const res = await prisma[collectionName].count()
+  let parr = []
+  for(let i=0; i<collectionsName.length; i++){
+    parr.push(prisma[collectionsName[i]].count())
+  }
+  const res = await Promise.all(parr)
+  .catch(err => {throw new Error(err)})
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+  return res
+}
+
+export {readRow, createRow, updateRow, deleteRow, countRows, countsRows}

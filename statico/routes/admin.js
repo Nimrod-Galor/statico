@@ -2,7 +2,7 @@ import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 // import pluralize from 'pluralize'
 // import { PrismaClient } from '@prisma/client'
-import readRows, {countRows} from '../../db.js'
+import readRows, {countsRows} from '../../db.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
@@ -14,14 +14,34 @@ const prismaModels = [
         "header": "Users",
         "description": "",
         "fields": [
-            {"key": "id", "header": "Id", "type": "String", "visible": false},
-            {"key": "userName", "header": "User Name", "type": "String", "visible": true},
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime", "visible": true},
-            {"key": "email", "header": "Email", "type": "String", "visible": true},
-            {"key": "emailVerified", "header": "Verified", "type": "Boolean", "visible": true},
-            {"key": "posts", "header": "Posts", "type": "Int", "visible": true},
-            {"key": "role", "header": "Role", "type": "String", "visible": true}
-        ]
+            {"key": "userName", "header": "User Name", "type": "String"},
+            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
+            {"key": "email", "header": "Email", "type": "String"},
+            {"key": "emailVerified", "header": "Verified", "type": "Boolean"},
+            {"key": "posts", "header": "Posts", "type": "Int"},
+            {"key": "role", "header": "Role", "type": "String"}
+        ],
+        "select" : {
+            id: true,
+            userName: true,
+            createdAt: true,
+            email: true,
+            emailVerified: true,
+            _count: {
+                select: { posts: true }
+            },
+            role: {
+                select: {
+                    name: true
+                }
+            }
+        },
+        "destructur": (user) => ({
+            ...user,
+            posts: user._count.posts,
+            role: user.role.name,
+            _count: undefined // optionally remove the original _count field
+        }),
     },
       
     {
@@ -29,17 +49,42 @@ const prismaModels = [
         "header": "Posts",
         "description": "",
         "fields": [
-            {"key": "id", "header": "Id", "type": "String", "visible": false},
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime", "visible": true},
-            {"key": "updatedAt", "header": "Update Date", "type": "DateTime", "visible": true},
-            {"key": "title", "header": "Title", "type": "String", "visible": true},
+            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
+            {"key": "updatedAt", "header": "Update Date", "type": "DateTime"},
+            {"key": "title", "header": "Title", "type": "String"},
             // {"key": "body", "header": "", "type": "", "visible": },
-            {"key": "published", "header": "Published", "type": "Boolean", "visible": true},
-            {"key": "viewCount", "header": "Views", "type": "Int", "visible": true},
-            {"key": "author", "header": "Author", "type": "String", "visible": true},
-            {"key": "authorId", "header": "authorId", "type": "String", "visible": false},
-            {"key": "comments", "header": "Comments", "type": "Int", "visible": true}
-        ]
+            {"key": "published", "header": "Published", "type": "Boolean"},
+            {"key": "viewCount", "header": "Views", "type": "Int"},
+            {"key": "author", "header": "Author", "type": "String"},
+            {"key": "comments", "header": "Comments", "type": "Int"}
+        ],
+        "select": {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            title: true,
+            published: true,
+            viewCount: true,
+            author: {
+                select: {
+                    userName: true
+                }
+            },
+            authorId: true,
+            // comments: true
+            _count:{
+                select: {
+                    comments: true
+                }
+            }
+
+        },
+        "destructur": (post) => ({
+            ...post,
+            author: post.author.name,
+            comments: post._count.comments,
+            _count: undefined
+        })
     },
       
     {
@@ -47,12 +92,22 @@ const prismaModels = [
         "header": "Comments",
         "description": "",
         "fields": [
-            {"key": "id", "header": "Id", "type": "String", "visible": false},
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime", "visible": true},
-            {"key": "comment", "header": "Comment", "type": "String", "visible": true},
-            {"key": "published", "header": "Published", "type": "Boolean", "visible": true},
-            {"key": "postId", "header": "postId", "type": "String", "visible": false},
-        ]
+            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
+            {"key": "comment", "header": "Comment", "type": "String"},
+            {"key": "published", "header": "Published", "type": "Boolean"}
+        ],
+        "select": {
+            id: true,
+            createdAt: true,
+            comment: true,
+            published: true,
+            post: {
+                select:{
+                    id: true
+                }
+            },
+            postId: true
+        }
     },
       
     {
@@ -60,106 +115,73 @@ const prismaModels = [
         "header": "Roles",
         "description": "",
         "fields": [
-            {"key": "id", "header": "Id", "type": "String", "visible": false},
-            {"key": "name", "header": "Name", "type": "String", "visible": true},
-            {"key": "description", "header": "Description", "type": "String", "visible": true}
-        ]
+            {"key": "name", "header": "Name", "type": "String"},
+            {"key": "description", "header": "Description", "type": "String"}
+        ],
+        "select": {
+            id: true,
+            name: true,
+            description: true
+        }
     }
 ]
 
-// const prisma = new PrismaClient();
-// // Basic parsing of model definitions
-// function parseModels(schema){
-//     // this code is from: https://stackoverflow.com/questions/71658510/how-can-i-get-the-all-fields-from-prisma-class
-//     // Thanks to James Tan https://stackoverflow.com/users/2857193/james-tan
-//     const modelRegex = /model (\w+) {([\s\S]*?)^}/gm
-//     let match
-//     const models = []
-
-//     while ((match = modelRegex.exec(schema)) !== null) {
-//         const modelName = match[1]
-//         const modelBody = match[2]
-
-//         const fields = modelBody.trim().split('\n')
-//         .filter(line => line && !line.startsWith('@') && !line.startsWith('@@'))
-//         .map((line) => {
-//             const [name, type] = line.trim().split(/\s+/)
-//             const isUnique = line.includes('@unique')
-//             const isObjectId = line.includes('@db.ObjectId');
-//             const ignoreField = line.includes('//@ignore');
-//             const hideField = line.includes('//@hide');
-//             const countField = line.includes('//@count');
-//             const relationField = line.includes('//@relation') ? line.match(/\b(\w+)$/)[0] : false;
-
-//             if (name.includes('@@')) {
-//                 return null
-//             }
-//             return { name, type, isUnique, isObjectId, ignoreField, hideField, countField, relationField }
-//         }).filter(field => field !== null)
-
-//         // Extract table mapping
-//         const tableMappingMatch = modelBody.match(/@@map\(["'](.+?)["']\)/)
-//         const tableName = tableMappingMatch ? tableMappingMatch[1] : undefined
-
-//         // Extract unique constraints
-//         const uniqueConstraints = []
-//         const uniqueRegex = /@@unique\(\[([^\]]+)\]\)/g
-//         let uniqueMatch
-//         while ((uniqueMatch = uniqueRegex.exec(modelBody)) !== null) {
-//         const fields = uniqueMatch[1].split(',').map(field => field.trim())
-//         uniqueConstraints.push({ fields })
-//         }
-
-//         // Extract indexes
-//         const indexes = []
-//         const indexRegex = /@@index\(\[([^\]]+)\]\)/g
-//         let indexMatch
-//         while ((indexMatch = indexRegex.exec(modelBody)) !== null) {
-//         const fields = indexMatch[1].split(',').map(field => field.trim())
-//         indexes.push({ fields })
-//         }
-
-//         models.push({ name: modelName, plural: pluralize(modelName), tableName, fields, uniqueConstraints, indexes })
-//     }
-
-//     return models
+// // Count models rows
+// async function modelCount(modelName){
+//     const res = await countRows(modelName)
+//     return res
 // }
 
-// const prismaModels = parseModels(prisma._engineConfig.inlineSchema)
+// async function updateModelsCount(){
+//     for (let i =0; i < prismaModels.length; i++) {
+//         // prismaModels[i].count = await modelCount(prismaModels[i].name);
+//         prismaModels[i].count = await countRows(prismaModels[i].name)
+//     }
+// }
 
+// updateModelsCount()
 
-// Count models rows
-async function modelCount(modelName){
-    const res = await countRows(modelName)
-    return res
-}
+// function getSelectFields(contentType, cb){
+//     const select = prismaModels.find(i => i.name == contentType).fields.filter(cb).reduce((o, key) => ({ ...o, [key.key]: true}), {})
 
-async function updateModelsCount(){
-    for (let i =0; i < prismaModels.length; i++) {
-        prismaModels[i].count = await modelCount(prismaModels[i].name);
-    }
-}
+//     return select
+// }
 
-updateModelsCount()
-
-function getSelectFields(contentType, cb){
-    const select = prismaModels.find(i => i.name == contentType).fields.filter(cb).reduce((o, key) => ({ ...o, [key.key]: true}), {})
-
-    return select
-}
 
 
 // console.log('models',JSON.stringify(prismaModels))
 
-router.get("/:contentType?", ensureLoggedIn('/login'), async (req, res) => {
-    const contentType = req.params.contentType || prismaModels[0].name
-    //  create Model headers array
-    const headers = Object.keys(getSelectFields(contentType, (field) => {return field.visible}))
-    // // get initial Data
-    const select = getSelectFields(contentType, (field) => {return true})
-    const modelData = await readRows(contentType, 0, 10, select)
+router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) => {
+    // count models rows
+    const modelsName = prismaModels.map(item => item.name)
+    const counts = await countsRows(modelsName)
+    for(let i=0; i< counts.length; i++){
+        prismaModels[i].count = counts[i]
+    }
 
-    res.render('dashboard', {prismaModels, contentType, modelData, headers })
+    const contentType = req.params.contentType || prismaModels[0].name
+    const model = prismaModels.find((model) => model.name == contentType)
+    //  create Model headers array
+    //const modelHeaders = model.fields//.filter((field) => {return field.visible})
+    // // get initial Data
+    // const skip = req.params.page || 0
+    // const take = 10
+    // const where = {}
+    // const select = getSelectFields(contentType, (field) => {return true})
+    // const orderBy = {}
+    const query = {
+        "skip": req.params.page || 0,
+        "take": 10,
+        "where": {},
+        "select": model.select,
+        "orderBy": {}
+    }
+    let modelData = await readRows(contentType, query)
+    if(model.destructur){
+        modelData = modelData.map(model.destructur)
+    }
+
+    res.render('dashboard', {prismaModels, contentType, modelData, modelHeaders: model.fields })
 })
 
 export default router

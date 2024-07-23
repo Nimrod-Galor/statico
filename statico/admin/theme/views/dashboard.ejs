@@ -87,22 +87,29 @@
                     <caption>List of <%-contentType%></caption>
                     <thead class="table-dark">
                         <tr>
-                            <% headers.forEach((header) => {%>
+                            <% modelHeaders.forEach((field) => {%>
                                 <th scope="col">
-                                    <%-header%>
+                                    <%-field.header%>
                                 </th>
                             <%})%>
+                            <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
                         <% modelData.forEach((data) => {%>
                             <tr>
                                 <!-- < %- JSON.stringify(data) %> -->
-                                <% headers.forEach((key) => {%>
+                                <% modelHeaders.forEach((field) => {%>
                                     <td>
-                                        <%-data[key]%>
+                                        <%-data[field.key]%>
                                     </td>
                                 <%})%>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="button" class="btn btn-warning" onclick="deleteItemClick('<%-data.id%>')">Delete</button>
+                                        <button type="button" class="btn btn-primary" onclick="editItemClick('<%-data.id%>')">Edit</button>
+                                    </div>
+                                </td>
                             </tr>
                         <%})%>
                     </tbody>
