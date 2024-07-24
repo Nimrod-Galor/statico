@@ -157,7 +157,17 @@ function checkFilterIsValid(data, type){
 
 const roles = await readRows('role', {select:{ id: true, name: true}})
 
-router.get("/:contentType?/*", ensureLoggedIn('/login'), async (req, res) => {
+// get name of all models
+const modelsName = prismaModels.map(item => item.name)
+// count models rows
+const counts = await countsRows(modelsName)
+// update counts in models list
+for(let i=0; i< counts.length; i++){
+    prismaModels[i].count = counts[i]
+}
+
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), async (req, res) => {
+    ///:contentType?/*
     // get selected content type name
     const contentType = req.params.contentType || prismaModels[0].name.toLowerCase()
     // get selected model
@@ -191,14 +201,7 @@ router.get("/:contentType?/*", ensureLoggedIn('/login'), async (req, res) => {
 
 
 
-    // get name of all models
-    const modelsName = prismaModels.map(item => item.name)
-    // count models rows
-    const counts = await countsRows(modelsName)
-    // update counts in models list
-    for(let i=0; i< counts.length; i++){
-        prismaModels[i].count = counts[i]
-    }
+    
 
     //  create Model headers array
     //const modelHeaders = model.fields//.filter((field) => {return field.visible})
