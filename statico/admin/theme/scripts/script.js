@@ -33,3 +33,8 @@ function openModelView(modelName){
 function closeModelView(){
     document.querySelector('.horizontal-collapse').classList.remove('open')
 }
+
+function validateCreateModel(modelName){
+    console.log(modelName)
+    return true
+}

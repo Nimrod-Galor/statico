@@ -3,8 +3,8 @@ import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import crypto from 'crypto'
 import ensureLogIn from 'connect-ensure-login'
-
-import readRows, {readRow, createRow} from '../db.js'
+import createUser from '../modules/createUser.js'
+import readRows, {readRow} from '../db.js'
 
 
 const router = express.Router();
@@ -101,7 +101,7 @@ router.get('/logout', function(req, res, next) {
     if (err) {
       return next(err)
     }
-    res.redirect('/')
+    res.redirect('/admin')
   })
 })
 
@@ -132,78 +132,23 @@ router.get('/signup', function(req, res, next) {
 router.post('/signup', async function(req, res, next) {
   const { email, userName, password } = req.body
 
-  // validate data
-  const isValidPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
-  const isValidUserName = /^([a-zA-Z0-9_\-\.]).{4,12}$/
-  const isValidEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  
-  if( !isValidEmail.test(email) || 
-      !isValidUserName.test(userName) || 
-      !isValidPassword.test(password) ){
-    return next(err)
-  }
+  // sanitize ** todo
 
   try{
-    // check if use exist
-    try{
-      // const existsUser = await getBy('user', {email})
-      const user = await readRow('user', {where:{email}})
-      // console.log('existsUser', existsUser)
-      if(existsUser){// user exist
-        // res.locals.message = {"type": 'warning',
-        //   "title": 'An account with that email address already exists.',
-        //   "body": '<p>Please log in to continue.</p>'}
+    //  create new user
+    const result = await createUser(email, userName, password)
 
-        res.locals.messages = ['An account with that email address already exists. Please log in to continue.']
-        res.locals.hasMessages = true
-          
-        res.render('signup')
-
-        // req.session.messages.push('An account with that email address already exists. Please log in to continue.')
-        // res.redirect('/login')
-        return
-      }
-    }catch(err){
-      // Error: NotFoundError: No User found
-      // this is good. continue script...
+    if(result.user){// success
+      req.session.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + result.user.email]
+      req.session.messageType = 'success'
+      res.redirect('/login')
+    }else{
+      res.locals.messages = result.errorMsg
+      res.locals.messageTitle = result.messageTitle
+      res.locals.messageType = result.messageType
+      res.locals.hasMessages = true
+      res.render('signup', {user: undefined})
     }
-
-    // get subscriber role
-    // const subscriberRole = await getBy('role', {"name": 'subscriber'})
-    const subscriberRole = await readRow('user', {where:{"name": 'subscriber'}})
-
-    // create new user
-    const tmpUser = {
-      email,
-      password,
-      salt: crypto.randomBytes(16),
-      userName,
-      role: {
-          connect: {id: subscriberRole.id}
-        }
-    }
-
-    const key = crypto.pbkdf2Sync(tmpUser.password, tmpUser.salt, 100000, 64, 'sha512');
-    tmpUser.password = key.toString('hex')
-    // crypto.pbkdf2(tmpUser.password, tmpUser.salt, 310000, 32, 'sha256', function(err, derivedKey) {
-    //     tmpUser.password = derivedKey.toString('hex')
-    // })
-
-    tmpUser.salt = tmpUser.salt.toString('hex')
-
-    const user = await createRow('user', tmpUser)
-    
-    // res.locals.message = {
-    //   "type": 'success',
-    //   "title": 'Your account has been successfully created.',
-    //   "body": '<p>An email with a verification code was just sent to: ' + user.email + '</p>'
-    // }
-
-    res.locals.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + user.email]
-    res.locals.hasMessages = true
-    // res.redirect('/login')
-    res.render('index')
-
   }catch(err){
     console.error(err)
     return next(err)

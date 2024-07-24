@@ -1,11 +1,19 @@
 import express from 'express'
+import createError from 'http-errors'
 import ensureLogIn from 'connect-ensure-login'
-import { PrismaClient } from '@prisma/client'
+import bodyParser from 'body-parser'
+import createUser from '../../modules/createUser.js'
+import isValid from '../../modules/validations.js'
 
+// import { PrismaClient } from '@prisma/client'
 // import pluralize from 'pluralize'
 import readRows, {countsRows} from '../../db.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
+
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
 const router = express.Router()
 
 
@@ -134,27 +142,6 @@ const prismaModels = [
     }
 ]
 
-function checkFilterIsValid(data, type){
-    switch(type){
-        case "uuid":
-            let regUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
-        break;
-        case "ObjectID":
-            let regObjectID = /^[a-f\d]{24}$/i
-                return regObjectID.test(data)
-        break;
-        case "Boolean":
-            return (data.toLowerCase() === 'true' || data.toLowerCase() === 'false')
-        break;
-        case "userName":
-            let regUserName = /^[A-Za-z][A-Za-z0-9_]{6,29}$/
-            return regUserName.test(data)
-        break;
-    }
-
-    return false
-}
-
 const roles = await readRows('role', {select:{ id: true, name: true}})
 
 // get name of all models
@@ -166,10 +153,47 @@ for(let i=0; i< counts.length; i++){
     prismaModels[i].count = counts[i]
 }
 
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), async (req, res) => {
+// Create new user
+router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, async (req, res) => {
+    let {email, password, username, emailverified, role} = req.body
+
+    // sanitize ** todo
+
+    try{
+        //  create new user
+        const result = await createUser(email, username, password, emailverified, role)
+
+        if(result.user){// success
+            res.locals.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + result.user.email]
+            res.locals.messgaeTitle = 'Success'
+            res.locals.messageType = 'success'
+        }else{
+            res.locals.messages = result.errorMsg
+            res.locals.messageTitle = result.messageTitle
+            res.locals.messageType = result.messageType
+            res.locals.hasMessages = true
+        }
+        res.render('/admin')
+    }catch(err){
+        console.error(err)
+        return next(err)
+    }
+})
+
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), async (req, res, next) => {
     ///:contentType?/*
     // get selected content type name
     const contentType = req.params.contentType || prismaModels[0].name.toLowerCase()
+    // check we didnt get here by mistake
+    if(!modelsName.includes(capitalizeFirstLetter(contentType))){
+        try{
+            const err = createError(404, 'Resource not found');
+            throw err;
+        } catch (err) {
+            next(err); // Pass the error to the Express error handler
+        }
+        return
+    }
     // get selected model
     const model = prismaModels.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
     // check for extra parmas
@@ -188,7 +212,7 @@ router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), asy
                         // we found a filter match
                         let filterOn = paramsArr[++i]
                         // check if filteron is valid
-                        if(checkFilterIsValid(filterOn, filter.type)){
+                        if(isValid(filterOn, filter.type)){
                             // set filter
                             where[filter.key] = filterOn
                         }
@@ -223,9 +247,11 @@ router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), asy
         modelData = modelData.map(model.destructur)
     }
 
-    res.render('dashboard', {prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
+    res.render('dashboard', {user: req.user, prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
 })
 
-
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export default router

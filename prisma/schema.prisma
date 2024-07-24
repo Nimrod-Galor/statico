@@ -53,8 +53,9 @@ model Comment {
 }
 
 model Role {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String @unique @default("subscriber")
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String  @unique @default("subscriber")
   description String
+  default     Boolean @default(false)
   User        User[]
 }

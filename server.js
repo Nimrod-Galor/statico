@@ -55,9 +55,14 @@ app.use(passport.authenticate('session'))
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     var msgs = req.session.messages || [];
+    var mtype = req.session.messageType || 'info'
+    var title = req.session.messageTitle || ''
     res.locals.messages = msgs;
-    res.locals.hasMessages = !! msgs.length;
-    req.session.messages = [];
+    res.locals.messageTitle = title
+    res.locals.messageType = mtype
+    res.locals.hasMessages = !! msgs.length
+    req.session.messages = []
+    req.session.messageTitle = ''
     next();
 });
 
