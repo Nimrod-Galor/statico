@@ -150,6 +150,12 @@ const prismaModels = [
 
 
 // console.log('models',JSON.stringify(prismaModels))
+async function getRoles(){
+    const roles = await readRows('role', {select:{ id: true, name: true}})
+    return roles
+}
+const roles = await readRows('role', {select:{ id: true, name: true}})
+
 
 router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) => {
     // count models rows
@@ -181,7 +187,7 @@ router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) =
         modelData = modelData.map(model.destructur)
     }
 
-    res.render('dashboard', {prismaModels, contentType, modelData, modelHeaders: model.fields })
+    res.render('dashboard', {prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
 })
 
 export default router

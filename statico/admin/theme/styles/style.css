@@ -7,3 +7,37 @@
 .modelAddBtn svg:hover{
     background-color: RGBA(var(--bs-warning-rgb));
 }
+
+
+.horizontal-collapse{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 0fr auto;
+    transition: grid-template-columns 250ms;
+}
+
+.horizontal-collapse > div{
+    overflow: hidden;
+}
+
+.horizontal-collapse.open{
+    grid-template-columns: 1fr 0fr;
+    transition: grid-template-columns 250ms;
+}
+
+.content-type-wrapp{
+    padding: 5% 20%;
+}
+
+.content-type-wrapp form{
+    max-width: 50%;
+}
+
+.close-model-create{
+    cursor: pointer;
+    text-align-last: right;
+    padding: 15px;
+}
+.close-model-create svg:hover{
+    box-shadow: 3px 3px 5px #aeaeae;
+}
