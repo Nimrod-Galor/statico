@@ -1,7 +1,8 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
+import { PrismaClient } from '@prisma/client'
+
 // import pluralize from 'pluralize'
-// import { PrismaClient } from '@prisma/client'
 import readRows, {countsRows} from '../../db.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -126,36 +127,7 @@ const prismaModels = [
     }
 ]
 
-// // Count models rows
-// async function modelCount(modelName){
-//     const res = await countRows(modelName)
-//     return res
-// }
-
-// async function updateModelsCount(){
-//     for (let i =0; i < prismaModels.length; i++) {
-//         // prismaModels[i].count = await modelCount(prismaModels[i].name);
-//         prismaModels[i].count = await countRows(prismaModels[i].name)
-//     }
-// }
-
-// updateModelsCount()
-
-// function getSelectFields(contentType, cb){
-//     const select = prismaModels.find(i => i.name == contentType).fields.filter(cb).reduce((o, key) => ({ ...o, [key.key]: true}), {})
-
-//     return select
-// }
-
-
-
-// console.log('models',JSON.stringify(prismaModels))
-async function getRoles(){
-    const roles = await readRows('role', {select:{ id: true, name: true}})
-    return roles
-}
 const roles = await readRows('role', {select:{ id: true, name: true}})
-
 
 router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) => {
     // count models rows

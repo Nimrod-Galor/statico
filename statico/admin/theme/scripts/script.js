@@ -15,7 +15,16 @@ function editItemClick(itemId){
 // }
 
 function openModelView(modelName){
-    // create model form
+    // hide all forms
+    const mfs = document.querySelectorAll('.content-type-wrapp')
+    mfs.forEach((mf) => {
+        if(mf.id == modelName){
+            // show selected model form
+            mf.classList.remove('d-none')
+        }else{
+            mf.classList.add('d-none')
+        }
+    })
     
     // open div
     document.querySelector('.horizontal-collapse').classList.add('open')
