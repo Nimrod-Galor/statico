@@ -115,7 +115,13 @@
                                         <!-- < %- JSON.stringify(data) %> -->
                                         <% modelHeaders.forEach((field) => {%>
                                             <td>
-                                                <%-data[field.key]%>
+                                                <% if(field.relation){ %>
+                                                    <a href="/admin/<%-field.relation + '/' + field.filter + '/' + data.id%>">
+                                                        <%-data[field.key]%>
+                                                    </a>
+                                                <%}else{%>
+                                                    <%-data[field.key]%>
+                                                <%}%>
                                             </td>
                                         <%})%>
                                         <td>

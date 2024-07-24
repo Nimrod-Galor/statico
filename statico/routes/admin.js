@@ -19,7 +19,7 @@ const prismaModels = [
             {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
             {"key": "email", "header": "Email", "type": "String"},
             {"key": "emailVerified", "header": "Verified", "type": "Boolean"},
-            {"key": "posts", "header": "Posts", "type": "Int"},
+            {"key": "posts", "header": "Posts", "type": "Int", "relation": "post", "filter": "author"},
             {"key": "role", "header": "Role", "type": "String"}
         ],
         "select" : {
@@ -43,6 +43,10 @@ const prismaModels = [
             role: user.role.name,
             _count: undefined // optionally remove the original _count field
         }),
+        "filters": [
+            {"name": "username", "key": "userName", "type": "userName"}, // by user name 
+            {"name": "verified", "key": "emailVerified", "type": "Boolean"} // filter users by emailVerified
+        ]
     },
       
     {
@@ -85,7 +89,10 @@ const prismaModels = [
             author: post.author.name,
             comments: post._count.comments,
             _count: undefined
-        })
+        }),
+        "filters": [
+            {"name": "author", "key": "authorId", "type": "ObjectID"} // filter posts by author
+        ]
     },
       
     {
@@ -127,30 +134,84 @@ const prismaModels = [
     }
 ]
 
+function checkFilterIsValid(data, type){
+    switch(type){
+        case "uuid":
+            let regUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
+        break;
+        case "ObjectID":
+            let regObjectID = /^[a-f\d]{24}$/i
+                return regObjectID.test(data)
+        break;
+        case "Boolean":
+            return (data.toLowerCase() === 'true' || data.toLowerCase() === 'false')
+        break;
+        case "userName":
+            let regUserName = /^[A-Za-z][A-Za-z0-9_]{6,29}$/
+            return regUserName.test(data)
+        break;
+    }
+
+    return false
+}
+
 const roles = await readRows('role', {select:{ id: true, name: true}})
 
-router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) => {
-    // count models rows
+router.get("/:contentType?/*", ensureLoggedIn('/login'), async (req, res) => {
+    // get selected content type name
+    const contentType = req.params.contentType || prismaModels[0].name.toLowerCase()
+    // get selected model
+    const model = prismaModels.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
+    // check for extra parmas
+    const where = {}
+    // const orderBy = {}
+    if(req.params[0]){
+        const paramsArr = req.params[0].split('/')
+        for(let i=0; i<paramsArr.length;i++){
+            const param = paramsArr[i]
+            // check if param of type filter 
+            if(model.filters){
+                // check every filter in filters list
+                for(let fi=0; fi<model.filters.length; fi++){
+                    let filter = model.filters[fi]
+                    if(param == filter.name){
+                        // we found a filter match
+                        let filterOn = paramsArr[++i]
+                        // check if filteron is valid
+                        if(checkFilterIsValid(filterOn, filter.type)){
+                            // set filter
+                            where[filter.key] = filterOn
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    // get name of all models
     const modelsName = prismaModels.map(item => item.name)
+    // count models rows
     const counts = await countsRows(modelsName)
+    // update counts in models list
     for(let i=0; i< counts.length; i++){
         prismaModels[i].count = counts[i]
     }
 
-    const contentType = req.params.contentType || prismaModels[0].name
-    const model = prismaModels.find((model) => model.name == contentType)
     //  create Model headers array
     //const modelHeaders = model.fields//.filter((field) => {return field.visible})
     // // get initial Data
     // const skip = req.params.page || 0
     // const take = 10
-    // const where = {}
+    // const where = req.query.filter ? createFilter(req.query.filter) : {}
     // const select = getSelectFields(contentType, (field) => {return true})
-    // const orderBy = {}
+    // 
     const query = {
-        "skip": req.params.page || 0,
+        "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
         "take": 10,
-        "where": {},
+        where,
         "select": model.select,
         "orderBy": {}
     }
@@ -161,5 +222,7 @@ router.get("/:contentType?/:page?", ensureLoggedIn('/login'), async (req, res) =
 
     res.render('dashboard', {prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
 })
+
+
 
 export default router
