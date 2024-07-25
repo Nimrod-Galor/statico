@@ -1,90 +1,85 @@
 // import fs from 'fs'
 // import path from 'path'
+import { PrismaClient } from '@prisma/client'
 import crypto from 'crypto'
-import readRows, {createRow} from '../db.js'
+// import readRows, {createRow} from '../db.js'
+const prisma = new PrismaClient()
 
 export default async function initialize(){
     // check for defaul roles
-    const roles = await readRows('role')
-    if(roles.length === 0){
-        console.log('Start create role')
-        // create subscriber role
-        const subscriberRole = await createRow('role', {
-            name: 'subscriber',
-            description: 'somebody who can only manage their profile.',
-            default: true
-        })
+    await prisma['role'].count()
+    .then(async (roles) => {
+        console.log('roles', roles)
+        if(roles === 0){
+            console.log('Start creating roles')
 
-        // create contributor role
-        const contributorRole = await createRow('role', {
-            name: 'contributor',
-            description: 'somebody who can write and manage their own posts but cannot publish them.'
-        })
+            let parr = []
+            // create subscriber role
+            //subscriberRole
+            parr.push(prisma['role'].create({
+                data: {
+                name: 'subscriber',
+                description: 'somebody who can only manage their profile.',
+                default: true
+            }}))
 
-        // create author role
-        const authorRole = await createRow('role', {
-            name: 'author',
-            description: 'somebody who can publish and manage their own posts.'
-        })
+            // create contributor role
+            // contributorRole
+            parr.push(prisma['role'].create({
+                data: {
+                name: 'contributor',
+                description: 'somebody who can write and manage their own posts but cannot publish them.'
+            }}))
 
-        // create editor role
-        const editorRole = await createRow('role', {
-            name: 'editor',
-            description: 'somebody who can publish and manage posts including the posts of other users.'
-        })
+            // create author role
+            // authorRole
+            parr.push(prisma['role'].create({
+                data: {
+                name: 'author',
+                description: 'somebody who can publish and manage their own posts.'
+            }}))
 
-        // create administrator role
-        const adminRole = await createRow('role', {
-            name: 'admin',
-            description: 'somebody who has access to all the administration features within a single site.'
-        })
+            // create editor role
+            //editorRole
+            parr.push(prisma['role'].create({
+                data: {
+                name: 'editor',
+                description: 'somebody who can publish and manage posts including the posts of other users.'
+            }}))
 
-        // // create super administrator role
-        // const superAdminRole = await createRow('role', {
-        //     name: 'super admin',
-        //     description: 'somebody with access to the site network administration features and all other features.'
-        // })
+            // create administrator role
+            //adminRole
+            parr.push(prisma['role'].create({
+                data: {
+                name: 'admin',
+                description: 'somebody who has access to all the administration features within a single site.'
+            }}))
 
+            const [subscriberRole, contributorRole, authorRole, editorRole, adminRole] = await Promise.all(parr)
 
+            // hash passowrd
+            const salt = crypto.randomBytes(16)
+            const key = crypto.pbkdf2Sync('password', salt, 100000, 64, 'sha512');
 
-        // hash passowrd
-        const salt = crypto.randomBytes(16)
-        const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
-
-        // create new user
-        const tmpUser = {
-        email,
-        emailVerified, 
-        password: key.toString('hex'),
-        salt: salt.toString('hex'),
-        userName,
-        role: {
-            connect: {id: roleId}
+            // create new user
+            const tmpUser = {
+            email: 'admin@admin.com',
+            emailVerified: true,
+            password: key.toString('hex'),
+            salt: salt.toString('hex'),
+            userName: 'admin',
+            role: {
+                connect: {id: subscriberRole.id}
+                }
             }
+
+            const user = await prisma['user'].create({data: tmpUser})
+                .catch(err => {throw new Error(err)})
+            
         }
-
-        const user = await createRow('user', tmpUser)
-
-
-
-        // // create super administrator user
-        // const superUser = {
-        //     email : 'admin@admin.com',
-        //     password: 'password',
-        //     salt: crypto.randomBytes(16),
-        //     userName: 'administrator',
-        //     role: {
-        //         connect: {id: adminRole.id}
-        //       }
-        // }
-        
-        
-        // crypto.pbkdf2(superUser.password, superUser.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-        //     superUser.password = hashedPassword
-        // })
-
-        // superUser.salt = superUser.salt.toString('hex')
-
-        // const superAdminUser = await createRow('user', superUser)
-    }
+    })
+    .catch(err => {throw new Error(err)})
+    .finally(async () => {
+        await prisma.$disconnect()
+    })
 }
