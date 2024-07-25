@@ -3,7 +3,8 @@ import createError from 'http-errors'
 import ensureLogIn from 'connect-ensure-login'
 import bodyParser from 'body-parser'
 import createUser from '../../modules/createUser.js'
-import isValid from '../../modules/validations.js'
+import isValid from '../admin/theme/scripts/validations.js'
+import initialize from '../setup/initialize.js'
 
 // import { PrismaClient } from '@prisma/client'
 // import pluralize from 'pluralize'
@@ -152,6 +153,34 @@ const counts = await countsRows(modelsName)
 for(let i=0; i< counts.length; i++){
     prismaModels[i].count = counts[i]
 }
+
+// Setup
+router.post("/setup",urlencodedParser, async (req, res) => {
+    let {email, emailverified, password, username} = req.body
+
+    emailverified = !! emailverified
+    // sanitize ** todo
+    // initialize statico
+    const results = await initialize(email, emailverified, password, username)
+
+    if(results.success){
+        req.session.messages = [results.message]
+        req.session.messgaeTitle = 'Success'
+        req.session.messageType = 'success'
+        res.redirect('/login')
+    }else{// error
+        // res.locals.messages = [results.message]
+        // res.locals.messgaeTitle = 'Error'
+        // res.locals.messageType = 'error'
+        // res.render('/error')
+        res.locals.message = results.message;
+        res.locals.error = req.app.get('env') === 'development' ? results : {};
+
+        // render the error page
+        res.status(results.status || 500);
+        res.render('error', { user: req.user });
+    }
+})
 
 // Create new user
 router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, async (req, res) => {

@@ -1,5 +1,5 @@
 import readRows, {readRow, createRow} from '../db.js'
-import isValid from './validations.js'
+import isValid from '../statico/admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
 export default async function createUser(email, userName, password, roleId, emailVerified = false){

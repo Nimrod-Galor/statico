@@ -9,8 +9,6 @@ import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import logger  from 'morgan'
 
-// Statico
-import initialize from './statico/initialize.js'
 
 // routes
 import pagesRouter from './routes/pages.js'
@@ -108,4 +106,3 @@ app.use(function(err, req, res, next) {
 app.listen(PORT)
 
 
-initialize()
