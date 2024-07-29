@@ -1,11 +1,5 @@
 import passport from 'passport'
-
-
 import createUser from '../modules/createUser.js'
-
-
-
-
   
 export function auth_post_login(req, res, next){
   passport.authenticate('local', {
@@ -14,8 +8,6 @@ export function auth_post_login(req, res, next){
     failureMessage: true
   })(req, res, next)
 }
-
-
 
 export function auth_get_login(req, res, next){
     res.render('login', { user: null })
