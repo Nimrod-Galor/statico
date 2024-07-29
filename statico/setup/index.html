@@ -7,20 +7,19 @@
     <style>
         .cover{
             width: 100vw;
-            height: 100vh;
+            height: calc(100vh - 110px);
+            margin: 55px 0;
             position: absolute;
             z-index: 99;
             overflow: hidden;
             display: none;
             background-color: #fff;
         }
+
         .cover.open{
             display: block;
         }
-        .fade {
-            transition: opacity .15s linear;
-        }
-
+        
         .smodal{
             width: fit-content;
             background-color: #fff;
@@ -93,7 +92,6 @@
         </main>
     </div>
 
-
     <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
             <span class="text-body-secondary">@copyright statico.</span>
@@ -121,34 +119,9 @@
                 return
             }
             
-            openCover()
-        }
-
-        function openCover(){
-            const cover = document.getElementById("cover")
-            cover.classList.add('open')
-        }
-
-
-        function isValid(data, type,){
-            const regUserName = /^[A-Za-z][A-Za-z0-9_\-]{6,20}$/
-            const regPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
-            const regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-           
-            switch(type.toLowerCase()){
-                case "username":
-                    return regUserName.test(data)
-                break;
-                case "password":
-                    return regPassword.test(data)
-                break;
-                case "email":
-                    return regEmail.test(data)
-            }
-
-            return false
+            // open Cover
+            document.getElementById("cover").classList.add('open')
         }
     </script>
-    
 </body>
 </html>

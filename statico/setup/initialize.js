@@ -21,42 +21,47 @@ export default async function initialize(email, emailVerified, password, userNam
         //  create subscribe rRol
         return await prisma['role'].create({
             data: {
-            name: 'subscriber',
-            description: 'somebody who can only manage their profile.',
-            default: true
-        }})
+                name: 'subscriber',
+                description: 'somebody who can only manage their profile.',
+                default: true
+            }
+        })
     })
     .then(async () => {
         //  create contributor Role
         return await prisma['role'].create({
             data: {
-            name: 'contributor',
-            description: 'somebody who can write and manage their own posts but cannot publish them.'
-        }})
+                name: 'contributor',
+                description: 'somebody who can write and manage their own posts but cannot publish them.'
+            }
+        })
     })
     .then(async () => {
         //  create author Role
         await prisma['role'].create({
-            data: {
-            name: 'author',
-            description: 'somebody who can publish and manage their own posts.'
-        }})
+                data: {
+                name: 'author',
+                description: 'somebody who can publish and manage their own posts.'
+            }
+        })
     })
     .then(async () => {
         //  create editor Role
         return await prisma['role'].create({
             data: {
-            name: 'editor',
-            description: 'somebody who can publish and manage posts including the posts of other users.'
-        }})
+                name: 'editor',
+                description: 'somebody who can publish and manage posts including the posts of other users.'
+            }
+        })
     })
     .then(async () => {
         //  create admin Role
         return await prisma['role'].create({
             data: {
-            name: 'admin',
-            description: 'somebody who has access to all the administration features within a single site.'
-        }})
+                name: 'admin',
+                description: 'somebody who has access to all the administration features within a single site.'
+            }
+        })
     })
     .then(async (adminRole) => {
         // // hash passowrd

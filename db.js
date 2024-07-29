@@ -14,8 +14,8 @@ async function createRow(collectionName, data){
 }
 
 
-export default async function readRows(collectionName, query = '') {
-  const res = await prisma[collectionName].findMany(query)
+export async function readRows(collectionName, data = '') {
+  const res = await prisma[collectionName].findMany(data)
   .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()
@@ -23,8 +23,8 @@ export default async function readRows(collectionName, query = '') {
   return res
 }
 
-async function readRow(collectionName, query = '') {
-  const res = await prisma[collectionName].findFirstOrThrow(query)
+async function readRow(collectionName, data = '') {
+  const res = await prisma[collectionName].findFirstOrThrow(data)
   .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()

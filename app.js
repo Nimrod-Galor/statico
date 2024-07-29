@@ -3,10 +3,13 @@ import createError from 'http-errors'
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import passport from 'passport'
+import LocalStrategy from 'passport-local'
+import crypto from 'crypto'
+import {readRow} from './db.js'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
-import passport from 'passport'
 import logger  from 'morgan'
 
 
@@ -25,7 +28,6 @@ import adminRouter from './statico/routes/admin.js'
 /* Test prisma END*/
 
 const app = express()
-const PORT = process.env.port | 3000
 
 // view engine setup
 const __filename = fileURLToPath(import.meta.url);
@@ -50,6 +52,52 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })//'mongodb://localhost/test-app'
 }))
 app.use(passport.authenticate('session'))
+
+
+
+async function authenticateUser(email, password, done) {
+    try{
+        // const user = await getBy('user', {email})
+        const user = await readRow('user', {where:{email}})
+
+        if (email != user.email) {
+            return done(null, false, { message: 'Incorrect username or password.' })
+        }
+
+        const newPassword = crypto.pbkdf2Sync(password, Buffer.from(user.salt, 'hex'), 100000, 64, 'sha512')
+        const oldPassword = Buffer.from(user.password, 'hex')
+
+        if (!crypto.timingSafeEqual(oldPassword, newPassword)) {
+            return done(null, false, { message: 'Incorrect username or password.' })
+        }
+
+        return done(null, user)
+
+    }catch(err){//NotFoundError: No User found
+        return done(null, false, { message: 'Incorrect username or password.' })
+    }
+}
+  
+passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser))
+
+passport.serializeUser(function(user, cb) {
+    process.nextTick(function() {
+        cb(null, { id: user.id, username: user.userName })
+    })
+})
+
+passport.deserializeUser(function(user, cb) {
+    process.nextTick(function() {
+        return cb(null, user)
+    })
+})
+
+
+
+
+
+
+
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     var msgs = req.session.messages || [];
@@ -103,6 +151,6 @@ app.use(function(err, req, res, next) {
 })
 
 
-app.listen(PORT)
+// module.exports  = app
 
-
+export default app

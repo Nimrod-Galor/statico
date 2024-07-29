@@ -1,4 +1,4 @@
-import readRows, {readRow, createRow} from '../db.js'
+import {readRows, readRow, createRow} from '../db.js'
 import isValid from '../statico/admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 

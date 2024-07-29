@@ -26,8 +26,8 @@
         </nav>
     </header>
    
-    <div class="row h-100">
-        <div class="sidebar col-md-3 col-lg-2">
+    <div class="row">
+        <div id="sidebar" class="col-md-3 col-lg-2">
             <ul class="list-group list-group-flush">
                 <% prismaModels.forEach((model) => { %>
                     <li class="list-group-item list-group-item-action d-flex flex-row <%- model.name == contentType ? 'active' : '' %>">
@@ -53,26 +53,27 @@
             </ul>
         </div>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="horizontal-collapse">
-                
-                <div id="top-alert" class="top-alert <%- locals.hasMessages ? locals.messageType ? ' open ' + locals.messageType : ' open' : '' %>">
-                    <div>
-                        <div class="top-alert-innerDiv">
-                            <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
-                                <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
-                            </div>
-                            <div id="top-alert-title" class="top-alert-title">
-                                <%= locals.messageTitle %>
-                            </div>
-                            <div id="top-alert-body" class="top-alert-body">
-                                <% messages.forEach(function(message) { %>
-                                    <%= message %>
-                                <% }); %>
-                            </div>
+
+            <div id="top-alert" class="top-alert <%- locals.hasMessages ? locals.messageType ? ' open ' + locals.messageType : ' open' : '' %>">
+                <div>
+                    <div class="top-alert-innerDiv">
+                        <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
+                            <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
+                        </div>
+                        <div id="top-alert-title" class="top-alert-title">
+                            <%= locals.messageTitle %>
+                        </div>
+                        <div id="top-alert-body" class="top-alert-body">
+                            <% messages.forEach(function(message) { %>
+                                <%= message %>
+                            <% }); %>
                         </div>
                     </div>
                 </div>
-
+            </div>
+            
+            <div class="horizontal-collapse">
+                
                 <div>
                     <div id="close-model-create" class="close-model-create" onclick="closeModelView()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">

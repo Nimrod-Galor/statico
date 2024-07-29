@@ -2,11 +2,11 @@
   "name": "statico",
   "version": "1.0.0",
   "description": "Nodejs based cms",
-  "main": "server.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server",
+    "start": "node ./bin/www",
+    "dev": "nodemon --inspect ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

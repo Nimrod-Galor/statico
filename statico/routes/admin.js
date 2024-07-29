@@ -8,7 +8,7 @@ import initialize from '../setup/initialize.js'
 
 // import { PrismaClient } from '@prisma/client'
 // import pluralize from 'pluralize'
-import readRows, {countsRows} from '../../db.js'
+import {readRows, countsRows} from '../../db.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 
@@ -42,6 +42,7 @@ const prismaModels = [
             },
             role: {
                 select: {
+                    // id: true
                     name: true
                 }
             }
@@ -271,12 +272,16 @@ router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), asy
         "select": model.select,
         "orderBy": {}
     }
+    
     let modelData = await readRows(contentType, query)
+
     if(model.destructur){
         modelData = modelData.map(model.destructur)
     }
 
     res.render('dashboard', {user: req.user, prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
+    
+
 })
 
 function capitalizeFirstLetter(string) {
