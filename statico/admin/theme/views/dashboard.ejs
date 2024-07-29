@@ -10,23 +10,24 @@
     <title>Statico - Admin Dashboard</title>
 </head>
 <body class="d-flex flex-column h-100">
-    <header id="top-header" class="top-header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-            <div class="container-fluid ps-3">
-                <span class="navbar-brand mb-0 h1">Statico Admin</span>
-                <div class="float-end">
-                    <span class="text-light me-3">
-                        <%= user.username %>
-                    </span>
-                    <span class="float-end">
-                        <a href="/logout">Logout</a>
-                    </span>
+    
+        <header id="top-header" class="top-header">
+            <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+                <div class="container-fluid ps-3">
+                    <span class="navbar-brand mb-0 h1">Statico Admin</span>
+                    <div class="float-end">
+                        <span class="text-light me-3">
+                            <%= user.username %>
+                        </span>
+                        <span class="float-end">
+                            <a href="/logout">Logout</a>
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-   
-    <div class="row">
+            </nav>
+        </header>
+
+    <div class="row gx-0">
         <div id="sidebar" class="col-md-3 col-lg-2">
             <ul class="list-group list-group-flush">
                 <% prismaModels.forEach((model) => { %>
@@ -52,7 +53,7 @@
                 <%})%>
             </ul>
         </div>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main class="col-md-9 ms-sm-auto col-lg-10 ps-4">
 
             <div id="top-alert" class="top-alert <%- locals.hasMessages ? locals.messageType ? ' open ' + locals.messageType : ' open' : '' %>">
                 <div>
@@ -180,13 +181,13 @@
         </main>
     </div>
     
+        
 
     <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
             <span class="text-body-secondary">@copyright statico.</span>
         </div>
     </footer>
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/scripts/script.js"></script>
