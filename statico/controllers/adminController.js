@@ -64,9 +64,14 @@ export async function admin_post_createUser(req, res){
         const result = await createUser(email, username, password, role, emailverified)
 
         if(result.user){// success
-            res.locals.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + result.user.email]
-            res.locals.messgaeTitle = 'Success'
+            const msg = 'Your account has been successfully created.'
+            if(emailverified){
+                msg += ' An email with a verification code was just sent to: ' + result.user.email
+            }
+            res.locals.messages = [msg]
+            res.locals.messageTitle = 'Success'
             res.locals.messageType = 'success'
+            res.locals.hasMessages = true
         }else{
             res.locals.messages = result.errorMsg
             res.locals.messageTitle = result.messageTitle
