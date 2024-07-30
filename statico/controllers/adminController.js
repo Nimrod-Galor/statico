@@ -2,18 +2,18 @@ import initialize from '../setup/initialize.js'
 import createError from 'http-errors'
 import createUser from '../../modules/createUser.js'
 import isValid from '../admin/theme/scripts/validations.js'
-import prismaModels from '../interface/prismaModels.js'
+import modelsInterface from '../interface/modelsInterface.js'
 import {readRows, countsRows} from '../../db.js'
 
 const roles = await readRows('role', {select:{ id: true, name: true}})
 
 // get name of all models
-const modelsName = prismaModels.map(item => item.name)
+const modelsName = modelsInterface.map(item => item.name)
 // count models rows
 const counts = await countsRows(modelsName)
 // update counts in models list
 for(let i=0; i< counts.length; i++){
-    prismaModels[i].count = counts[i]
+    modelsInterface[i].count = counts[i]
 }
 
 
@@ -40,18 +40,22 @@ export async function admin_post_setup(req, res){
 
         // render the error page
         res.status(results.status || 500);
-        res.render('error', { user: req.user });
+        res.render('error', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles });
     }
 }
 
+
+/** Create User */
 export async function admin_post_createUser(req, res){
-    let {email, password, username, emailverified, role} = req.body
+    const contentType = "User"
+    let {email, username, password, role, emailverified} = req.body
+    //email, userName, password, roleId, emailVerified
 
     // sanitize ** todo
 
     try{
         //  create new user
-        const result = await createUser(email, username, password, emailverified, role)
+        const result = await createUser(email, username, password, role, emailverified)
 
         if(result.user){// success
             res.locals.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + result.user.email]
@@ -63,7 +67,27 @@ export async function admin_post_createUser(req, res){
             res.locals.messageType = result.messageType
             res.locals.hasMessages = true
         }
-        res.render('/admin')
+
+         // get selected model
+        const model = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
+        // check for extra parmas
+        const where = {}
+        const query = {
+            "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
+            "take": 10,
+            where,
+            "select": model.select,
+            "orderBy": {}
+        }
+        
+        let modelData = await readRows(contentType, query)
+    
+        if(model.destructur){       
+            modelData = modelData.map(model.destructur)
+        }
+            
+
+        res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles })
     }catch(err){
         console.error(err)
         return next(err)
@@ -73,7 +97,7 @@ export async function admin_post_createUser(req, res){
 export async function admin_get_content(req, res, next){
     ///:contentType?/*
     // get selected content type name
-    const contentType = req.params.contentType || prismaModels[0].name.toLowerCase()
+    const contentType = req.params.contentType || modelsInterface[0].name.toLowerCase()
     // check we didnt get here by mistake
     if(!modelsName.includes(capitalizeFirstLetter(contentType))){
         try{
@@ -85,7 +109,7 @@ export async function admin_get_content(req, res, next){
         return
     }
     // get selected model
-    const model = prismaModels.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
+    const model = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
     // check for extra parmas
     const where = {}
     // const orderBy = {}
@@ -113,18 +137,6 @@ export async function admin_get_content(req, res, next){
         }
     }
 
-
-
-    
-
-    //  create Model headers array
-    //const modelHeaders = model.fields//.filter((field) => {return field.visible})
-    // // get initial Data
-    // const skip = req.params.page || 0
-    // const take = 10
-    // const where = req.query.filter ? createFilter(req.query.filter) : {}
-    // const select = getSelectFields(contentType, (field) => {return true})
-    // 
     const query = {
         "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
         "take": 10,
@@ -139,7 +151,7 @@ export async function admin_get_content(req, res, next){
         modelData = modelData.map(model.destructur)
     }
 
-    res.render('dashboard', {user: req.user, prismaModels, contentType, modelData, modelHeaders: model.fields, roles })
+    res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles })
     
 
 }

@@ -27,10 +27,10 @@
             </nav>
         </header>
 
-    <div class="row gx-0">
-        <div id="sidebar" class="col-md-3 col-lg-2">
+    <div class="row h-100 gx-0">
+        <div id="sidebar" class="col-md-3 col-lg-2 h-100 bg-secondary-subtle">
             <ul class="list-group list-group-flush">
-                <% prismaModels.forEach((model) => { %>
+                <% modelsInterface.forEach((model) => { %>
                     <li class="list-group-item list-group-item-action d-flex flex-row <%- model.name == contentType ? 'active' : '' %>">
                         <% if(model.name == contentType){%>
                             <div class="w-100 me-2 fw-bold">
@@ -55,9 +55,9 @@
         </div>
         <main class="col-md-9 ms-sm-auto col-lg-10 ps-4">
 
-            <div id="top-alert" class="top-alert <%- locals.hasMessages ? locals.messageType ? ' open ' + locals.messageType : ' open' : '' %>">
+            <div id="top-alert" class="top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
                 <div>
-                    <div class="top-alert-innerDiv">
+                    <div class="alert alert-<%-locals.messageType%>">
                         <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
                             <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
                         </div>
@@ -65,9 +65,11 @@
                             <%= locals.messageTitle %>
                         </div>
                         <div id="top-alert-body" class="top-alert-body">
-                            <% messages.forEach(function(message) { %>
-                                <%= message %>
-                            <% }); %>
+                            <ul class="mb-0">
+                                <% messages.forEach(function(message) { %>
+                                    <li><%= message %></li>
+                                <% }); %>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -166,7 +168,7 @@
                                             <%}%>
                                         </td>
                                     <%})%>
-                                    <td>
+                                    <td class="text-end">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <button type="button" class="btn btn-warning" onclick="deleteItemClick('<%-data.id%>')">Delete</button>
                                             <button type="button" class="btn btn-primary" onclick="editItemClick('<%-data.id%>')">Edit</button>

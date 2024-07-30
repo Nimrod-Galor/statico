@@ -8,13 +8,15 @@ export default async function createUser(email, userName, password, roleId, emai
 
         // const roles = await readRows('role', {select:{ id: true, name: true}})
         // const selectedRole = roles.find((r) => r.name.toLowerCase() ===  role.toLowerCase())
-        if(role == undefined){
-            // no role? get default role
-            role = await readRows('role', {
-                select: {id: true},
-                where: {default: true}
-            })
-        }
+        // if(role == undefined){
+        //     // no role? get default role
+        //     role = await readRows('role', {
+        //         select: {id: true},
+        //         where: {default: true}
+        //     })
+
+        //     roleId = role.id
+        // }
 
 
         let errorMsg = []
@@ -60,10 +62,13 @@ export default async function createUser(email, userName, password, roleId, emai
               emailVerified, 
               password: key.toString('hex'),
               salt: salt.toString('hex'),
-              userName,
-              role: {
-                  connect: {id: roleId}
-                }
+              userName
+            }
+
+            if(roleId != undefined){
+                tmpUser.role = {
+                    connect: {id: roleId}
+                  }
             }
         
             const user = await createRow('user', tmpUser)

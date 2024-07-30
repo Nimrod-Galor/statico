@@ -1,4 +1,4 @@
-const prismaModels = [
+const modelsInterface = [
     {
         "name": "User",
         "header": "Users",
@@ -124,4 +124,4 @@ const prismaModels = [
     }
 ]
 
-export default prismaModels
+export default modelsInterface
