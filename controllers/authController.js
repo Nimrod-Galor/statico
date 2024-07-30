@@ -1,6 +1,7 @@
 import passport from 'passport'
 import createUser from '../modules/createUser.js'
-  
+
+// Login POST
 export function auth_post_login(req, res, next){
   passport.authenticate('local', {
     successReturnToOrRedirect: '/',
@@ -8,11 +9,11 @@ export function auth_post_login(req, res, next){
     failureMessage: true
   })(req, res, next)
 }
-
+//  Login GET
 export function auth_get_login(req, res, next){
     res.render('login', { user: null })
 }
-
+// Logout
 export function auth_logout(req, res, next) {
     req.logout(function(err) {
       if (err) {
@@ -21,13 +22,13 @@ export function auth_logout(req, res, next) {
       res.redirect('/admin')
     })
 }
-
+// Gignup GET
 export function auth_get_signup(req, res, next) {
     res.locals.title = 'Signup'
     res.locals.action = '/signup'
     res.render('signup', { user: null })
 }
-
+// Signup POST
 export async function auth_post_singup(req, res, next) {
     const { email, userName, password } = req.body
   

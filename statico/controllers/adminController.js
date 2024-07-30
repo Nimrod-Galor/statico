@@ -49,7 +49,13 @@ export async function admin_post_setup(req, res){
 export async function admin_post_createUser(req, res){
     const contentType = "User"
     let {email, username, password, role, emailverified} = req.body
-    //email, userName, password, roleId, emailVerified
+
+    // Convert emailverified to boolean
+    if(emailverified === "true"){
+        emailverified = true
+    }else if(emailverified === "false"){
+        emailverified = false
+    }
 
     // sanitize ** todo
 
