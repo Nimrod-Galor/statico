@@ -34,7 +34,19 @@ function closeModelView(){
     document.querySelector('.horizontal-collapse').classList.remove('open')
 }
 
-function validateCreateModel(modelName){
-    console.log(modelName)
+function toggleClass(objId, className){
+    document.getElementById(objId).classList.toggle(className);
+    event.currentTarget.classList.toggle(className);
+}
+
+function validateForm(event){
+    const form = event.currentTarget
+    form.classList.add('was-validated')
+    
+    if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+    }
     return true
 }
