@@ -16,7 +16,7 @@ for(let i=0; i< counts.length; i++){
     modelsInterface[i].count = counts[i]
 }
 
-
+/*  Setup   */
 export async function admin_post_setup(req, res){
     let {email, emailverified, password, username} = req.body
 
@@ -45,66 +45,10 @@ export async function admin_post_setup(req, res){
 }
 
 
-/** Create User */
-export async function admin_post_createUser(req, res){
-    const contentType = "User"
-    let {email, username, password, role, emailverified} = req.body
 
-    // Convert emailverified to boolean
-    if(emailverified === "true"){
-        emailverified = true
-    }else if(emailverified === "false"){
-        emailverified = false
-    }
 
-    // sanitize ** todo
 
-    try{
-        //  create new user
-        const result = await createUser(email, username, password, role, emailverified)
-
-        if(result.user){// success
-            const msg = 'Your account has been successfully created.'
-            if(emailverified){
-                msg += ' An email with a verification code was just sent to: ' + result.user.email
-            }
-            res.locals.messages = [msg]
-            res.locals.messageTitle = 'Success'
-            res.locals.messageType = 'success'
-            res.locals.hasMessages = true
-        }else{
-            res.locals.messages = result.errorMsg
-            res.locals.messageTitle = result.messageTitle
-            res.locals.messageType = result.messageType
-            res.locals.hasMessages = true
-        }
-
-         // get selected model
-        const model = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
-        // check for extra parmas
-        const where = {}
-        const query = {
-            "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
-            "take": 10,
-            where,
-            "select": model.select,
-            "orderBy": {}
-        }
-        
-        let modelData = await readRows(contentType, query)
-    
-        if(model.destructur){       
-            modelData = modelData.map(model.destructur)
-        }
-            
-
-        res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles })
-    }catch(err){
-        console.error(err)
-        return next(err)
-    }
-}
-
+/** Get Content */
 export async function admin_get_content(req, res, next){
     ///:contentType?/*
     // get selected content type name

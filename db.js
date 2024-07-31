@@ -72,9 +72,9 @@ async function readRow(collectionName, data = '') {
 
 
 
-async function updateRow(collectionName, filter, data){
+async function updateRow(collectionName, where, data){
   const res = await prisma[collectionName].update({
-    where: filter,
+    where,
     data
   })
   .catch(err => {throw new Error(err)})
@@ -82,7 +82,7 @@ async function updateRow(collectionName, filter, data){
     await prisma.$disconnect()
   })
 
-  return user
+  return res
 }
 
 async function deleteRow(collectionName, filter){
@@ -121,4 +121,15 @@ async function countsRows(collectionsName){
   return res
 }
 
-export {readRow, createRow, updateRow, deleteRow, countRows, countsRows}
+async function findUnique(collectionName, where){
+  const res = await prisma[collectionName].findUnique({
+    where
+  })
+  .catch(err => {throw new Error(err)})
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+  return res
+}
+
+export {findUnique, readRow, createRow, updateRow, deleteRow, countRows, countsRows}

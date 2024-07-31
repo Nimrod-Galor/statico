@@ -18,6 +18,7 @@ import pagesRouter from './routes/pages.js'
 import userRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './statico/routes/admin.js'
+import adminApiRouter from './statico/routes/api.js'
 
 /* Test prisma */
 // import getBy, {createRow} from './db.js'
@@ -131,6 +132,7 @@ app.use(function(req, res, next) {
 // Routes
 app.use('/', pagesRouter)
 app.use('/admin', adminRouter)
+app.use('/admin/api', adminApiRouter)
 app.use('/users', userRouter)
 app.use('/', authRouter)
 

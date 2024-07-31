@@ -8,6 +8,7 @@ function deleteItemClick(itemId){
 
 function createItemClick(contentType, fields){
     const form = document.getElementById(`create-${contentType}`)
+    form.action = "/admin/api/create/user"
     form.classList.remove('was-validated')
     // reset inputs
     for(const elmId in form.elements){
@@ -35,6 +36,7 @@ function createItemClick(contentType, fields){
 function editItemClick(contentType, data){
     data = JSON.parse(data)
     const form = document.getElementById(`create-${contentType}`)
+    form.action = "/admin/api/edit/user"
     form.classList.remove('was-validated')
     // fill form
     for(const elmId in form.elements){
@@ -121,16 +123,43 @@ function toggleClass(objId, className){
     event.currentTarget.classList.toggle(className);
 }
 
-function validateForm(event){
+async function validateForm(event){
+    event.preventDefault();
     const form = event.currentTarget
     form.classList.add('was-validated')
     
-    if (!form.checkValidity()) {
+    if (!form.checkValidity()) {// validation Failed
         event.preventDefault()
         event.stopPropagation()
-        return false
+        return
     }
-    return true
+
+    //Post form data
+    const formData = new FormData(form);
+    const dataToSend = Object.fromEntries(formData);
+    await fetch(form.action, {
+        method: "POST",
+        body: JSON.stringify(dataToSend),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log('data', data)
+        
+        topAlert(data.messageType, data.messageTitle, data.messageBody)
+    })
+    .catch(err => {
+        console.log('error', err)
+    })
+}
+
+function topAlert(type, title, body){
+    document.getElementById('top-alert').classList.add('open');
+    document.getElementById('top-alert').querySelector('.alert').className = `alert alert-${type}`
+    document.getElementById('top-alert-title').innerHTML = title;
+    document.getElementById('top-alert-body').innerHTML = body;
 }
 
 function capitalizeFirstLetter(string) {

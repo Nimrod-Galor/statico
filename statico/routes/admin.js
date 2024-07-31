@@ -1,7 +1,7 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 import bodyParser from 'body-parser'
-import {admin_post_setup, admin_post_createUser, admin_get_content} from '../controllers/adminController.js'
+import {admin_post_setup, admin_get_content} from '../controllers/adminController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -12,7 +12,7 @@ const router = express.Router()
 router.post("/setup",urlencodedParser, admin_post_setup)
 
 // Create new user
-router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, admin_post_createUser)
+// router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, admin_post_createUser)
 
 // get content
 router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), admin_get_content)
