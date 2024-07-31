@@ -1,6 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient().$extends({
+  result: {
+    user: {
+      createDate: {
+        needs: { createdAt: true },
+        compute(user) {
+          return new Date(user.createdAt).toLocaleString()
+        },
+      },
+    },
+  },
+})
 
 /*  Create */
 async function createRow(collectionName, data){

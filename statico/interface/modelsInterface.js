@@ -5,20 +5,24 @@ const modelsInterface = [
         "description": "",
         "fields": [
             {"key": "userName", "header": "User Name", "type": "String"},
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
+            {"key": "createDate", "header": "Create Date", "type": "DateTime"},
             {"key": "email", "header": "Email", "type": "String"},
             {"key": "emailVerified", "header": "Verified", "type": "Boolean"},
             {"key": "posts", "header": "Posts", "type": "Int", "relation": "post", "filter": "author"},
+            {"key": "comments", "header": "Comments", "type": "Int", "relation": "comment", "filter": "author"},
             {"key": "role", "header": "Role", "type": "String"}
         ],
         "select" : {
             id: true,
             userName: true,
-            createdAt: true,
+            createDate: true,
             email: true,
             emailVerified: true,
             _count: {
-                select: { posts: true }
+                select: { 
+                    posts: true,
+                    comments: true
+                }
             },
             role: {
                 select: {
@@ -30,6 +34,7 @@ const modelsInterface = [
         "destructur": (user) => ({
             ...user,
             posts: user._count.posts,
+            comments: user._count.comments,
             role: user.role.name,
             _count: undefined // optionally remove the original _count field
         }),
