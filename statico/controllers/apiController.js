@@ -1,4 +1,4 @@
-import {findUnique, updateRow, createRow, deleteRow} from '../../db.js'
+import {findUnique, updateRow, createRow, deleteRow, deleteRows} from '../../db.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
@@ -165,6 +165,9 @@ export async function api_deleteUser(req, res){
         if(!isValid(id, "objectid")){
              throw new Error('Invalid User')
         }
+
+        // Delete all user posts
+        await deleteRows('post', {id})
 
         //  Delete user
         await deleteRow('user', {id})

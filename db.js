@@ -34,45 +34,6 @@ async function readRow(collectionName, data = '') {
   return res
 }
 
-// async function getAll(collectionName) {
-//   const res = await prisma[collectionName].findMany()
-//   .catch(err => {throw new Error(err)})
-//   .finally(async () => {
-//     await prisma.$disconnect()
-//   })
-//   return res
-// }
-
-// export default async function getBy(collectionName, filter){
-//   const res = await prisma[collectionName].findFirstOrThrow({
-//     where: filter
-//     // {
-//     //   email: email
-//     // }
-//   })
-//   .catch(err => {throw new Error(err)})
-//   .finally(async () => {
-//     await prisma.$disconnect()
-//   })
-//   return res
-// }
-
-// async function getPagination(collectionName, skip, take, select, where = {}, orderBy = {}){
-//   const res = await prisma[collectionName].findMany({
-//     skip,
-//     take,
-//     where,
-//     select,
-//     orderBy
-//   })
-//   .catch(err => {throw new Error(err)})
-//   .finally(async () => {
-//     await prisma.$disconnect()
-//   })
-//   return res
-// }
-
-
 /*  Update  */
 async function updateRow(collectionName, where, data){
   const res = await prisma[collectionName].update({
@@ -88,9 +49,20 @@ async function updateRow(collectionName, where, data){
 }
 
 /*  DELETE  */
-async function deleteRow(collectionName, filter){
+async function deleteRow(collectionName, where){
   await prisma[collectionName].delete({
-    where: filter
+    where
+  })
+  .catch(err => {throw new Error(err)})
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+}
+
+/*  Delete Many */
+async function deleteRows(collectionName, where){
+  await prisma[collectionName].deleteMany({
+    where
   })
   .catch(err => {throw new Error(err)})
   .finally(async () => {
@@ -109,7 +81,7 @@ async function countRows(collectionName){
 }
 
 
-/* Multiple Counta Rows */
+/*  Count Multiple Rows*/
 async function countsRows(collectionsName){
   //const res = await prisma[collectionName].count()
   let parr = []
@@ -135,4 +107,4 @@ async function findUnique(collectionName, where){
   return res
 }
 
-export {findUnique, readRow, createRow, updateRow, deleteRow, countRows, countsRows}
+export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows}
