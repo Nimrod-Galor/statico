@@ -10,6 +10,20 @@ const prisma = new PrismaClient().$extends({
         },
       },
     },
+    post: {
+      createDate: {
+        needs: { createdAt: true },
+        compute(post) {
+          return new Date(post.createdAt).toLocaleString()
+        },
+      },
+      updated: {
+        needs: { updatedAt: true },
+        compute(post) {
+          return new Date(post.updatedAt).toLocaleString()
+        },
+      },
+    }
   },
 })
 

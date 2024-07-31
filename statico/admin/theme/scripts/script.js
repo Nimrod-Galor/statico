@@ -10,16 +10,20 @@ function deleteItemClick(contentType, id, header){
 function editItemClick(contentType, data){
     data = JSON.parse(data)
     const form = document.getElementById(`create-${contentType}`)
-    form.action = "/admin/api/edit/user"
+    form.action = `/admin/api/edit/${contentType}`
     form.classList.remove('was-validated')
     // fill form
     for(const elmId in form.elements){
         // get value from data object
         let key = Object.keys(data).find(item => form.elements[elmId].name === item.toLowerCase())
         if(key === undefined){
-            // set input as not required
-            form.elements[elmId].required = false
+            // fields we dont have in fields interface
+            if(form.elements[elmId].name === "password"){// password is a special case
+                // set input as not required
+                form.elements[elmId].required = false
+            }
         }else{
+            console.log('type', form.elements[elmId].type)
             switch(form.elements[elmId].type){
                 case 'checkbox':
                     form.elements[elmId].checked = data[key]
@@ -43,14 +47,17 @@ function editItemClick(contentType, data){
 
 function createItemClick(contentType, fields){
     const form = document.getElementById(`create-${contentType}`)
-    form.action = "/admin/api/create/user"
+    form.action = `/admin/api/create/${contentType}`
     form.classList.remove('was-validated')
     // reset inputs
     for(const elmId in form.elements){
         let key = JSON.parse(fields).find(item => form.elements[elmId].name === item.key.toLowerCase())
         if(key === undefined){
-            // set input as required
-            form.elements[elmId].required = true
+            // fields we dont have in fields interface
+            if(form.elements[elmId].name === "password"){// password is a special case
+                // set input as not required
+                form.elements[elmId].required = true
+            }
         }
         switch(form.elements[elmId].type){
             case 'checkbox':

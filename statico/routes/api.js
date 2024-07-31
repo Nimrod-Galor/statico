@@ -1,7 +1,7 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 // import bodyParser from 'body-parser'
-import {api_createUser, api_editUser, api_deleteUser} from '../controllers/apiController.js'
+import {api_createUser, api_editUser, api_deleteUser, api_createPost} from '../controllers/apiController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -16,5 +16,9 @@ router.post("/edit/user", ensureLoggedIn('/login'), api_editUser)
 
 //  Delete User
 router.delete("/delete/user", ensureLoggedIn('/login'), api_deleteUser)
+
+
+//  Create Post
+router.post("/create/post", ensureLoggedIn('/login'), api_createPost)
 
 export default router

@@ -182,3 +182,74 @@ export async function api_deleteUser(req, res){
         res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
     }
 }
+
+function postValidations(title, body, publish, slug){
+    let errorMsg = []
+
+    
+    if( !isValid(title, "Title")){
+        errorMsg.push('Invalid Title')
+    }
+    // if(!isValid(body, "Body")){
+    //     errorMsg.push('Invalid Body')
+    // }
+    if(!isValid(publish, "Boolean")){
+        errorMsg.push('Invalid Credentials')
+    }
+    if(slug != '' && !isValid(slug, "Slug")){
+        errorMsg.push('Invalid Slug')
+    }
+    
+
+    if(errorMsg.length != 0){
+        throw new Error(errorMsg.join("</li><li>"))
+    }
+
+    return true
+}
+
+/*  Create Post */
+export async function api_createPost(req, res){
+    //  Get user data
+    let {title, body, publish, slug} = req.body
+
+    // Convert publish string to boolean
+    const published = stringToBoolean(publish)
+
+    try{
+        //  Validate user data
+        postValidations(title, body, published, slug)
+
+        if(slug != ''){
+            // check if slug exist
+            const postWithSlug = await findUnique('post', {slug})
+            if(postWithSlug){
+                // post with same slug exist
+                // throw new Error('post with the same slug already been taken.')
+                //  Send Error json
+                res.json({messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'})
+                return
+            }
+        }
+
+        // Set new Post object
+        const tmpPost = {
+            title,
+            body,
+            published,
+            slug,
+            author: {
+                connect: {id: req.user.id}
+            }
+        }
+
+        // Create Post
+        await createRow('post', tmpPost)
+
+        // Send Success json
+        res.json({messageBody: `Post "${title}" was created successfuly`, messageTitle: 'Post Created', messageType: 'success'})
+    }catch(errorMsg){
+        //  Send Error json
+        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+    }
+}

@@ -1,16 +1,17 @@
 const modelsInterface = [
     {
         "name": "User",
-        "header": "Users",
+        header: "Users",
         "description": "",
         "fields": [
-            {"key": "userName", "header": "User Name", "type": "String"},
-            {"key": "createDate", "header": "Create Date", "type": "DateTime"},
-            {"key": "email", "header": "Email", "type": "String"},
-            {"key": "emailVerified", "header": "Verified", "type": "Boolean"},
-            {"key": "posts", "header": "Posts", "type": "Int", "relation": "post", "filter": "author"},
-            {"key": "comments", "header": "Comments", "type": "Int", "relation": "comment", "filter": "author"},
-            {"key": "role", "header": "Role", "type": "String"}
+            {key: "userName", header: "User Name", type: "String"},//, visible: true, require: true},
+            // {key: "password", header: "Password", type: "String"},//, visible: false, require: true},
+            {key: "createDate", header: "Create Date", type: "DateTime"},//, visible: true, require: false},
+            {key: "email", header: "Email", type: "String"},//, visible: true, require: true},
+            {key: "emailVerified", header: "Verified", type: "Boolean"},//, visible: true, require: false},
+            {key: "posts", header: "Posts", type: "Int", relation: "post"},//, filter: "author", visible: true, require: false},
+            {key: "comments", header: "Comments", type: "Int", relation: "comment"},//, filter: "author", visible: true, require: false},
+            {key: "role", header: "Role", type: "String"},//, visible: true, require: true}
         ],
         "select" : {
             id: true,
@@ -39,30 +40,33 @@ const modelsInterface = [
             _count: undefined // optionally remove the original _count field
         }),
         "filters": [
-            {"name": "username", "key": "userName", "type": "userName"}, // by user name 
-            {"name": "verified", "key": "emailVerified", "type": "Boolean"} // filter users by emailVerified
+            {"name": "username", key: "userName", type: "userName"}, // by user name 
+            {"name": "verified", key: "emailVerified", type: "Boolean"} // filter users by emailVerified
         ]
     },
       
     {
         "name": "Post",
-        "header": "Posts",
+        header: "Posts",
         "description": "",
         "fields": [
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
-            {"key": "updatedAt", "header": "Update Date", "type": "DateTime"},
-            {"key": "title", "header": "Title", "type": "String"},
-            // {"key": "body", "header": "", "type": "", "visible": },
-            {"key": "published", "header": "Published", "type": "Boolean"},
-            {"key": "viewCount", "header": "Views", "type": "Int"},
-            {"key": "author", "header": "Author", "type": "String"},
-            {"key": "comments", "header": "Comments", "type": "Int"}
+            {key: "title", header: "Title", type: "String"},
+            {key: "createDate", header: "Create Date", type: "DateTime"},
+            {key: "updated", header: "Update Date", type: "DateTime"},
+            // {key: "slug", header: "Slug", type: "String"},
+            // {key: "body", header: "", type: "", "visible": },
+            {key: "published", header: "Published", type: "Boolean"},
+            {key: "viewCount", header: "Views", type: "Int"},
+            {key: "author", header: "Author", type: "String", relation: "post", filter: "author"},
+            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post"}
         ],
         "select": {
             id: true,
-            createdAt: true,
-            updatedAt: true,
+            createDate: true,
+            updated: true,
             title: true,
+            body: true,
+            slug: true,
             published: true,
             viewCount: true,
             author: {
@@ -81,23 +85,23 @@ const modelsInterface = [
         },
         "destructur": (post) => ({
             ...post,
-            author: post.author.name,
+            author: post.author.userName,
             comments: post._count.comments,
             _count: undefined
         }),
         "filters": [
-            {"name": "author", "key": "authorId", "type": "ObjectID"} // filter posts by author
+            {"name": "author", key: "authorId", type: "ObjectID"} // filter posts by author
         ]
     },
       
     {
         "name": "Comment",
-        "header": "Comments",
+        header: "Comments",
         "description": "",
         "fields": [
-            {"key": "createdAt", "header": "Create Date", "type": "DateTime"},
-            {"key": "comment", "header": "Comment", "type": "String"},
-            {"key": "published", "header": "Published", "type": "Boolean"}
+            {key: "createdAt", header: "Create Date", type: "DateTime"},
+            {key: "comment", header: "Comment", type: "String"},
+            {key: "published", header: "Published", type: "Boolean"}
         ],
         "select": {
             id: true,
@@ -115,11 +119,11 @@ const modelsInterface = [
       
     {
         "name": "Role",
-        "header": "Roles",
+        header: "Roles",
         "description": "",
         "fields": [
-            {"key": "name", "header": "Name", "type": "String"},
-            {"key": "description", "header": "Description", "type": "String"}
+            {key: "name", header: "Name", type: "String"},
+            {key: "description", header: "Description", type: "String"}
         ],
         "select": {
             id: true,

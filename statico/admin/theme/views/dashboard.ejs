@@ -78,12 +78,13 @@
             <div class="horizontal-collapse">
                 
                 <div>
-                    <div id="close-model-create" class="close-model-create" onclick="closeModelView()">
+                    <div id="close-model-create" class="close-model-create float-end" onclick="closeModelView()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
                             <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
                             </svg>
                     </div>
+                    <!-- User -->
                     <div id="model-user" class="content-type-wrapp">
                         <h3 class="mb-3">Create User</h3>
                         <form id="create-user" action="/admin/create/user" method="POST" onsubmit="return validateForm(event)" novalidate>
@@ -105,7 +106,7 @@
                                 </label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" minlength="8" maxlength="30" required>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
                                 <label for="password">Password</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -115,7 +116,7 @@
                                 </div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Techno007" minlength="6" maxlength="20" required>
+                                <input type="text" class="form-control" id="username" name="username" pattern="[A-Za-z0-9_\-]{6,20}" required>
                                 <label for="username">User name</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -136,10 +137,46 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
-                    <div id="model-post" class="content-type-wrapp d-none">
+                    <!-- Post -->
+                    <div id="model-post" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
                         <h3 class="mb-3">Create Post</h3>
-                        <form id="create-post" action="/admin/create/post" method="POST" onsubmit="validateForm(event)" novalidate>
-
+                        <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="validateForm(event)" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
+                                <label for="title">Title</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Title
+                                </div>    
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <label for="body">Body</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please enter your post in the textarea.
+                                </div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="true" id="publish" name="publish" checked="true">
+                                <label class="form-check-label" for="publish">
+                                    Publish
+                                </label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
+                                <label for="slug">Slug</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Slug
+                                </div>    
+                            </div>
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>

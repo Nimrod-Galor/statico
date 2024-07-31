@@ -6,28 +6,37 @@ export default function isValid(data, type,){
     const regPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
     const regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     const regString = /^[A-Z][a-z]*/
+    const regTitle = /^[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}$/
+    const regSlug = /^[a-zA-Z0-9\-_]{3,64}$/
 
     switch(type.toLowerCase()){
         case "objectid":
             return regObjectID.test(data)
-        break;
+            break
         case "boolean":
             return typeof(data) === 'boolean'
-        break;
+            break
         case "username":
             return regUserName.test(data)
-        break;
+            break
         case "password":
             return regPassword.test(data)
-        break;
+            break
         case "email":
             return regEmail.test(data)
+            break
         case "string":
             return regString.test(data)
-        break;
+            break
+        case "title":
+            return regTitle.test(data)
+            break
+        case "slug":
+            return regSlug.test(data)
+            break
         case "uuid":
             // todo
-        break;
+            break
     }
 
     return false
