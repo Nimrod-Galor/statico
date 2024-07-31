@@ -1,6 +1,6 @@
 import initialize from '../setup/initialize.js'
 import createError from 'http-errors'
-import createUser from '../../modules/createUser.js'
+// import createUser from '../../modules/createUser.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import {readRows, countsRows} from '../../db.js'
@@ -73,22 +73,35 @@ export async function admin_get_content(req, res, next){
         for(let i=0; i<paramsArr.length;i++){
             const param = paramsArr[i]
             // check if param of type filter 
-            if(model.filters){
-                // check every filter in filters list
-                for(let fi=0; fi<model.filters.length; fi++){
-                    let filter = model.filters[fi]
-                    if(param == filter.name){
-                        // we found a filter match
-                        let filterOn = paramsArr[++i]
-                        // check if filteron is valid
-                        if(isValid(filterOn, filter.type)){
-                            // set filter
-                            where[filter.key] = filterOn
-                        }
-                        continue;
+            const filter = model.filters.find(f => f.name == param)
+            if(filter){
+                let filterOn = paramsArr[++i]
+                // check if filteron is valid
+                if(isValid(filterOn, filter.type)){
+                    if(filter.type === "BooleanString"){
+                        filterOn = stringToBoolean(filterOn)
                     }
+                    // set filter
+                    where[filter.key] = filterOn
                 }
             }
+            
+            // if(model.filters){
+            //     // check every filter in filters list
+            //     for(let fi=0; fi<model.filters.length; fi++){
+            //         let filter = model.filters[fi]
+            //         if(param == filter.name){
+            //             // we found a filter match
+            //             let filterOn = paramsArr[++i]
+            //             // check if filteron is valid
+            //             if(isValid(filterOn, filter.type)){
+            //                 // set filter
+            //                 where[filter.key] = filterOn
+            //             }
+            //             continue;
+            //         }
+            //     }
+            // }
         }
     }
 
@@ -111,7 +124,14 @@ export async function admin_get_content(req, res, next){
 
 }
 
-
+function stringToBoolean(str){
+    if(str === "true"){
+        return true
+    }else if(str === "false"){
+        return false
+    }
+    return undefined
+}
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

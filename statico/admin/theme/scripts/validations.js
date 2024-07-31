@@ -34,6 +34,8 @@ export default function isValid(data, type,){
         case "slug":
             return regSlug.test(data)
             break
+        case "booleanstring":
+            return (data === "true" || data === "false")
         case "uuid":
             // todo
             break

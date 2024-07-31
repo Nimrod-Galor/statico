@@ -8,10 +8,10 @@ const modelsInterface = [
             // {key: "password", header: "Password", type: "String"},//, visible: false, require: true},
             {key: "createDate", header: "Create Date", type: "DateTime"},//, visible: true, require: false},
             {key: "email", header: "Email", type: "String"},//, visible: true, require: true},
-            {key: "emailVerified", header: "Verified", type: "Boolean"},//, visible: true, require: false},
-            {key: "posts", header: "Posts", type: "Int", relation: "post"},//, filter: "author", visible: true, require: false},
-            {key: "comments", header: "Comments", type: "Int", relation: "comment"},//, filter: "author", visible: true, require: false},
-            {key: "role", header: "Role", type: "String"},//, visible: true, require: true}
+            {key: "emailVerified", header: "Verified", type: "Boolean", relation: "user", filter: "verified", filterKey: "emailVerified"},//, visible: true, require: false},
+            {key: "posts", header: "Posts", type: "Int", relation: "post", filter: "author", filterKey: 'id'},//, visible: true, require: false},
+            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "author", filterKey: 'id'},//, visible: true, require: false},
+            {key: "role", header: "Role", type: "String", relation: "user", filter: "role", filterKey: "roleId"},//, visible: true, require: true}
         ],
         "select" : {
             id: true,
@@ -27,7 +27,7 @@ const modelsInterface = [
             },
             role: {
                 select: {
-                    // id: true
+                    id: true,
                     name: true
                 }
             }
@@ -37,11 +37,13 @@ const modelsInterface = [
             posts: user._count.posts,
             comments: user._count.comments,
             role: user.role.name,
+            roleId: user.role.id,
             _count: undefined // optionally remove the original _count field
         }),
         "filters": [
             {"name": "username", key: "userName", type: "userName"}, // by user name 
-            {"name": "verified", key: "emailVerified", type: "Boolean"} // filter users by emailVerified
+            {"name": "verified", key: "emailVerified", type: "BooleanString"}, // filter users by emailVerified
+            {"name": "role", key: "roleId", type: "ObjectID"}
         ]
     },
       
@@ -57,8 +59,8 @@ const modelsInterface = [
             // {key: "body", header: "", type: "", "visible": },
             {key: "published", header: "Published", type: "Boolean"},
             {key: "viewCount", header: "Views", type: "Int"},
-            {key: "author", header: "Author", type: "String", relation: "post", filter: "author"},
-            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post"}
+            {key: "author", header: "Author", type: "String", relation: "post", filter: "author", filterKey: 'authorId'},
+            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post", filterKey: 'id'}
         ],
         "select": {
             id: true,

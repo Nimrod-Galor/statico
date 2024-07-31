@@ -22,6 +22,7 @@
                 <div class="person" onclick="profileDropdownClick()"></div>
                 <div id="profileDropdown" class="dropdown-content">
                     <% if (user) { %>
+                        <a href="/admin">Admin</a>
                         <a href="/profile">My Profile</a>
                         <a href="/logout">Logout</a>
                     <% } else { %>

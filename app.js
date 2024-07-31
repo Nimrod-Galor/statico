@@ -14,8 +14,7 @@ import logger  from 'morgan'
 
 
 // routes
-import pagesRouter from './routes/pages.js'
-import userRouter from './routes/users.js'
+import postRouter from './routes/post.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './statico/routes/admin.js'
 import adminApiRouter from './statico/routes/api.js'
@@ -130,11 +129,10 @@ app.use(function(req, res, next) {
 // })
 
 // Routes
-app.use('/', pagesRouter)
-app.use('/admin', adminRouter)
 app.use('/admin/api', adminApiRouter)
-app.use('/users', userRouter)
+app.use('/admin', adminRouter)
 app.use('/', authRouter)
+app.use('/', postRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

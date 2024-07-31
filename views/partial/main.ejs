@@ -7,8 +7,10 @@
     </section>
     <article id="main-article" class="main-article">
         <div id="main-article-innerDiv" class="main-article-innerDiv">
-            <h2><%- locals.mainTitle %></h2>
-            <%- locals.mainBody %>
+            <h1><%=postData.title%></h1>
+            <div>
+                <%=postData.body%>
+            </div>
         </div>
     </article>
 </main>
