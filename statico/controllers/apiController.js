@@ -1,4 +1,4 @@
-import {findUnique, updateRow} from '../../db.js'
+import {findUnique, updateRow, createRow, deleteRow} from '../../db.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
@@ -18,7 +18,7 @@ function userValidations(id, email, username, password, role, emailverified){
     if(!isValid(emailverified, "Boolean")){
         errorMsg.push('Invalid Credentials')
     }
-    if(!isValid(username, "UserName")){
+    if(!isValid(username, "username")){
         errorMsg.push('Invalid User name')
     }
     if(password != ""){// this field is optional
@@ -31,135 +31,113 @@ function userValidations(id, email, username, password, role, emailverified){
     }
 
     if(errorMsg.length != 0){
-        res.json({errorMsg, messageTitle: 'Invalid Credentials', messageType: 'warning'})
-        return
+        throw new Error(errorMsg.join("</li><li>"))
+        // res.json({errorMsg, messageTitle: 'Invalid Credentials', messageType: 'warning'})
+        // return
     }
 
     return true
 }
 
+function stringToBoolean(str){
+    if(str === "true"){
+        return true
+    }else if(str === "false"){
+        return false
+    }
+    return undefined
+}
+
 /** Create User */
 export async function api_createUser(req, res){
-    let {email, userName, password, role, emailVerified} = req.body
+    //  Get user data
+    let {email, username, password, role, emailverified} = req.body
 
-    // Convert emailverified to boolean
-    if(emailVerified === "true"){
-        emailVerified = true
-    }else if(emailVerified === "false"){
-        emailVerified = false
-    }
+    // Convert emailverified string to boolean
+    emailverified = stringToBoolean(emailverified)
 
-    const valid = userValidations(undefined, email, userName, password, role, emailVerified)
-    
-    if(valid != true){
-        res.json(valid)
-        return
-    }
-
-    // check if use exist
     try{
-        const existsUser = await readRow('user', {where:{email}})
+        //  Validate user data
+        userValidations(undefined, email, username, password, role, emailverified)
+
+        // Check if user exists
+        const existsUser = await findUnique('user', {email})
         if(existsUser){
-            return {errorMsg: ['An account with that email address already exists'], messageTitle: 'Notice', messageType: 'warning'}
+            throw new Error('An account with that email address already exists')
         }
-    }catch(err){
-        // Error: NotFoundError: No User found
-        // this is good. continue script...
-    }
 
-    try{
-        // hash passowrd
+        // Hash passowrd
         const salt = crypto.randomBytes(16)
         const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
         
-        // create new user
+        //  Set new user object
         const tmpUser = {
           email,
-          emailVerified, 
+          emailVerified: emailverified, 
           password: key.toString('hex'),
           salt: salt.toString('hex'),
-          userName
+          userName: username
         }
 
+        //  Set new user role
         if(role != undefined){
             tmpUser.role = {
                 connect: {id: role}
               }
         }
-    
-        const user = await createRow('user', tmpUser)
 
-        const msg = 'Your account has been successfully created.'
-        if(emailVerified){
-            msg += ' An email with a verification code was just sent to: ' + result.user.email
+        // Create new user
+        await createRow('user', tmpUser)
+
+        // Set return message
+        let msg = 'Your account has been successfully created.'
+        if(emailverified){
+            msg += ' An email with a verification code was just sent to: ' + email
         }
 
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
-    
+        // Send Success json
+        res.json({messageBody: msg, messageTitle: 'Success', messageType: 'success'})
     }catch(errorMsg){
-        res.json({errorMsg: errorMsg.message, messageTitle: 'Error', messageType: 'error'})
+        //  Send Error json
+        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
     }
-
-    // try{
-    //     //  create new user
-    //     const result = await createUser(email, username, password, role, emailverified)
-
-    //     if(result.user){// success
-    //         const msg = 'Your account has been successfully created.'
-    //         if(emailverified){
-    //             msg += ' An email with a verification code was just sent to: ' + result.user.email
-    //         }
-    //         res.locals.messages = [msg]
-    //         res.locals.messageTitle = 'Success'
-    //         res.locals.messageType = 'success'
-    //         res.locals.hasMessages = true
-    //     }else{
-    //         res.locals.messages = result.errorMsg
-    //         res.locals.messageTitle = result.messageTitle
-    //         res.locals.messageType = result.messageType
-    //         res.locals.hasMessages = true
-    //     }
-
-    // }catch(errorMsg){
-    //     res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
-    // }
 }
 
 export async function api_editUser(req, res){
-    let {id, email, userName, password, role, emailVerified} = req.body
+    //  Get user data
+    let {id, email, username, password, role, emailverified} = req.body
 
-    // Convert emailverified to boolean
-    if(emailVerified === "true"){
-        emailVerified = true
-    }else if(emailVerified === "false"){
-        emailVerified = false
-    }
-
-    const valid = userValidations(id, email, userName, password, role, emailVerified)
-    
-    if(valid != true){
-        res.json(valid)
-        return
-    }
+    // Convert emailverified string to boolean
+    emailverified = stringToBoolean(emailverified)
 
     try{
+        //  Validate user data
+        userValidations(id, email, username, password, role, emailverified)
+
         // Validate role exists
         const selectedRole = await findUnique('role', {id: role})
+        if(!selectedRole){
+            throw new Error('Invalid Role')
+        }
 
         // Validate user exists
         const selectedUser = await findUnique('user', {id})
+        if(!selectedUser){
+            throw new Error('Invalid User')
+        }
 
+        //  Set user object
         const tmpUser = {
             email,
-            emailVerified,
-            userName,
+            emailVerified: emailverified,
+            userName: username,
             role: {
                 connect: {id: selectedRole.id}
             }
         }
 
         if(password != ''){
-            // hash passowrd
+            // Hash passowrd
             const salt = crypto.randomBytes(16)
             const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
 
@@ -167,10 +145,34 @@ export async function api_editUser(req, res){
             tmpUser.salt = salt.toString('hex')
         }
 
-        const UpdatedUser = await updateRow('user', {id: selectedUser.id}, tmpUser)
+        //  Update user
+        await updateRow('user', {id: selectedUser.id}, tmpUser)
 
-        res.json({messageBody: `User ${userName} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'})
+        // Send Success json
+        res.json({messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'})
     }catch(errorMsg){
+        // Send Error json
+        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+    }
+}
+
+export async function api_deleteUser(req, res){
+    //  Get user data
+    let {id, header} = req.body
+
+    try{
+        //  Validate user data
+        if(!isValid(id, "objectid")){
+             throw new Error('Invalid User')
+        }
+
+        //  Delete user
+        await deleteRow('user', {id})
+
+        // Send Success json
+        res.json({messageBody: `User ${header} was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'})
+    }catch(errorMsg){
+        // Send Error json
         res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
     }
 }

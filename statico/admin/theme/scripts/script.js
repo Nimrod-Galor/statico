@@ -1,36 +1,10 @@
-console.log('Admin script')
-
-function deleteItemClick(itemId){
-    if(confirm("delete Item?")){
-        console.log('delete', itemId)
+function deleteItemClick(contentType, id, header){
+    if(confirm(`delete Item (${header})?`)){
+        // console.log('delete', itemId)
+        // Send Delet user
+        const dataToSend = {id, header}
+        fetchData(`/admin/api/delete/${contentType}`, "DELETE", dataToSend)
     }
-}
-
-function createItemClick(contentType, fields){
-    const form = document.getElementById(`create-${contentType}`)
-    form.action = "/admin/api/create/user"
-    form.classList.remove('was-validated')
-    // reset inputs
-    for(const elmId in form.elements){
-        let key = JSON.parse(fields).find(item => form.elements[elmId].name === item.key.toLowerCase())
-        if(key === undefined){
-            // set input as required
-            form.elements[elmId].required = true
-        }
-        switch(form.elements[elmId].type){
-            case 'checkbox':
-                form.elements[elmId].checked = true
-            break;
-            case 'select-one':
-                form.elements[elmId].options[0].selected = true
-            break
-            default:
-                form.elements[elmId].value = ''
-            break
-        }
-    }
-
-    openModelView(`model-${contentType}`, `Create ${capitalizeFirstLetter(contentType)}`, 'Create')
 }
 
 function editItemClick(contentType, data){
@@ -62,36 +36,37 @@ function editItemClick(contentType, data){
                 break
             }
         }
-
-        // for(const key in data){
-        //     if(form.elements[elmId].name === key.toLowerCase()){
-        //         console.log("input", key, 'type:', form.elements[elmId].type)
-        //         switch(form.elements[elmId].type){
-        //             case 'checkbox':
-        //                 form.elements[elmId].checked = data[key]
-        //             break;
-        //             case 'select-one':
-        //                 for(const op of form.elements[elmId].options){
-        //                     if(op.label === data[key]){
-        //                         op.selected = true
-        //                     }
-        //                 }
-        //             break
-        //             default:
-        //                 form.elements[elmId].value = data[key]
-        //             break
-        //         }
-        //         continue
-        //     }
-        // }
     }
 
     openModelView(`model-${contentType}`, `Edit ${capitalizeFirstLetter(contentType)}`, 'Update')
 }
 
-// function toggleModelView(){
-//     document.querySelector('.horizontal-collapse').classList.toggle('open')
-// }
+function createItemClick(contentType, fields){
+    const form = document.getElementById(`create-${contentType}`)
+    form.action = "/admin/api/create/user"
+    form.classList.remove('was-validated')
+    // reset inputs
+    for(const elmId in form.elements){
+        let key = JSON.parse(fields).find(item => form.elements[elmId].name === item.key.toLowerCase())
+        if(key === undefined){
+            // set input as required
+            form.elements[elmId].required = true
+        }
+        switch(form.elements[elmId].type){
+            case 'checkbox':
+                form.elements[elmId].checked = true
+            break;
+            case 'select-one':
+                form.elements[elmId].options[0].selected = true
+            break
+            default:
+                form.elements[elmId].value = ''
+            break
+        }
+    }
+
+    openModelView(`model-${contentType}`, `Create ${capitalizeFirstLetter(contentType)}`, 'Create')
+}
 
 function openModelView(modelName, titleText, buttonText){
     // hide all forms
@@ -123,7 +98,7 @@ function toggleClass(objId, className){
     event.currentTarget.classList.toggle(className);
 }
 
-async function validateForm(event){
+function validateForm(event){
     event.preventDefault();
     const form = event.currentTarget
     form.classList.add('was-validated')
@@ -137,8 +112,12 @@ async function validateForm(event){
     //Post form data
     const formData = new FormData(form);
     const dataToSend = Object.fromEntries(formData);
-    await fetch(form.action, {
-        method: "POST",
+    fetchData(form.action, "POST", dataToSend)
+}
+
+async function fetchData(action, method, dataToSend){
+    await fetch(action, {
+        method,
         body: JSON.stringify(dataToSend),
         headers: {
             "Content-Type": "application/json"
@@ -155,11 +134,12 @@ async function validateForm(event){
     })
 }
 
+
 function topAlert(type, title, body){
     document.getElementById('top-alert').classList.add('open');
     document.getElementById('top-alert').querySelector('.alert').className = `alert alert-${type}`
     document.getElementById('top-alert-title').innerHTML = title;
-    document.getElementById('top-alert-body').innerHTML = body;
+    document.getElementById('top-alert-body').innerHTML = `<ul><li>${body}</li></ul>`;
 }
 
 function capitalizeFirstLetter(string) {

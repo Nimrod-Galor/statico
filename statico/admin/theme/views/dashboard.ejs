@@ -192,7 +192,7 @@
                                     <%})%>
                                     <td class="text-end">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <button type="button" class="btn btn-warning" onclick="deleteItemClick('<%-contentType.toLowerCase()%>', '<%-data.id%>')">Delete</button>
+                                            <button type="button" class="btn btn-warning" onclick="deleteItemClick('<%-contentType.toLowerCase()%>', '<%=data.id%>', '<%=data[modelHeaders[0].key]%>')">Delete</button>
                                             <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
                                         </div>
                                     </td>

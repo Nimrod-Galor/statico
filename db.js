@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+/*  Create */
 async function createRow(collectionName, data){
   console.log("create row")
   const res = await prisma[collectionName].create({data})
@@ -13,7 +14,7 @@ async function createRow(collectionName, data){
   return res
 }
 
-
+/*  Read rows */
 export async function readRows(collectionName, data = '') {
   const res = await prisma[collectionName].findMany(data)
   .catch(err => {throw new Error(err)})
@@ -23,6 +24,7 @@ export async function readRows(collectionName, data = '') {
   return res
 }
 
+/*  Read row */
 async function readRow(collectionName, data = '') {
   const res = await prisma[collectionName].findFirstOrThrow(data)
   .catch(err => {throw new Error(err)})
@@ -71,7 +73,7 @@ async function readRow(collectionName, data = '') {
 // }
 
 
-
+/*  Update  */
 async function updateRow(collectionName, where, data){
   const res = await prisma[collectionName].update({
     where,
@@ -85,8 +87,9 @@ async function updateRow(collectionName, where, data){
   return res
 }
 
+/*  DELETE  */
 async function deleteRow(collectionName, filter){
-  await prisma[collectionName].update({
+  await prisma[collectionName].delete({
     where: filter
   })
   .catch(err => {throw new Error(err)})
@@ -95,7 +98,7 @@ async function deleteRow(collectionName, filter){
   })
 }
 
-// Count Rows
+/*  Count Rows */
 async function countRows(collectionName){
   const res = await prisma[collectionName].count()
   .catch(err => {throw new Error(err)})
@@ -106,7 +109,7 @@ async function countRows(collectionName){
 }
 
 
-// Multiple Counta Rows
+/* Multiple Counta Rows */
 async function countsRows(collectionsName){
   //const res = await prisma[collectionName].count()
   let parr = []
