@@ -17,16 +17,17 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime @default(now())
-  email         String   @unique
-  emailVerified Boolean  @default(false)
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime  @default(now())
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   password      String
   salt          String
   userName      String?
+  role          Role      @relation(fields: [roleId], references: [id])
+  roleId        String    @db.ObjectId
   posts         Post[]
-  role          Role     @relation(fields: [roleId], references: [id])
-  roleId        String   @db.ObjectId
+  Comment       Comment[]
 }
 
 model Post {
@@ -50,6 +51,8 @@ model Comment {
   published Boolean  @default(true)
   post      Post     @relation(fields: [postId], references: [id])
   postId    String   @db.ObjectId
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String   @db.ObjectId
 }
 
 model Role {

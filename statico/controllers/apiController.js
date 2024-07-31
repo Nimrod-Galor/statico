@@ -166,14 +166,17 @@ export async function api_deleteUser(req, res){
              throw new Error('Invalid User')
         }
 
-        // Delete all user posts
-        await deleteRows('post', {id})
+        // Delete all user Comments
+        await deleteRows('comments', {authorId: id})
+
+        // Delete all user Posts
+        await deleteRows('post', {authorId: id})
 
         //  Delete user
         await deleteRow('user', {id})
 
         // Send Success json
-        res.json({messageBody: `User ${header} was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'})
+        res.json({messageBody: `User /"${header}/" was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'})
     }catch(errorMsg){
         // Send Error json
         res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
