@@ -137,6 +137,69 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
+                    <!-- Page -->
+                    <div id="model-page" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
+                        <h3 class="mb-3">Create Page</h3>
+                        <form id="create-page" action="/admin/create/page" method="POST" style="max-width: 80%;" onsubmit="validateForm(event)" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
+                                <label for="title">Title</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Title
+                                </div>    
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <label for="body">Body</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please enter your post in the textarea.
+                                </div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="true" id="publish" name="publish" checked="true">
+                                <label class="form-check-label" for="publish">
+                                    Publish
+                                </label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
+                                <label for="slug">Slug</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Slug
+                                </div>    
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,128}">
+                                <label for="metatitle">Meta Title</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Meta Title
+                                </div>    
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,256}">
+                                <label for="metadescription">Meta Description</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Meta Description
+                                </div>    
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </form>
+                    </div>
                     <!-- Post -->
                     <div id="model-post" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
                         <h3 class="mb-3">Create Post</h3>
@@ -177,9 +240,30 @@
                                     Invalid Slug
                                 </div>    
                             </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,128}">
+                                <label for="metatitle">Meta Title</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Meta Title
+                                </div>    
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,256}">
+                                <label for="metadescription">Meta Description</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid Meta Description
+                                </div>    
+                            </div>
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
+                    <!-- Comments -->
                     <div id="model-comment" class="content-type-wrapp d-none">
                         <h3 class="mb-3">Create Comment</h3>
                         <form id="create-comment" action="/admin/create/comment" method="POST" onsubmit="validateForm(event)" novalidate>
@@ -187,6 +271,7 @@
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
+                    <!-- Roles -->
                     <div id="model-role" class="content-type-wrapp d-none">
                         <h3 class="mb-3">Create Role</h3>
                         <form id="create-role" action="/admin/create/role" method="POST" onsubmit="validateForm(event)" novalidate>

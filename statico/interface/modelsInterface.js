@@ -48,6 +48,29 @@ const modelsInterface = [
     },
       
     {
+        "name": "Page",
+        header: "Pages",
+        "description": "",
+        "fields": [
+            {key: "title", header: "Title", type: "String"},
+            {key: "slug", header: "Slug", type: "String"},
+            {key: "publish", header: "Published", type: "Boolean"},
+        ],
+        "select": {
+            id: true,
+            metaTitle: true,
+            metaDescription: true,
+            title: true,
+            body: true,
+            slug: true,
+            publish: true
+        },
+        "filters": [
+            {"name": "published", key: "publish", type: "Boolean"} // filter pages by publish
+        ]
+    },
+
+    {
         "name": "Post",
         header: "Posts",
         "description": "",
@@ -55,7 +78,7 @@ const modelsInterface = [
             {key: "title", header: "Title", type: "String"},
             {key: "createDate", header: "Create Date", type: "DateTime"},
             {key: "updated", header: "Update Date", type: "DateTime"},
-            // {key: "slug", header: "Slug", type: "String"},
+            {key: "slug", header: "Slug", type: "String"},
             // {key: "body", header: "", type: "", "visible": },
             {key: "publish", header: "Published", type: "Boolean"},
             {key: "viewCount", header: "Views", type: "Int"},
@@ -64,6 +87,8 @@ const modelsInterface = [
         ],
         "select": {
             id: true,
+            metaTitle: true,
+            metaDescription: true,
             createDate: true,
             updated: true,
             title: true,
