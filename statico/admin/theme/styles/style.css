@@ -89,3 +89,44 @@
     margin-left: 100px;
 }
 
+fieldset {
+    min-width: unset;
+    padding: unset;
+    margin: unset;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+legend {
+    float: unset;
+    width: unset;
+    padding: unset;
+    margin-bottom: .5rem;
+    font-size: calc(1.275rem + .3vw);
+    line-height: inherit;
+}
+
+form.create legend.edit{
+    display: none;
+}
+
+form.edit legend.create{
+    display: none;
+}
+
+form button[type="submit"] .spinner-border{
+    display: none;
+}
+
+form fieldset:disabled button[type="submit"] .spinner-border{
+    display: inline-block;
+}
+
+form.create button[type="submit"].edit{
+    display: none;
+}
+
+form.edit button[type="submit"].create{
+    display: none;
+}

@@ -11,7 +11,10 @@ function editItemClick(contentType, data){
     data = JSON.parse(data)
     const form = document.getElementById(`create-${contentType}`)
     form.action = `/admin/api/edit/${contentType}`
-    form.classList.remove('was-validated')
+    form.classList.remove('was-validated', 'create')
+    form.classList.add('edit')
+    //enable fieldset
+    form[0].disabled = false
     // fill form
     for(const elmId in form.elements){
         // get value from data object
@@ -52,13 +55,16 @@ function editItemClick(contentType, data){
         }
     }
 
-    openModelView(`model-${contentType}`, `Edit ${capitalizeFirstLetter(contentType)}`, 'Update')
+    openModelView(`model-${contentType}`)
 }
 
 function createItemClick(contentType, fields){
     const form = document.getElementById(`create-${contentType}`)
     form.action = `/admin/api/create/${contentType}`
-    form.classList.remove('was-validated')
+    form.classList.remove('was-validated', 'edit')
+    form.classList.add('create')
+    //enable fieldset
+    form[0].disabled = false
     // reset inputs
     for(const elmId in form.elements){
         let key = JSON.parse(fields).find(item => form.elements[elmId].name === item.key.toLowerCase())
@@ -92,10 +98,10 @@ function createItemClick(contentType, fields){
         }
     }
 
-    openModelView(`model-${contentType}`, `Create ${capitalizeFirstLetter(contentType)}`, 'Create')
+    openModelView(`model-${contentType}`)
 }
 
-function openModelView(modelName, titleText, buttonText){
+function openModelView(modelName){
     // hide all forms
     const mfs = document.querySelectorAll('.content-type-wrapp')
     mfs.forEach((mf) => {
@@ -108,9 +114,9 @@ function openModelView(modelName, titleText, buttonText){
     })
 
     // change title
-    document.getElementById(modelName).querySelector('h3').innerText = titleText
-    // change button
-    document.getElementById(modelName).querySelector('button[type="submit"]').innerText = buttonText
+    // document.getElementById(modelName).querySelector('h3').innerText = titleText
+    // // change button
+    // document.getElementById(modelName).querySelector('button[type="submit"]').innerText = buttonText
     
     // open div
     document.querySelector('.horizontal-collapse').classList.add('open')
@@ -139,6 +145,10 @@ function validateForm(event){
     //Post form data
     const formData = new FormData(form);
     const dataToSend = Object.fromEntries(formData);
+
+    // disabel fieldset
+    form[0].disabled = true
+    //  send data
     fetchData(form.action, "POST", dataToSend)
 }
 
@@ -153,8 +163,12 @@ async function fetchData(action, method, dataToSend){
     .then(res => res.json())
     .then(data => {
         console.log('data', data)
-        
+        // close model
+        closeModelView()
+        // show alert message
         topAlert(data.messageType, data.messageTitle, data.messageBody)
+        // reload page
+        // ***ToDo
     })
     .catch(err => {
         console.log('error', err)
