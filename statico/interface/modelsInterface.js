@@ -57,7 +57,7 @@ const modelsInterface = [
             {key: "updated", header: "Update Date", type: "DateTime"},
             // {key: "slug", header: "Slug", type: "String"},
             // {key: "body", header: "", type: "", "visible": },
-            {key: "published", header: "Published", type: "Boolean"},
+            {key: "publish", header: "Published", type: "Boolean"},
             {key: "viewCount", header: "Views", type: "Int"},
             {key: "author", header: "Author", type: "String", relation: "post", filter: "author", filterKey: 'authorId'},
             {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post", filterKey: 'id'}
@@ -69,7 +69,7 @@ const modelsInterface = [
             title: true,
             body: true,
             slug: true,
-            published: true,
+            publish: true,
             viewCount: true,
             author: {
                 select: {
@@ -103,13 +103,13 @@ const modelsInterface = [
         "fields": [
             {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "comment", header: "Comment", type: "String"},
-            {key: "published", header: "Published", type: "Boolean"}
+            {key: "publish", header: "Published", type: "Boolean"}
         ],
         "select": {
             id: true,
             createdAt: true,
             comment: true,
-            published: true,
+            publish: true,
             post: {
                 select:{
                     id: true

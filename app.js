@@ -14,6 +14,7 @@ import logger  from 'morgan'
 
 
 // routes
+import pageRouter from './routes/page.js'
 import postRouter from './routes/post.js'
 import authRouter from './routes/auth.js'
 import adminRouter from './statico/routes/admin.js'
@@ -131,6 +132,7 @@ app.use(function(req, res, next) {
 // Routes
 app.use('/admin/api', adminApiRouter)
 app.use('/admin', adminRouter)
+app.use('/', pageRouter)
 app.use('/', authRouter)
 app.use('/', postRouter)
 
