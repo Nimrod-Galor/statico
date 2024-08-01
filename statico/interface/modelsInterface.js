@@ -87,8 +87,8 @@ const modelsInterface = [
         ],
         "select": {
             id: true,
-            metaTitle: true,
-            metaDescription: true,
+            metatitle: true,
+            metadescription: true,
             createDate: true,
             updated: true,
             title: true,

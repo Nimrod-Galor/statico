@@ -88,9 +88,9 @@
                     <div id="model-user" class="content-type-wrapp">
                         <h3 class="mb-3">Create User</h3>
                         <form id="create-user" action="/admin/create/user" method="POST" onsubmit="return validateForm(event)" novalidate>
-                            <input type="hidden" id="id" name="id" value="" />
+                            <input type="hidden" id="user-id" name="id" value="" />
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="" required>
+                                <input type="email" class="form-control" id="user-email" name="email" placeholder="name@example.com" value="" required>
                                 <label for="email">Email address</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -100,13 +100,13 @@
                                 </div>    
                             </div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="true" id="emailverified" name="emailverified" checked="true">
+                                <input class="form-check-input" type="checkbox" value="true" id="user-emailverified" name="emailverified" checked="true">
                                 <label class="form-check-label" for="emailverified">
                                     Send verification email
                                 </label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
+                                <input type="password" class="form-control" id="user-password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
                                 <label for="password">Password</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -116,7 +116,7 @@
                                 </div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="username" name="username" pattern="[A-Za-z0-9_\-]{6,20}" required>
+                                <input type="text" class="form-control" id="user-username" name="username" pattern="[A-Za-z0-9_\-]{6,20}" required>
                                 <label for="username">User name</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -126,7 +126,7 @@
                                 </div>
                             </div>
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="role" name="role" aria-label="Floating label select example">
+                                <select class="form-select" id="user-role" name="role" aria-label="Floating label select example">
                                     <% roles.forEach((role) => { %>
                                         <option value="<%-role.id%>"><%-role.name%></option>
                                     <%})%>
@@ -140,9 +140,10 @@
                     <!-- Page -->
                     <div id="model-page" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
                         <h3 class="mb-3">Create Page</h3>
-                        <form id="create-page" action="/admin/create/page" method="POST" style="max-width: 80%;" onsubmit="validateForm(event)" novalidate>
+                        <form id="create-page" action="/admin/create/page" method="POST" style="max-width: 80%;" onsubmit="updatePageBody();validateForm(event)" novalidate>
+                            <input type="hidden" id="page-id" name="id" value="" />
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
+                                <input type="text" class="form-control" id="page-title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
                                 <label for="title">Title</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -152,7 +153,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <textarea class="form-control page-body-textarea" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 500px" required></textarea>
                                 <label for="body">Body</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -162,13 +163,13 @@
                                 </div>
                             </div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="true" id="publish" name="publish" checked="true">
+                                <input class="form-check-input" type="checkbox" value="true" id="page-publish" name="publish" checked="true">
                                 <label class="form-check-label" for="publish">
                                     Publish
                                 </label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
+                                <input type="text" class="form-control" id="page-slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
                                 <label for="slug">Slug</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -178,7 +179,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,128}">
+                                <input type="text" class="form-control" id="page-metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/\']{1,128}">
                                 <label for="metatitle">Meta Title</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -188,7 +189,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,256}">
+                                <input type="text" class="form-control" id="page-metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/\']{1,256}">
                                 <label for="metadescription">Meta Description</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -203,9 +204,10 @@
                     <!-- Post -->
                     <div id="model-post" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
                         <h3 class="mb-3">Create Post</h3>
-                        <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="validateForm(event)" novalidate>
+                        <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="updatePostBody();validateForm(event)" novalidate>
+                            <input type="hidden" id="post-id" name="id" value="" />
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
+                                <input type="text" class="form-control" id="post-title" name="title" pattern="[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}" required>
                                 <label for="title">Title</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -215,7 +217,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <textarea class="form-control post-body-textarea" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 500px" required></textarea>
                                 <label for="body">Body</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -225,13 +227,13 @@
                                 </div>
                             </div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="true" id="publish" name="publish" checked="true">
+                                <input class="form-check-input" type="checkbox" value="true" id="post-publish" name="publish" checked="true">
                                 <label class="form-check-label" for="publish">
                                     Publish
                                 </label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
+                                <input type="text" class="form-control" id="post-slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
                                 <label for="slug">Slug</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -241,7 +243,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,128}">
+                                <input type="text" class="form-control" id="post-metatitle" name="metatitle" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,128}">
                                 <label for="metatitle">Meta Title</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -251,7 +253,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,256}">
+                                <input type="text" class="form-control" id="post-metadescription" name="metadescription" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/]{1,256}">
                                 <label for="metadescription">Meta Description</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -267,7 +269,7 @@
                     <div id="model-comment" class="content-type-wrapp d-none">
                         <h3 class="mb-3">Create Comment</h3>
                         <form id="create-comment" action="/admin/create/comment" method="POST" onsubmit="validateForm(event)" novalidate>
-
+                            <input type="hidden" id="comment-id" name="id" value="" />
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>
@@ -275,7 +277,7 @@
                     <div id="model-role" class="content-type-wrapp d-none">
                         <h3 class="mb-3">Create Role</h3>
                         <form id="create-role" action="/admin/create/role" method="POST" onsubmit="validateForm(event)" novalidate>
-
+                            <input type="hidden" id="role-id" name="id" value="" />
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
                     </div>

@@ -161,7 +161,6 @@ async function fetchData(action, method, dataToSend){
     })
 }
 
-
 function topAlert(type, title, body){
     document.getElementById('top-alert').classList.add('open');
     document.getElementById('top-alert').querySelector('.alert').className = `alert alert-${type}`
@@ -171,4 +170,12 @@ function topAlert(type, title, body){
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function updatePostBody(){
+    document.getElementById('post-body').value = window.postEditor.getData();
+}
+
+function updatePageBody(){
+    document.getElementById('page-body').value = window.pageEditor.getData();
 }

@@ -32,8 +32,8 @@ model User {
 
 model Page {
   id              String  @id @default(auto()) @map("_id") @db.ObjectId
-  metaTitle       String
-  metaDescription String
+  metatitle       String
+  metadescription String
   slug            String  @unique
   title           String
   body            String
@@ -42,8 +42,8 @@ model Page {
 
 model Post {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  metaTitle       String
-  metaDescription String
+  metatitle       String
+  metadescription String
   slug            String    @unique
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
