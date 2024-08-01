@@ -35,6 +35,16 @@ function editItemClick(contentType, data){
                         }
                     }
                 break
+                case "textarea":
+                    switch(contentType){
+                        case "page":
+                            window.pageEditor.setData(data[key])
+                        break
+                        case "post":
+                            window.postEditor.setData(data[key])
+                        break
+                    }
+                break
                 default:
                     form.elements[elmId].value = data[key]
                 break
@@ -66,6 +76,16 @@ function createItemClick(contentType, fields){
             case 'select-one':
                 form.elements[elmId].options[0].selected = true
             break
+            case "textarea":
+                    switch(contentType){
+                        case "page":
+                            window.pageEditor.setData('')
+                        break
+                        case "post":
+                            window.postEditor.setData('')
+                        break
+                    }
+                break
             default:
                 form.elements[elmId].value = ''
             break

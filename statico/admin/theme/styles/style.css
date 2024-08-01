@@ -84,3 +84,8 @@
 .top-alert-title{
     font-size: 1.8rem;
 }
+
+.ck.ck-toolbar>.ck-toolbar__items button.ck-source-editing-button{
+    margin-left: 100px;
+}
+

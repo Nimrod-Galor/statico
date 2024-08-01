@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/42.0.2/ckeditor5.css" />
     <link rel="stylesheet" href="/styles/style.css">
     <title>Statico - Admin Dashboard</title>
 </head>
@@ -152,7 +152,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" placeholder="Leave a comment here" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <textarea class="form-control page-body-textarea" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
                                 <label for="body">Body</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -215,7 +215,7 @@
                                 </div>    
                             </div>
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" placeholder="Leave a comment here" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                <textarea class="form-control post-body-textarea" id="body" name="body" minlength="4" style="height: 500px" required></textarea>
                                 <label for="body">Body</label>
                                 <div class="valid-feedback">
                                     Looks good!
@@ -337,5 +337,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/scripts/script.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/42.0.2/ckeditor5.js",
+                "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/42.0.2/"
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        let pageEditor
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Bold,
+            Italic,
+            Font,
+            Alignment,
+            Paragraph,
+            Heading,
+            Indent,
+            IndentBlock,
+            SourceEditing,
+            AutoLink,
+            Link,
+            List,
+
+
+        } from 'ckeditor5';
+
+        // Page
+        ClassicEditor.create( document.querySelector( '.page-body-textarea' ), {
+            plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
+            toolbar: {
+                items: [
+                    'sourceEditing', '|',
+                    'undo', 'redo', '|',
+                    'heading', 'bold', 'italic','|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'outdent', 'indent', '|',
+                    'link', '|',
+                    'bulletedList', 'numberedList', '|',
+                ]
+            },
+            placeholder: 'Enter your text here...'
+        })
+        .then( newEditor => {
+            window.pageEditor = newEditor;
+        })
+        .catch( error => {
+            console.error( error );
+        });
+
+        // Post
+        ClassicEditor.create( document.querySelector( '.post-body-textarea' ), {
+            plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
+            toolbar: {
+                items: [
+                    'sourceEditing', '|',
+                    'undo', 'redo', '|',
+                    'heading', 'bold', 'italic','|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'outdent', 'indent', '|',
+                    'link', '|',
+                    'bulletedList', 'numberedList', '|',
+                ]
+            },
+            placeholder: 'Enter your text here...'
+        })
+        .then( newEditor => {
+            window.postEditor = newEditor;
+        })
+        .catch( error => {
+            console.error( error );
+        });
+
+    </script>
+    
 </body>
 </html>
