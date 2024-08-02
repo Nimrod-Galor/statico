@@ -102,7 +102,7 @@ export async function admin_get_content(req, res, next){
         modelData = modelData.map(model.destructur)
     }
 
-    res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles })
+    res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles, caption : '' })
     
 
 }
