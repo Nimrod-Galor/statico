@@ -36,7 +36,6 @@
                             <div class="w-100 me-2 fw-bold">
                                 <span class="badge text-bg-warning rounded-pill me-2 boxShadow"><%= model.count %></span>
                                 <%=caption = model.header%>
-                                
                             </div>
                         <%}else{%>
                             <a href="/admin/<%-model.name.toLowerCase()%>" class="d-block w-100 me-2 text-decoration-none fw-bold">
@@ -360,7 +359,7 @@
 
                     </header>
                     <table class="table caption-top">
-                        <caption class="text-center fs-3 fw-bold bg-body-tertiary"><%=caption%></caption>
+                        <caption class="text-center fs-4 bg-warning-subtle"><%=caption%></caption>
                         <thead class="table-primary">
                             <tr>
                                 <% modelHeaders.forEach((field) => {%>

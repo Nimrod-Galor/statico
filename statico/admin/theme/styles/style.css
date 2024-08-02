@@ -119,7 +119,7 @@ form button[type="submit"] .spinner-border{
     display: none;
 }
 
-form fieldset:disabled button[type="submit"] .spinner-border{
+form.disabled button[type="submit"] .spinner-border{
     display: inline-block;
 }
 

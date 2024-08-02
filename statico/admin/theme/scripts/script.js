@@ -142,6 +142,11 @@ function validateForm(event){
         return false
     }
 
+    // start submit button spiner
+    form.classList.add('disabled')
+    // disabel submit buttn
+    event.submitter.disabled = true
+    
     return true
     //Post form data
     // const formData = new FormData(form);
