@@ -52,28 +52,24 @@ export async function admin_post_setup(req, res){
 export async function admin_get_content(req, res, next){
     ///:contentType?/*
     // get selected content type name
-    const contentType = req.params.contentType || modelsInterface[0].name.toLowerCase()
+    const contentType = req.params.contentType.toLowerCase() || modelsInterface[0].name.toLowerCase()
     // check we didnt get here by mistake
     if(!modelsName.includes(capitalizeFirstLetter(contentType))){
-        try{
-            const err = createError(404, 'Resource not found');
-            throw err;
-        } catch (err) {
-            next(err); // Pass the error to the Express error handler
-        }
-        return
+        next(createError(404, 'Resource not found'))
     }
     // get selected model
-    const model = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
-    // check for extra parmas
+    const selectedModel = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
+
+    // build models data query string
     const where = {}
     // const orderBy = {}
     if(req.params[0]){
+        // check for extra parmas
         const paramsArr = req.params[0].split('/')
         for(let i=0; i<paramsArr.length;i++){
             const param = paramsArr[i]
             // check if param of type filter 
-            const filter = model.filters.find(f => f.name == param)
+            const filter = selectedModel.filters.find(f => f.name == param)
             if(filter){
                 let filterOn = paramsArr[++i]
                 // check if filteron is valid
@@ -92,19 +88,30 @@ export async function admin_get_content(req, res, next){
         "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
         "take": 10,
         where,
-        "select": model.select,
+        "select": selectedModel.select,
         "orderBy": {}
     }
-    
-    let modelData = await readRows(contentType, query)
-
-    if(model.destructur){
-        modelData = modelData.map(model.destructur)
+    //  Get models data
+    let modelsData = await readRows(contentType, query)
+    // destruct nested fields
+    if(selectedModel.destructur){
+        modelsData = modelsData.map(selectedModel.destructur)
     }
-
-    res.render('dashboard', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles, caption : '' })
+    // set models meta data
+    const metaData = modelsInterface.reduce((res, item) => {
+            res.push({
+                "name": item.name.toLowerCase(),
+                "header": item.header,
+                "count": item.count,
+                "selected": item.name.toLowerCase() == contentType,
+                "fields": `"${JSON.stringify(item.fields)}"`
+            });
+            return res;
+    }, [])
     
-
+    const modelHeaders = selectedModel.fields
+    
+    res.render('dashboard', {user: req.user, metaData, contentType, modelsData, modelHeaders, roles, caption: '' })
 }
 
 function stringToBoolean(str){

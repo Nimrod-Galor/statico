@@ -1,10 +1,5 @@
-function deleteItemClick(contentType, id, header){
-    if(confirm(`delete Item (${header})?`)){
-        // console.log('delete', itemId)
-        // Send Delet user
-        const dataToSend = {id, header}
-        fetchData(`/admin/delete/${contentType}`, "DELETE", dataToSend)
-    }
+function deleteItemClick(header){
+    return confirm(`Delete Item (${header})?`)
 }
 
 function editItemClick(contentType, data){

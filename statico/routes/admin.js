@@ -38,7 +38,7 @@ router.post("/edit/user", ensureLoggedIn('/login'), urlencodedParser, editUser, 
     res.redirect('/admin/user')
 })
 //  Delete User
-router.delete("/delete/user", ensureLoggedIn('/login'), urlencodedParser, deleteUser, setAlertMessage, (req, res) => {
+router.post("/delete/user", ensureLoggedIn('/login'), urlencodedParser, deleteUser, setAlertMessage, (req, res) => {
     res.redirect('/admin/user')
 })
 
@@ -51,7 +51,7 @@ router.post("/edit/post", ensureLoggedIn('/login'), urlencodedParser, editPage, 
     res.redirect('/admin/page')
 })
 //  Delete Page
-router.delete("/delete/page", ensureLoggedIn('/login'), urlencodedParser, deletePage, setAlertMessage, (req, res) => {
+router.post("/delete/page", ensureLoggedIn('/login'), urlencodedParser, deletePage, setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
 
@@ -64,7 +64,7 @@ router.post("/edit/post", ensureLoggedIn('/login'), urlencodedParser, editPost, 
     res.redirect('admin/post')
 })
 //  Delete Post
-router.delete("/delete/post", ensureLoggedIn('/login'), urlencodedParser, deletePost, setAlertMessage, (req, res) => {
+router.post("/delete/post", ensureLoggedIn('/login'), urlencodedParser, deletePost, setAlertMessage, (req, res) => {
     res.redirect('/admin/post')
 })
 
