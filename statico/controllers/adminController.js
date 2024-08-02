@@ -5,16 +5,8 @@ import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import {readRows, countsRows} from '../../db.js'
 
-const roles = await readRows('role', {select:{ id: true, name: true}})
-
 // get name of all models
 const modelsName = modelsInterface.map(item => item.name)
-// count models rows
-const counts = await countsRows(modelsName)
-// update counts in models list
-for(let i=0; i< counts.length; i++){
-    modelsInterface[i].count = counts[i]
-}
 
 /*  Setup   */
 export async function admin_post_setup(req, res){
@@ -50,13 +42,26 @@ export async function admin_post_setup(req, res){
 
 /** Get Content */
 export async function admin_get_content(req, res, next){
-    ///:contentType?/*
     // get selected content type name
     const contentType = req.params.contentType.toLowerCase() || modelsInterface[0].name.toLowerCase()
+
+    
+
     // check we didnt get here by mistake
     if(!modelsName.includes(capitalizeFirstLetter(contentType))){
         next(createError(404, 'Resource not found'))
     }
+
+    //  Get roles
+    const roles = await readRows('role', {select:{ id: true, name: true}})
+
+    // count models
+    const counts = await countsRows(modelsName)
+    // update counts in models list
+    for(let i=0; i< counts.length; i++){
+        modelsInterface[i].count = counts[i]
+    }
+
     // get selected model
     const selectedModel = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
 
