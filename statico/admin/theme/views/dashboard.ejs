@@ -359,7 +359,7 @@
 
                     </header>
                     <table class="table caption-top">
-                        <caption>List of <%-contentType%></caption>
+                        <caption class="text-center fs-3 fw-bold bg-body-tertiary"><%=contentType%></caption>
                         <thead class="table-primary">
                             <tr>
                                 <% modelHeaders.forEach((field) => {%>
@@ -399,8 +399,6 @@
             </div>
         </main>
     </div>
-    
-        
 
     <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
@@ -424,24 +422,7 @@
         let pageEditor
     </script>
     <script type="module">
-        import {
-            ClassicEditor,
-            Essentials,
-            Bold,
-            Italic,
-            Font,
-            Alignment,
-            Paragraph,
-            Heading,
-            Indent,
-            IndentBlock,
-            SourceEditing,
-            AutoLink,
-            Link,
-            List,
-
-
-        } from 'ckeditor5';
+        import {ClassicEditor, Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing, AutoLink, Link, List} from 'ckeditor5';
 
         // Page
         ClassicEditor.create( document.querySelector( '.page-body-textarea' ), {
