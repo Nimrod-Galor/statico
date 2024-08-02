@@ -32,8 +32,6 @@ function userValidations(id, email, username, password, role, emailverified){
 
     if(errorMsg.length != 0){
         throw new Error(errorMsg.join("</li><li>"))
-        // res.json({errorMsg, messageTitle: 'Invalid Credentials', messageType: 'warning'})
-        // return
     }
 
     return true
@@ -49,7 +47,7 @@ function stringToBoolean(str){
 }
 
 /** Create User */
-export async function api_createUser(req, res){
+export async function createUser(req, res, next){
     //  Get user data
     let {email, username, password, role, emailverified} = req.body
 
@@ -96,14 +94,17 @@ export async function api_createUser(req, res){
         }
 
         // Send Success json
-        res.json({messageBody: msg, messageTitle: 'Success', messageType: 'success'})
+        req.crud_response = {messageBody: msg, messageTitle: 'Success', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
-export async function api_editUser(req, res){
+export async function editUser(req, res, next){
     //  Get user data
     let {id, email, username, password, role, emailverified} = req.body
 
@@ -149,14 +150,17 @@ export async function api_editUser(req, res){
         await updateRow('user', {id: selectedUser.id}, tmpUser)
 
         // Send Success json
-        res.json({messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'})
+        req.crud_response = {messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
-export async function api_deleteUser(req, res){
+export async function deleteUser(req, res, next){
     //  Get user data
     let {id, header} = req.body
 
@@ -176,10 +180,13 @@ export async function api_deleteUser(req, res){
         await deleteRow('user', {id})
 
         // Send Success json
-        res.json({messageBody: `User "${header}" was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'})
+        req.crud_response = {messageBody: `User "${header}" was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
@@ -218,7 +225,7 @@ function postValidations(id, title, body, publish, slug, metatitle, metadescript
 }
 
 /*  Create Page */
-export async function api_createPage(req, res){
+export async function createPage(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
@@ -245,7 +252,7 @@ export async function api_createPage(req, res){
                 // page with same slug exist
                 // throw new Error('page with the same slug already been taken.')
                 //  Send Error json
-                res.json({messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'})
+                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
             // update page object
@@ -256,15 +263,18 @@ export async function api_createPage(req, res){
         await createRow('page', tmpPage)
 
         // Send Success json
-        res.json({messageBody: `Page "${title}" was created successfuly`, messageTitle: 'Page Created', messageType: 'success'})
+        req.crud_response = {messageBody: `Page "${title}" was created successfuly`, messageTitle: 'Page Created', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
 /*  Edit Page */
-export async function api_editPage(req, res){
+export async function editPage(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
@@ -298,7 +308,7 @@ export async function api_editPage(req, res){
                 // page with same slug exist
                 // throw new Error('page with the same slug already been taken.')
                 //  Send Error json
-                res.json({messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'})
+                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
             // update page object
@@ -310,15 +320,18 @@ export async function api_editPage(req, res){
         await updateRow('page', {id: selectedPage.id}, tmpPage)
 
         // Send Success json
-        res.json({messageBody: `Page "${title}" was updated successfuly`, messageTitle: 'Page Updated', messageType: 'success'})
+        req.crud_response = {messageBody: `Page "${title}" was updated successfuly`, messageTitle: 'Page Updated', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
 /*  Delete Page */
-export async function api_deletePage(req, res){
+export async function deletePage(req, res, next){
      //  Get user data
      let {id, header} = req.body
 
@@ -332,15 +345,18 @@ export async function api_deletePage(req, res){
          await deleteRow('page', {id})
  
          // Send Success json
-         res.json({messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'})
+         req.crud_response = {messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'}
      }catch(errorMsg){
          // Send Error json
-         res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
+     finally{
+        next()
+    }
 }
 
 /*  Create Post */
-export async function api_createPost(req, res){
+export async function createPost(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
@@ -358,7 +374,7 @@ export async function api_createPost(req, res){
                 // post with same slug exist
                 // throw new Error('post with the same slug already been taken.')
                 //  Send Error json
-                res.json({messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'})
+                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
         }
@@ -380,15 +396,18 @@ export async function api_createPost(req, res){
         await createRow('post', tmpPost)
 
         // Send Success json
-        res.json({messageBody: `Post "${title}" was created successfuly`, messageTitle: 'Post Created', messageType: 'success'})
+        req.crud_response = {messageBody: `Post "${title}" was created successfuly`, messageTitle: 'Post Created', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
 /*  Edit Post */
-export async function api_editPost(req, res){
+export async function editPost(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
@@ -422,7 +441,7 @@ export async function api_editPost(req, res){
                 // post with same slug exist
                 // throw new Error('post with the same slug already been taken.')
                 //  Send Error json
-                res.json({messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'})
+                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
             // update post object
@@ -434,15 +453,18 @@ export async function api_editPost(req, res){
         await updateRow('post', {id: selectedPost.id}, tmpPost)
 
         // Send Success json
-        res.json({messageBody: `Post "${title}" was updated successfuly`, messageTitle: 'Post Created', messageType: 'success'})
+        req.crud_response = {messageBody: `Post "${title}" was updated successfuly`, messageTitle: 'Post Created', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
-        res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 
 /*  Delete Post */
-export async function api_deletePost(req, res){
+export async function deletePost(req, res, next){
      //  Get user data
      let {id, header} = req.body
 
@@ -459,9 +481,12 @@ export async function api_deletePost(req, res){
          await deleteRow('post', {id})
  
          // Send Success json
-         res.json({messageBody: `Post "${header}" was successfuly deleted`, messageTitle: 'Post Delete', messageType: 'success'})
+         req.crud_response = {messageBody: `Post "${header}" was successfuly deleted`, messageTitle: 'Post Delete', messageType: 'success'}
      }catch(errorMsg){
          // Send Error json
-         res.json({messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'})
+         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
+     finally{
+        next()
+    }
 }

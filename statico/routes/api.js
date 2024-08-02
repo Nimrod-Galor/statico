@@ -1,33 +1,51 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 // import bodyParser from 'body-parser'
-import  {   api_createUser, api_editUser, api_deleteUser,
-            api_createPage, api_editPage, api_deletePage,
-            api_createPost, api_editPost, api_deletePost
-        } from '../controllers/apiController.js'
+import  {   createUser, editUser, deleteUser,
+            createPage, editPage, deletePage,
+            createPost, editPost, deletePost
+        } from '../middleware/crud.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
 
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), api_createUser)
+router.post("/create/user", ensureLoggedIn('/login'), createUser, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/login'), api_editUser)
+router.post("/edit/user", ensureLoggedIn('/login'), editUser, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Delete User
-router.delete("/delete/user", ensureLoggedIn('/login'), api_deleteUser)
+router.delete("/delete/user", ensureLoggedIn('/login'), deleteUser, (req, res, next) => {
+    res.json(req.crud_response)
+})
 
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/login'), api_createPage)
+router.post("/create/page", ensureLoggedIn('/login'), createPage, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Edit Page
-router.post("/edit/post", ensureLoggedIn('/login'), api_editPage)
+router.post("/edit/post", ensureLoggedIn('/login'), editPage, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Delete Page
-router.delete("/delete/page", ensureLoggedIn('/login'), api_deletePage)
+router.delete("/delete/page", ensureLoggedIn('/login'), deletePage, (req, res, next) => {
+    res.json(req.crud_response)
+})
 
 //  Create Post
-router.post("/create/post", ensureLoggedIn('/login'), api_createPost)
+router.post("/create/post", ensureLoggedIn('/login'), createPost, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Edit Post
-router.post("/edit/post", ensureLoggedIn('/login'), api_editPost)
+router.post("/edit/post", ensureLoggedIn('/login'), editPost, (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Delete Post
-router.delete("/delete/post", ensureLoggedIn('/login'), api_deletePost)
+router.delete("/delete/post", ensureLoggedIn('/login'), deletePost, (req, res, next) => {
+    res.json(req.crud_response)
+})
 
 export default router

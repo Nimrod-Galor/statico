@@ -3,14 +3,14 @@ function deleteItemClick(contentType, id, header){
         // console.log('delete', itemId)
         // Send Delet user
         const dataToSend = {id, header}
-        fetchData(`/admin/api/delete/${contentType}`, "DELETE", dataToSend)
+        fetchData(`/admin/delete/${contentType}`, "DELETE", dataToSend)
     }
 }
 
 function editItemClick(contentType, data){
     data = JSON.parse(data)
     const form = document.getElementById(`create-${contentType}`)
-    form.action = `/admin/api/edit/${contentType}`
+    form.action = `/admin/edit/${contentType}`
     form.classList.remove('was-validated', 'create')
     form.classList.add('edit')
     //enable fieldset
@@ -60,7 +60,7 @@ function editItemClick(contentType, data){
 
 function createItemClick(contentType, fields){
     const form = document.getElementById(`create-${contentType}`)
-    form.action = `/admin/api/create/${contentType}`
+    form.action = `/admin/create/${contentType}`
     form.classList.remove('was-validated', 'edit')
     form.classList.add('create')
     //enable fieldset
@@ -132,24 +132,25 @@ function toggleClass(objId, className){
 }
 
 function validateForm(event){
-    event.preventDefault();
+    // event.preventDefault();
     const form = event.currentTarget
     form.classList.add('was-validated')
     
     if (!form.checkValidity()) {// validation Failed
         event.preventDefault()
         event.stopPropagation()
-        return
+        return false
     }
 
+    return true
     //Post form data
-    const formData = new FormData(form);
-    const dataToSend = Object.fromEntries(formData);
+    // const formData = new FormData(form);
+    // const dataToSend = Object.fromEntries(formData);
 
-    // disabel fieldset
-    form[0].disabled = true
-    //  send data
-    fetchData(form.action, "POST", dataToSend)
+    // // disabel fieldset
+    // form[0].disabled = true
+    // //  send data
+    // fetchData(form.action, "POST", dataToSend)
 }
 
 async function fetchData(action, method, dataToSend){

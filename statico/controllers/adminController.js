@@ -85,23 +85,6 @@ export async function admin_get_content(req, res, next){
                     where[filter.key] = filterOn
                 }
             }
-            
-            // if(model.filters){
-            //     // check every filter in filters list
-            //     for(let fi=0; fi<model.filters.length; fi++){
-            //         let filter = model.filters[fi]
-            //         if(param == filter.name){
-            //             // we found a filter match
-            //             let filterOn = paramsArr[++i]
-            //             // check if filteron is valid
-            //             if(isValid(filterOn, filter.type)){
-            //                 // set filter
-            //                 where[filter.key] = filterOn
-            //             }
-            //             continue;
-            //         }
-            //     }
-            // }
         }
     }
 
