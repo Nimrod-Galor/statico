@@ -60,11 +60,12 @@ export async function admin_dashboard(req, res, next){
     // Get sidebat data
     const sidebarData = modelsInterface.reduce((res, item) => {
             res.push({
-                "name": item.name,
+                "name": item.name.toLocaleLowerCase(),
                 "header": item.header,
                 "count": item.count,
                 "selected": item.name.toLowerCase() == req.contentType,
-                "fields": `"${JSON.stringify(item.fields)}"`
+                "fields": JSON.stringify(item.fields)
+                // "fields": `"${JSON.stringify(item.fields)}"`
             });
             return res;
     }, [])

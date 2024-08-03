@@ -61,8 +61,9 @@ function createItemClick(contentType, fields){
     //enable fieldset
     form[0].disabled = false
     // reset inputs
+    fields = JSON.parse(fields)
     for(const elmId in form.elements){
-        let key = JSON.parse(fields).find(item => form.elements[elmId].name === item.key.toLowerCase())
+        let key = fields.find(item => form.elements[elmId].name === item.key.toLowerCase())
         if(key === undefined){
             // fields we dont have in fields interface
             if(form.elements[elmId].name === "password"){// password is a special case
