@@ -1,3 +1,5 @@
+console.log('themea.js')
+
 function toggleClass(objId, className){
     document.getElementById(objId).classList.toggle(className);
     event.currentTarget.classList.toggle(className);
@@ -19,4 +21,22 @@ function profileDropdownClick(){
         obj.classList.add("show")
         document.body.addEventListener('click', profileDropdownClick)
     }
+}
+
+function validateForm(event){
+    const form = event.currentTarget
+    form.classList.add('was-validated')
+
+    if (!form.checkValidity()) {// validation Failed
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+    }
+
+    // start submit button spiner
+    form.classList.add('disabled')
+    // disabel submit buttn
+    event.submitter.disabled = true
+    
+    return true
 }

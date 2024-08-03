@@ -1,5 +1,6 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
+import {createUser} from '../statico/controllers/crudController.js'
 import {auth_post_login, auth_get_login, auth_logout, auth_get_signup, auth_post_singup} from '../controllers/authController.js'
 
 const router = express.Router();
@@ -17,6 +18,6 @@ router.get('/logout', auth_logout)
 router.get('/signup', auth_get_signup)
 
 /* POST /signup */
-router.post('/signup', auth_post_singup)
+router.post('/signup', createUser, auth_post_singup)
 
 export default router

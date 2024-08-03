@@ -33,10 +33,14 @@ export async function get_postBySlug(req, res, next){
         //  Get post data
         const postData = await findUnique('post', {slug})
         if(!postData){
-            // post not found
-            return next(createError(404, 'Resource not found'));
+            // try  Get page data
+            const pageData = await findUnique('page', {slug})
+            if(!pageData){
+                // post not found
+                return next(createError(404, 'Resource not found'));
+            }
+            res.render('page', { user: req.user, pageData })
         }
-
         res.render('post', { user: req.user, postData })
     }catch(err){
         console.log(err)

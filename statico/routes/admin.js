@@ -1,11 +1,12 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 import bodyParser from 'body-parser'
-import  {   createUser, editUser, deleteUser,
+import  { listContent,
+    createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
     createPost, editPost, deletePost
-} from '../middleware/crud.js'
-import {admin_post_setup, admin_get_content} from '../controllers/adminController.js'
+} from '../controllers/crudController.js'
+import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -15,11 +16,8 @@ const router = express.Router()
 // initial Setup
 router.post("/setup",urlencodedParser, admin_post_setup)
 
-// Create new user
-// router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, admin_post_createUser)
-
 // get content
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), admin_get_content)
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), listContent, admin_dashboard)
 //, "/create/:contentType", "/adit/:contentType", "delete/:contentType"
 
 function setAlertMessage(req, res, next){

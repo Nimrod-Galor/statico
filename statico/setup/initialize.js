@@ -10,6 +10,7 @@ import crypto from 'crypto'
 const prisma = new PrismaClient()
 
 export default async function initialize(email, emailVerified, password, userName){
+    const progress = []
     // check for defaul roles
     return await prisma.role.count()
     .then(async (roles) => {
@@ -18,7 +19,7 @@ export default async function initialize(email, emailVerified, password, userNam
             throw new Error('Installation has already been completed', "")
         }
     }).then(async () => {
-        //  create subscribe rRol
+        //  create subscribe Role
         return await prisma.role.create({
             data: {
                 name: 'subscriber',
@@ -28,6 +29,7 @@ export default async function initialize(email, emailVerified, password, userNam
         })
     })
     .then(async () => {
+        progress.push('Subscribe Role Created.')
         //  create contributor Role
         return await prisma.role.create({
             data: {
@@ -37,6 +39,7 @@ export default async function initialize(email, emailVerified, password, userNam
         })
     })
     .then(async () => {
+        progress.push('Contributer Role Created.')
         //  create author Role
         await prisma.role.create({
                 data: {
@@ -46,6 +49,7 @@ export default async function initialize(email, emailVerified, password, userNam
         })
     })
     .then(async () => {
+        progress.push('Author Role Created.')
         //  create editor Role
         return await prisma.role.create({
             data: {
@@ -55,6 +59,7 @@ export default async function initialize(email, emailVerified, password, userNam
         })
     })
     .then(async () => {
+        progress.push('Editor Role Created.')
         //  create admin Role
         return await prisma.role.create({
             data: {
@@ -64,6 +69,7 @@ export default async function initialize(email, emailVerified, password, userNam
         })
     })
     .then(async (adminRole) => {
+        progress.push('Admin Role Created.')
         // // hash passowrd
         const salt = crypto.randomBytes(16)
         const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
@@ -84,10 +90,11 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Admin user Created.')
         // Create Default home page
         const homePage = {
-            metaTitle:  "Statico Default Home Page",
-            metaDescription:  "Statico Default Home Page",
+            metatitle:  "Statico Default Home Page",
+            metadescription:  "Statico Default Home Page",
             slug:   "home",
             title:  "Statico Default Home Page",
             body:  "Statico Default Home Page",
@@ -97,10 +104,11 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Default Home page Created.')
         // Create Default Features page
         const featuresPage = {
-            metaTitle:  "Statico Default Features Page",
-            metaDescription:  "Statico Default Features Page",
+            metatitle:  "Statico Default Features Page",
+            metadescription:  "Statico Default Features Page",
             slug:   "features",
             title:  "Statico Default Features Page",
             body:  "Statico Default Features Page",
@@ -110,10 +118,11 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Default Features page Created.')
         // Create Default Pricing page
         const pricingPage = {
-            metaTitle:  "Statico Default Pricing Page",
-            metaDescription:  "Statico Default Pricing Page",
+            metatitle:  "Statico Default Pricing Page",
+            metadescription:  "Statico Default Pricing Page",
             slug:   "pricing",
             title:  "Statico Default Pricing Page",
             body:  "Statico Default Pricing Page",
@@ -123,10 +132,11 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Default Home pricing Created.')
         // Create Default FAQ page
         const faqPage = {
-            metaTitle:  "Statico Default FAQ Page",
-            metaDescription:  "Statico Default FAQ Page",
+            metatitle:  "Statico Default FAQ Page",
+            metadescription:  "Statico Default FAQ Page",
             slug:   "faq",
             title:  "Statico Default FAQ Page",
             body:  "Statico Default FAQ Page",
@@ -136,10 +146,11 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Default FAQ page Created.')
         // Create Default About page
         const aboutPage = {
-            metaTitle:  "Statico Default About Page",
-            metaDescription:  "Statico Default About Page",
+            metatitle:  "Statico Default About Page",
+            metadescription:  "Statico Default About Page",
             slug:   "about",
             title:  "Statico Default About Page",
             body:  "Statico Default About Page",
@@ -149,13 +160,15 @@ export default async function initialize(email, emailVerified, password, userNam
         return
     })
     .then(async () => {
+        progress.push('Default About page Created.')
         //  if we got up to heare with no errors, delete setup (index) file from public folder.
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
         const filePath = path.join( __dirname, '..', '..', 'public', 'index.html')
         await unlink(filePath)
 
-        return {message: `Successfully created roles and Admin user: "${userName}"`, success: true}
+        progress.push(`Successfully created Roles, Default pages and Admin user: "${userName}"`)
+        return {message: progress, success: true}
     })
     .catch((err) => {
         return err
@@ -164,23 +177,3 @@ export default async function initialize(email, emailVerified, password, userNam
         await prisma.$disconnect()
     })
 }
-
-            // console.log('Start creating roles')
-
-            // let parr = []
-            // // create subscriber role
-
-            // // create contributor role
-
-            // // create author role
-
-            // // create editor role
-
-            // // create administrator role
-
-            // const [subscriberRole, contributorRole, authorRole, editorRole, adminRole] = await Promise.all(parr)
-
-
-    //         return user
-    //     }
-    // })

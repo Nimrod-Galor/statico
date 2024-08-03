@@ -6,7 +6,7 @@ import modelsInterface from '../interface/modelsInterface.js'
 import {readRows, countsRows} from '../../db.js'
 
 // get name of all models
-const modelsName = modelsInterface.map(item => item.name)
+const modelsName = modelsInterface.map(item => item.name.toLowerCase())
 
 /*  Setup   */
 export async function admin_post_setup(req, res){
@@ -18,7 +18,7 @@ export async function admin_post_setup(req, res){
     const results = await initialize(email, emailverified, password, username)
 
     if(results.success){
-        req.session.messages = [results.message]
+        req.session.messages = results.message
         req.session.messgaeTitle = 'Success'
         req.session.messageType = 'success'
         res.redirect('/login')
@@ -32,7 +32,7 @@ export async function admin_post_setup(req, res){
 
         // render the error page
         res.status(results.status || 500);
-        res.render('error', {user: req.user, modelsInterface, contentType, modelData, modelHeaders: model.fields, roles });
+        res.render('error');
     }
 }
 
@@ -41,19 +41,14 @@ export async function admin_post_setup(req, res){
 
 
 /** Get Content */
-export async function admin_get_content(req, res, next){
-    // get selected content type name
-    const contentType = req.params.contentType.toLowerCase() || modelsInterface[0].name.toLowerCase()
-
-    
-
-    // check we didnt get here by mistake
-    if(!modelsName.includes(capitalizeFirstLetter(contentType))){
-        next(createError(404, 'Resource not found'))
+export async function admin_dashboard(req, res, next){
+    // check for errors
+    if(req.crud_response){
+        res.locals.messages = [req.crud_response.messageBody];
+        res.locals.messageTitle = req.crud_response.messageTitle
+        res.locals.messageType = req.crud_response.messageType
+        res.locals.hasMessages = true
     }
-
-    //  Get roles
-    const roles = await readRows('role', {select:{ id: true, name: true}})
 
     // count models
     const counts = await countsRows(modelsName)
@@ -62,61 +57,26 @@ export async function admin_get_content(req, res, next){
         modelsInterface[i].count = counts[i]
     }
 
-    // get selected model
-    const selectedModel = modelsInterface.find((model) => model.name.toLowerCase() == contentType.toLowerCase())
-
-    // build models data query string
-    const where = {}
-    // const orderBy = {}
-    if(req.params[0]){
-        // check for extra parmas
-        const paramsArr = req.params[0].split('/')
-        for(let i=0; i<paramsArr.length;i++){
-            const param = paramsArr[i]
-            // check if param of type filter 
-            const filter = selectedModel.filters.find(f => f.name == param)
-            if(filter){
-                let filterOn = paramsArr[++i]
-                // check if filteron is valid
-                if(isValid(filterOn, filter.type)){
-                    if(filter.type === "BooleanString"){
-                        filterOn = stringToBoolean(filterOn)
-                    }
-                    // set filter
-                    where[filter.key] = filterOn
-                }
-            }
-        }
-    }
-
-    const query = {
-        "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
-        "take": 10,
-        where,
-        "select": selectedModel.select,
-        "orderBy": {}
-    }
-    //  Get models data
-    let modelsData = await readRows(contentType, query)
-    // destruct nested fields
-    if(selectedModel.destructur){
-        modelsData = modelsData.map(selectedModel.destructur)
-    }
-    // set models meta data
-    const metaData = modelsInterface.reduce((res, item) => {
+    // Get sidebat data
+    const sidebarData = modelsInterface.reduce((res, item) => {
             res.push({
-                "name": item.name.toLowerCase(),
+                "name": item.name,
                 "header": item.header,
                 "count": item.count,
-                "selected": item.name.toLowerCase() == contentType,
+                "selected": item.name.toLowerCase() == req.contentType,
                 "fields": `"${JSON.stringify(item.fields)}"`
             });
             return res;
     }, [])
+
+    //  Get roles
+    const roles = await readRows('role', {select:{ id: true, name: true}})
+
+    const modelHeaders = req.selectedModel?.fields || []
+    const modelsData = req.modelsData || []
+    const contentType = req.contentType || ''
     
-    const modelHeaders = selectedModel.fields
-    
-    res.render('dashboard', {user: req.user, metaData, contentType, modelsData, modelHeaders, roles, caption: '' })
+    res.render('dashboard', {user: req.user, sidebarData, contentType, modelsData, modelHeaders, roles, caption: '' })
 }
 
 function stringToBoolean(str){

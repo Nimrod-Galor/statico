@@ -2,7 +2,7 @@ import {readRows, readRow, createRow} from '../db.js'
 import isValid from '../statico/admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
-export default async function createUser(email, userName, password, roleId, emailVerified = false){
+export default async function createUser(email, username, password, roleId, emailverified = false){
     // fields validation
     try{
 
@@ -24,10 +24,10 @@ export default async function createUser(email, userName, password, roleId, emai
         if( !isValid(email, "Email")){
             errorMsg.push('Invalid Email address')
         }
-        if(!isValid(emailVerified, "Boolean")){
+        if(!isValid(emailverified, "Boolean")){
             errorMsg.push('Invalid Credentials')
         }
-        if(!isValid(userName, "UserName")){
+        if(!isValid(username, "username")){
             errorMsg.push('Invalid User name')
         }
         if(!isValid(password, "Password")){
@@ -59,10 +59,10 @@ export default async function createUser(email, userName, password, roleId, emai
             // create new user
             const tmpUser = {
               email,
-              emailVerified, 
+              emailverified, 
               password: key.toString('hex'),
               salt: salt.toString('hex'),
-              userName
+              username
             }
 
             if(roleId != undefined){
@@ -76,10 +76,10 @@ export default async function createUser(email, userName, password, roleId, emai
             return {user}
         
         }catch(err){
-            return {errorMsg: [err], messageTitle: 'Error', messageType: 'error'}
+            return {errorMsg: [err], messageTitle: 'Error', messageType: 'danger'}
         }
     }catch(err){
-        return {errorMsg: [err], messageTitle: 'Error', messageType: 'error'}
+        return {errorMsg: [err], messageTitle: 'Error', messageType: 'danger'}
     }
 
 

@@ -1,7 +1,75 @@
-import {findUnique, updateRow, createRow, deleteRow, deleteRows} from '../../db.js'
+import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows} from '../../db.js'
+import createError from 'http-errors'
+import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
+
+/*  admin list content  */
+export async function listContent(req, res, next){
+    try{
+        // get selected content type name
+        let contentType = req.params.contentType || modelsInterface[0].name
+        contentType = contentType.toLowerCase()
+    
+        // get selected model
+        const selectedModel = modelsInterface.find((model) => model.name.toLowerCase() == contentType)
+    
+        // check we didnt get here by mistake
+        if(selectedModel === undefined){
+            next(createError(404, 'Resource not found'))
+            return
+        }
+    
+        // build models data query string
+        const where = {}
+        // const orderBy = {}
+        if(req.params[0]){
+            // check for extra parmas
+            const paramsArr = req.params[0].split('/')
+            for(let i=0; i<paramsArr.length;i++){
+                const param = paramsArr[i]
+                // check if param of type filter 
+                const filter = selectedModel.filters.find(f => f.name == param)
+                if(filter){
+                    let filterOn = paramsArr[++i]
+                    // check if filteron is valid
+                    if(isValid(filterOn, filter.type)){
+                        if(filter.type === "BooleanString"){
+                            filterOn = stringToBoolean(filterOn)
+                        }
+                        // set filter
+                        where[filter.key] = filterOn
+                    }
+                }
+            }
+        }
+    
+        const query = {
+            "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
+            "take": 10,
+            where,
+            "select": selectedModel.select,
+            "orderBy": {}
+        }
+        //  Get models data
+        let modelsData = await readRows(contentType, query)
+        // destruct nested fields
+        if(selectedModel.destructur){
+            modelsData = modelsData.map(selectedModel.destructur)
+        }
+
+        req.contentType = contentType
+        req.selectedModel = selectedModel
+        req.modelsData = modelsData
+    }catch(errorMsg){
+        //  Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
 
 function userValidations(id, email, username, password, role, emailverified){
     // Validate user Data
@@ -49,12 +117,27 @@ function stringToBoolean(str){
 /** Create User */
 export async function createUser(req, res, next){
     //  Get user data
-    let {email, username, password, role, emailverified} = req.body
+    let {email, username, password, role, emailverified = 'true'} = req.body
 
     // Convert emailverified string to boolean
     emailverified = stringToBoolean(emailverified)
 
     try{
+        if(role == undefined){
+            // no role selected, get default role
+            const defaultRole = await readRow('role', {
+                select: {id: true},
+                where: {default: true}
+            })
+            
+            role = defaultRole.id
+        }
+        
+        // const roles = await readRows('role', {select:{ id: true, name: true}})
+        // const selectedRole = roles.find((r) => r.name.toLowerCase() ===  role.toLowerCase())
+
+
+
         //  Validate user data
         userValidations(undefined, email, username, password, role, emailverified)
 
@@ -74,14 +157,10 @@ export async function createUser(req, res, next){
           emailVerified: emailverified, 
           password: key.toString('hex'),
           salt: salt.toString('hex'),
-          userName: username
-        }
-
-        //  Set new user role
-        if(role != undefined){
-            tmpUser.role = {
-                connect: {id: role}
-              }
+          userName: username,
+          role: {
+            connect: {id: role}
+          }
         }
 
         // Create new user

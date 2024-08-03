@@ -4,7 +4,7 @@ import ensureLogIn from 'connect-ensure-login'
 import  {   createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost
-        } from '../middleware/crud.js'
+        } from '../controllers/crudController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()

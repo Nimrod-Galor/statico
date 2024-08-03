@@ -1,0 +1,62 @@
+.pointer{cursor: pointer;}
+
+.close-btn{
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%235f6368"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>');
+    width: 24px;
+    height: 24px;
+}
+
+/* Top Alert */
+.top-alert{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 250ms ease-out;
+    padding: 15px 0;
+}
+
+.top-alert.open{
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 250ms ease-out;
+}
+
+.top-alert > div{
+    overflow: hidden;
+}
+
+.top-alert-closebtn{
+    cursor: pointer;
+    float: right;
+    transition: box-shadow 0.1s;
+    border: 1px solid #a3cfbb;
+    border-radius: 6px;
+}
+
+.top-alert-closebtn:hover{
+    border: 1px solid var(--border-color);
+    box-shadow: 5px 5px 5px #212529;
+    border: 1px solid #a3cfbb;
+    border-radius: 6px;
+    transition: box-shadow 0.1s;
+}
+
+.top-alert-title{
+    font-size: 1.8rem;
+}
+
+/* Login / Signup   */
+
+.form-signin {
+    max-width: 500px;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ededed
+}
+
+/*  Form Spiner */
+form button[type="submit"] .spinner-border{
+    display: none;
+}
+
+form.disabled button[type="submit"] .spinner-border{
+    display: inline-block;
+}

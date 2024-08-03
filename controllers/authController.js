@@ -1,7 +1,6 @@
 import passport from 'passport'
-import createUser from '../modules/createUser.js'
 
-// Login POST
+/*  Login POST  */
 export function auth_post_login(req, res, next){
   passport.authenticate('local', {
     successReturnToOrRedirect: '/',
@@ -9,11 +8,13 @@ export function auth_post_login(req, res, next){
     failureMessage: true
   })(req, res, next)
 }
-//  Login GET
+
+/*  Login GET */
 export function auth_get_login(req, res, next){
     res.render('login', { user: null })
 }
-// Logout
+
+/*  Logout  */
 export function auth_logout(req, res, next) {
     req.logout(function(err) {
       if (err) {
@@ -22,35 +23,29 @@ export function auth_logout(req, res, next) {
       res.redirect('/admin')
     })
 }
-// Gignup GET
+
+/*  Gignup GET  */
 export function auth_get_signup(req, res, next) {
-    res.locals.title = 'Signup'
-    res.locals.action = '/signup'
-    res.render('signup', { user: null })
+    res.render('signup')
 }
-// Signup POST
+/*  Signup POST */
 export async function auth_post_singup(req, res, next) {
-    const { email, userName, password } = req.body
-  
-    // sanitize ** todo
-  
-    try{
-      //  create new user
-      const result = await createUser(email, userName, password)
-  
-      if(result.user){// success
-        req.session.messages = ['Your account has been successfully created. An email with a verification code was just sent to: ' + result.user.email]
-        req.session.messageType = 'success'
-        res.redirect('/login')
-      }else{
-        res.locals.messages = result.errorMsg
-        res.locals.messageTitle = result.messageTitle
-        res.locals.messageType = result.messageType
-        res.locals.hasMessages = true
-        res.render('signup', {user: undefined})
-      }
-    }catch(err){
-      console.error(err)
-      return next(err)
+  try{
+    if(req.crud_response.messageType === 'success'){
+      // user creater successfuly
+      req.session.messages = [req.crud_response.messageBody]
+      req.session.messageType = req.crud_response.messageType
+      req.session.messageTitle = req.crud_response.messageTitle
+      res.redirect('/login')
+    }else{
+      // error
+      req.localse.messages = [req.crud_response.messageBody]
+      req.localse.messageType = req.crud_response.messageType
+      req.localse.messageTitle = req.crud_response.messageTitle
+      res.render('signup')
     }
+  }catch(err){
+  console.error(err)
+  return next(err)
+  }
 }
