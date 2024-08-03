@@ -51,6 +51,15 @@
     box-shadow: 3px 3px 5px #aeaeae;
 }
 
+
+/*  Sidebar */
+#sidebar .comment .modelAddBtn{
+    display: none;
+}
+
+#sidebar .role .modelAddBtn{
+    display: none;
+}
 /* Top Alert */
 
 .top-alert{
