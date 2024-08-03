@@ -308,8 +308,13 @@ export async function createPage(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
-    // Convert publish string to boolean
-    publish = stringToBoolean(publish)
+    if(publish){
+        // Convert publish string to boolean
+        publish = stringToBoolean(publish)
+    }else{
+        // pulish was not checked. we get undefined
+        publish = false
+    }
 
     try{
         //  Validate user data
@@ -357,8 +362,13 @@ export async function editPage(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
-    // Convert publish string to boolean
-    publish = stringToBoolean(publish)
+    if(publish){
+        // Convert publish string to boolean
+        publish = stringToBoolean(publish)
+    }else{
+        // pulish was not checked. we get undefined
+        publish = false
+    }
 
     try{
         //  Validate user data
@@ -439,8 +449,13 @@ export async function createPost(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
-    // Convert publish string to boolean
-    publish = stringToBoolean(publish)
+    if(publish){
+        // Convert publish string to boolean
+        publish = stringToBoolean(publish)
+    }else{
+        // pulish was not checked. we get undefined
+        publish = false
+    }
 
     try{
         //  Validate user data
@@ -490,8 +505,13 @@ export async function editPost(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
-    // Convert publish string to boolean
-    publish = stringToBoolean(publish)
+    if(publish){
+        // Convert publish string to boolean
+        publish = stringToBoolean(publish)
+    }else{
+        // pulish was not checked. we get undefined
+        publish = false
+    }
 
     try{
         //  Validate user data
