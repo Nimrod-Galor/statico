@@ -320,27 +320,30 @@ export async function createPage(req, res, next){
         //  Validate user data
         postValidations(undefined ,title, body, publish, slug, metatitle, metadescription)
 
-        // Set new Post object
-        const tmpPage = {
-            title,
-            body,
-            publish,
-            metatitle,
-            metadescription
-        }
-
         if(slug != ''){
             // check if slug exist
             const pageWithSlug = await findUnique('page', {slug})
             if(pageWithSlug){
                 // page with same slug exist
-                // throw new Error('page with the same slug already been taken.')
-                //  Send Error json
                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
-            // update page object
-            tmpPage.slug = slug
+            const postWithSlug = await findUnique('post', {slug})
+            if(postWithSlug){
+                // post with same slug exist
+                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+                return
+            }
+        }
+
+        // Set new Post object
+        const tmpPage = {
+            title,
+            body,
+            publish,
+            slug,
+            metatitle,
+            metadescription
         }
 
         // Create Page
@@ -395,9 +398,13 @@ export async function editPage(req, res, next){
             const pageWithSlug = await findUnique('page', {slug})
             if(pageWithSlug){
                 // page with same slug exist
-                // throw new Error('page with the same slug already been taken.')
-                //  Send Error json
                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+                return
+            }
+            const postWithSlug = await findUnique('post', {slug})
+            if(postWithSlug){
+                // post with same slug exist
+                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
             // update page object
@@ -466,9 +473,13 @@ export async function createPost(req, res, next){
             const postWithSlug = await findUnique('post', {slug})
             if(postWithSlug){
                 // post with same slug exist
-                // throw new Error('post with the same slug already been taken.')
-                //  Send Error json
                 req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+                return
+            }
+            const pageWithSlug = await findUnique('page', {slug})
+            if(pageWithSlug){
+                // page with same slug exist
+                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
         }
@@ -538,16 +549,19 @@ export async function editPost(req, res, next){
             const postWithSlug = await findUnique('post', {slug})
             if(postWithSlug){
                 // post with same slug exist
-                // throw new Error('post with the same slug already been taken.')
-                //  Send Error json
                 req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+                return
+            }
+            const pageWithSlug = await findUnique('page', {slug})
+            if(pageWithSlug){
+                // page with same slug exist
+                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
             // update post object
             tmpPost.slug = slug
         }
 
-        
         // Update Post
         await updateRow('post', {id: selectedPost.id}, tmpPost)
 
