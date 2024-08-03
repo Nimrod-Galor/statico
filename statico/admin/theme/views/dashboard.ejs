@@ -380,6 +380,10 @@
                                                 <a href="/admin/<%-field.relation + '/' + field.filter + '/' + data[field.filterKey]%>">
                                                     <%-data[field.key]%>
                                                 </a>
+                                            <%}else if(field.key === 'slug'){%>
+                                                <a href="/<%= data[field.key]%>">
+                                                    <%-data[field.key]%>
+                                                </a>
                                             <%}else{%>
                                                 <%-data[field.key]%>
                                             <%}%>
