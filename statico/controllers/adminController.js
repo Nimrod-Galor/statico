@@ -76,8 +76,9 @@ export async function admin_dashboard(req, res, next){
     const modelHeaders = req.selectedModel?.fields || []
     const modelsData = req.modelsData || []
     const contentType = req.contentType || ''
-    
-    res.render('dashboard', {user: req.user, sidebarData, contentType, modelsData, modelHeaders, roles, caption: '' })
+    const numberOfPages = Math.ceil(sidebarData.find(item => item.name === contentType).count / 10)
+    const currentPage = parseInt(req.query.page) || 1
+    res.render('dashboard', {user: req.user, sidebarData, contentType, modelsData, modelHeaders, roles, caption: '', numberOfPages, currentPage })
 }
 
 function stringToBoolean(str){
