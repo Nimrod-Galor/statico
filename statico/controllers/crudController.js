@@ -613,7 +613,7 @@ function commentValidation(postid, parent, body){
         errorMsg.push('Invalid Post')
     }
 
-    if(parent != undefined){
+    if(parent != ''){
         if(!isValid(parent, "objectid")){
             errorMsg.push('Invalid Comment')
         }
@@ -629,6 +629,88 @@ function commentValidation(postid, parent, body){
 
     return true
 }
+
+/*  Get comments    */
+export async function getComment(req, res, next){
+    const {post, page = 1} = req.body
+
+    try{
+        // validate User data
+        if(!isValid(post, "objectid")){
+            throw new Error('Invalid Post')
+        }
+
+        if(!isValid(page, "number")){
+            throw new Error('Invalid Page Number')
+        }
+
+        const replies = {
+            select: {
+                id: true,
+                createdAt: true,
+                comment: true,
+                author: {
+                    select: {
+                        userName: true
+                    }
+                },
+                replies: this
+            }
+        }
+
+        const query = {
+            "skip": parseInt(page - 1) * 10,
+            "take": 25,
+            "where": {postId: post, publish: true, parent: null},
+            
+            "select": {
+                id: true,
+                createdAt: true,
+                comment: true,
+                author: {
+                    select: {
+                        userName: true
+                    }
+                },
+                replies: {
+                    select: {
+                        id: true,
+                        createdAt: true,
+                        comment: true,
+                        author: {
+                            select: {
+                                userName: true
+                            }
+                        },
+                        replies
+                    }
+                }
+            },
+            "orderBy": {}
+        }
+
+        // Get comments
+        let comments = await readRows('comment', query)
+        // comments = deconstructComments(comments)
+
+        req.crud_response = {messageBody: comments, messageTitle: '', messageType: 'data'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+
+// function deconstructComments(comments){
+//     return comments.map((item) => ({
+//         ...item,
+//         author: item.author.userName,
+//         replies: item.replies.length > 0 ? deconstructComments(item.replies): []
+//     }))
+// }
 
 /*  Create Comment  */
 export async function createComment(req, res, next){
@@ -650,7 +732,9 @@ export async function createComment(req, res, next){
         }
 
         if(parent){
-            tmpComment.parent = parent
+            tmpComment.parent = {
+                connect: {id: parent}
+            }
         }
 
         // Create Comment

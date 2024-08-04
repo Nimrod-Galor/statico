@@ -85,3 +85,12 @@ form button[type="submit"] .spinner-border{
 form.disabled button[type="submit"] .spinner-border{
     display: inline-block;
 }
+
+/*  Comments    */
+.comments-wrapper{
+    border: 1px solid #ededed;
+}
+
+.comments-list{
+    list-style: none;
+}

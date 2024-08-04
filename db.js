@@ -23,6 +23,14 @@ const prisma = new PrismaClient().$extends({
           return new Date(post.updatedAt).toLocaleString()
         },
       },
+    },
+    comment: {
+      createdAt: {
+        needs: { createdAt: true },
+        compute(post) {
+          return new Date(post.createdAt).toLocaleString()
+        },
+      }
     }
   },
 })
