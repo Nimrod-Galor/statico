@@ -9,6 +9,7 @@ const regTitle = /^[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}$/
 const regSlug = /^[a-zA-Z0-9\-_]{3,64}$/
 const regMetaTitle = /^[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/\']{1,128}$/
 const regMetaDescription = /^[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/\']{1,256}$/
+// const regEncoded = //
  // Todo const regBody = /^$/
 export default function isValid(data, type,){
 

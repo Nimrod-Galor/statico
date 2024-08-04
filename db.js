@@ -129,10 +129,14 @@ async function countsRows(collectionsName){
   return res
 }
 
-async function findUnique(collectionName, where){
-  const res = await prisma[collectionName].findUnique({
+async function findUnique(collectionName, where, include){
+  const obj = {
     where
-  })
+  }
+  if(include){
+    obj.include = include
+  }
+  const res = await prisma[collectionName].findUnique(obj)
   .catch(err => {throw new Error(err)})
   .finally(async () => {
     await prisma.$disconnect()

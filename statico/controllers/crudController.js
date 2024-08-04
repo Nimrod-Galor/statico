@@ -239,15 +239,24 @@ export async function editUser(req, res, next){
     }
 }
 
+function validateDeleteData(id, header){
+    //  Validate user data
+    if(!isValid(id, "objectid")){
+        throw new Error('Invalid User')
+   }
+
+   if(!isValid(header, "body")){
+       throw new Error('Invalid Header')
+   }
+}
+
 export async function deleteUser(req, res, next){
     //  Get user data
     let {id, header} = req.body
 
     try{
         //  Validate user data
-        if(!isValid(id, "objectid")){
-             throw new Error('Invalid User')
-        }
+        validateDeleteData(id, header)
 
         // Delete all user Comments
         await deleteRows('comment', {authorId: id})
@@ -433,10 +442,8 @@ export async function deletePage(req, res, next){
 
      try{
          //  Validate user data
-         if(!isValid(id, "objectid")){
-              throw new Error('Invalid User')
-         }
- 
+         validateDeleteData(id, header)
+
          //  Delete Page
          await deleteRow('page', {id})
  
@@ -583,9 +590,7 @@ export async function deletePost(req, res, next){
 
      try{
          //  Validate user data
-         if(!isValid(id, "objectid")){
-              throw new Error('Invalid User')
-         }
+         validateDeleteData(id, header)
  
          // Delete all Post Comments
          await deleteRows('comment', {postId: id})
@@ -784,14 +789,11 @@ export async function editComment(req, res, next){
 
 // Function to fetch all comments and replies recursively
 async function fetchAllComments(commentId) {
-    const comment = findUnique('comment', {
-                        where: { id: commentId },
-                        include: { replies: true }
-                    })
+    const comment = await findUnique('comment',  { id: commentId }, { replies: true })
     // const comment = await prisma.comment.findUnique({
-    //     where: { id: commentId },
-    //     include: { replies: true }
-    // });
+    //                     where: { id: commentId },
+    //                     include: { replies: true }
+    //                 })
 
     if (!comment) {
         throw new Error(`Comment with id ${commentId} not found.`);
@@ -808,28 +810,25 @@ async function fetchAllComments(commentId) {
 }
 
 /*  Delete Comment and replies*/
-export async function deleteComment(req, res, nect){
-    const {id} = req.body
+export async function deleteComment(req, res, next){
+    const {id, header} = req.body
 
     try {
         // Validate User data
-        if(!isValid(id, "objectid")){
-            throw new Error('Invalid Post')
-        }
-
+        validateDeleteData(id, header)
 
         // Fetch all comments and replies recursively
         const commentsToDelete = await fetchAllComments(id);
 
         // Delete comments and replies
         for (const comment of commentsToDelete.reverse()) {
-            await deleteRow('comment', {id})
+            await deleteRow('comment', {id: comment.id})
             // await prisma.comment.delete({
             //     where: { id: comment.id }
             // });
         }
 
-        req.crud_response = {messageBody: `Deleted comment with id ${id} and all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
+        req.crud_response = {messageBody: `Deleted comment "${header}" And all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

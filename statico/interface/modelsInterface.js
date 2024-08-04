@@ -128,8 +128,8 @@ const modelsInterface = [
         "header": "Comments",
         "description": "",
         "fields": [
-            {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "comment", header: "Comment", type: "String"},
+            {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "publish", header: "Published", type: "Boolean"},
             {key: "author", header: "Author", type: "String", relation: "user", filter: "id", filterKey: "authorId"},
             {key: "post", header: "Post", type: "String", relation: "post", filter: "id", filterKey: "postId" },

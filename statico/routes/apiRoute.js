@@ -4,51 +4,54 @@ import ensureLogIn from 'connect-ensure-login'
 import  {   createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost,
-            getComment, createComment, editComment
+            getComment, createComment, editComment, deleteComment
         } from '../controllers/crudController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
-
+/*  User    */
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), createUser, (req, res, next) => {
+router.post("/create/user", ensureLoggedIn('/json-alert/login'), createUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/login'), editUser, (req, res, next) => {
+router.post("/edit/user", ensureLoggedIn('/json-alert/login'), editUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete User
-router.delete("/delete/user", ensureLoggedIn('/login'), deleteUser, (req, res, next) => {
+router.delete("/delete/user", ensureLoggedIn('/json-alert/login'), deleteUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 
+/*  Page    */
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/login'), createPage, (req, res, next) => {
+router.post("/create/page", ensureLoggedIn('/json-alert/login'), createPage, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit Page
-router.post("/edit/post", ensureLoggedIn('/login'), editPage, (req, res, next) => {
+router.post("/edit/post", ensureLoggedIn('/json-alert/login'), editPage, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete Page
-router.delete("/delete/page", ensureLoggedIn('/login'), deletePage, (req, res, next) => {
+router.delete("/delete/page", ensureLoggedIn('/json-alert/login'), deletePage, (req, res, next) => {
     res.json(req.crud_response)
 })
 
+/*  Post    */
 //  Create Post
-router.post("/create/post", ensureLoggedIn('/login'), createPost, (req, res, next) => {
+router.post("/create/post", ensureLoggedIn('/json-alert/login'), createPost, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit Post
-router.post("/edit/post", ensureLoggedIn('/login'), editPost, (req, res, next) => {
+router.post("/edit/post", ensureLoggedIn('/json-alert/login'), editPost, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete Post
-router.delete("/delete/post", ensureLoggedIn('/login'), deletePost, (req, res, next) => {
+router.delete("/delete/post", ensureLoggedIn('/json-alert/login'), deletePost, (req, res, next) => {
     res.json(req.crud_response)
 })
 
+/*  Comment    */
 // Get Comments
 router.post("/comments", getComment, (req, res, next) => {
     res.json(req.crud_response)
@@ -57,10 +60,13 @@ router.post("/comments", getComment, (req, res, next) => {
 router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), createComment, (req, res, next) => {
     res.json(req.crud_response)
 })
-// Create Comment
+// Edit Comment
 router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), editComment, (req, res, next) => {
     res.json(req.crud_response)
 })
-
+// Delete Comment
+router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), deleteComment, (req, res, next) => {
+    res.json(req.crud_response)
+})
 
 export default router

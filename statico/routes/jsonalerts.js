@@ -6,4 +6,8 @@ router.get("/logintocomment", (req, res, next) => {
     res.json({messageBody: 'Please login to comment', messageTitle: 'Alert', messageType: 'warning'})
 })
 
+router.get("/login", (req, res, next) => {
+    res.json({messageBody: 'Please login.', messageTitle: 'Alert', messageType: 'warning'})
+})
+
 export default router
