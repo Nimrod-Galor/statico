@@ -58,6 +58,8 @@ function constractComment(parentObj, data, commentIndex){
     }
 }
 
+let activeForm
+
 async function postComment(event){
 
     console.log("create comments")
@@ -65,33 +67,32 @@ async function postComment(event){
     event.preventDefault()
     event.stopPropagation()
 
-    const form = event.currentTarget
-    form.classList.add('was-validated')
+    activeForm = event.currentTarget
+    activeForm.classList.add('was-validated')
 
-    if (!form.checkValidity()) {// validation Failed
+    if (!activeForm.checkValidity()) {// validation Failed
         return false
     }
 
     // start submit button spiner
-    form.classList.add('disabled')
+    activeForm.classList.add('disabled')
     // disabel submit buttn
     // event.submitter.disabled = true
 
     //Post form data
-    const formData = new FormData(form);
+    const formData = new FormData(activeForm);
     const dataToSend = Object.fromEntries(formData);
 
     // disabel fieldset
-    form[0].disabled = true
+    activeForm[0].disabled = true
     //  send data
-    await fetchData(form.action, "POST", dataToSend)
+    await fetchData(activeForm.action, "POST", dataToSend)
     .then((data) => {
         console.log('data', data)
-        // const form = document.getElementById('create-comment')
-        form.classList.remove('disabled', 'was-validated')
-        form[0].disabled = false
-        form.reset()
-        alertComment(data)
+        activeForm.classList.remove('disabled', 'was-validated')
+        activeForm[0].disabled = false
+        activeForm.reset()
+        alertComment(data, activeForm)
     })
 }
 
@@ -104,25 +105,16 @@ async function fetchData(action, method, dataToSend){
         }
     })
     .then(res => res.json())
-    // .then(data => {
-    //     console.log('data', data)
-    //     // close model
-    //     closeModelView()
-    //     // show alert message
-    //     topAlert(data.messageType, data.messageTitle, data.messageBody)
-    //     // reload page
-    //     // ***ToDo
-    // })
     .catch(err => {
         console.log('error', err)
     })
 }
 
-function alertComment(data){
-    document.getElementById('comment-alert-type').classList.add(`alert-${data.messageType}`)
-    document.getElementById('comment-alert-title').innerText = data.messageTitle
-    document.getElementById('comment-alert-body').innerHTML = `<ul><li>${data.messageBody}</li></ul>`
-    document.getElementById('comment-alert').classList.add('open')
+function alertComment(data, activeForm){
+    activeForm.querySelector('#comment-alert-type').classList.add(`alert-${data.messageType}`)
+    activeForm.querySelector('#comment-alert-title').innerText = data.messageTitle
+    activeForm.querySelector('#comment-alert-body').innerHTML = `<ul><li>${data.messageBody}</li></ul>`
+    activeForm.querySelector('#comment-alert').classList.add('open')
 }
 
 document.addEventListener('DOMContentLoaded', getComments(1))

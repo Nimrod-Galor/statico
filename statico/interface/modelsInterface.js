@@ -1,7 +1,7 @@
 const modelsInterface = [
     {
         "name": "User",
-        header: "Users",
+        "header": "Users",
         "description": "",
         "fields": [
             {key: "userName", header: "User Name", type: "String"},//, visible: true, require: true},
@@ -42,6 +42,7 @@ const modelsInterface = [
         }),
         "filters": [
             {"name": "username", key: "userName", type: "userName"}, // by user name 
+            {"name": "id", key: "id", type: "ObjectID"}, // by id
             {"name": "verified", key: "emailVerified", type: "BooleanString"}, // filter users by emailVerified
             {"name": "role", key: "roleId", type: "ObjectID"}
         ]
@@ -49,7 +50,7 @@ const modelsInterface = [
       
     {
         "name": "Page",
-        header: "Pages",
+        "header": "Pages",
         "description": "",
         "fields": [
             {key: "title", header: "Title", type: "String"},
@@ -72,7 +73,7 @@ const modelsInterface = [
 
     {
         "name": "Post",
-        header: "Posts",
+        "header": "Posts",
         "description": "",
         "fields": [
             {key: "title", header: "Title", type: "String"},
@@ -117,36 +118,62 @@ const modelsInterface = [
             _count: undefined
         }),
         "filters": [
+            {"name": "id", key: "id", type: "ObjectID"}, // filter posts by Id
             {"name": "author", key: "authorId", type: "ObjectID"} // filter posts by author
         ]
     },
       
     {
         "name": "Comment",
-        header: "Comments",
+        "header": "Comments",
         "description": "",
         "fields": [
             {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "comment", header: "Comment", type: "String"},
-            {key: "publish", header: "Published", type: "Boolean"}
+            {key: "publish", header: "Published", type: "Boolean"},
+            {key: "author", header: "Author", type: "String", relation: "user", filter: "id", filterKey: "authorId"},
+            {key: "post", header: "Post", type: "String", relation: "post", filter: "id", filterKey: "postId" },
+            {key: "replies", header: "Replies", type: "Int", relation: "comment", filter: "parent", filterKey: "id" }
         ],
         "select": {
             id: true,
             createdAt: true,
             comment: true,
             publish: true,
-            post: {
-                select:{
-                    id: true
+            author: {
+                select: {
+                    userName: true
                 }
             },
-            postId: true
-        }
+            authorId: true,
+            post: {
+                select:{
+                    id: true,
+                    title: true
+                }
+            },
+            postId: true,
+            _count:{
+                select: {
+                    replies: true
+                }
+            }
+        },
+        "destructur": (comment) => ({
+            ...comment,
+            author: comment.author.userName,
+            replies: comment._count.replies,
+            post: comment.post.title,
+            _count: undefined
+        }),
+        "filters": [
+            {name: "parent", key: "parentId", type: "ObjectID"}, 
+        ]
     },
       
     {
         "name": "Role",
-        header: "Roles",
+        "header": "Roles",
         "description": "",
         "fields": [
             {key: "name", header: "Name", type: "String"},
