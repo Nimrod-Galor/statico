@@ -41,6 +41,9 @@ function editItemClick(contentType, data){
                         case "post":
                             window.postEditor.setData(data[key])
                         break
+                        case "comment":
+                            form.elements[elmId].value = data[key]
+                        break
                     }
                 break
                 default:

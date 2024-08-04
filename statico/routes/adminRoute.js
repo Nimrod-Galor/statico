@@ -4,7 +4,8 @@ import bodyParser from 'body-parser'
 import  { listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
-    createPost, editPost, deletePost
+    createPost, editPost, deletePost,
+    editComment
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
 
@@ -64,6 +65,11 @@ router.post("/edit/post", ensureLoggedIn('/login'), urlencodedParser, editPost, 
 //  Delete Post
 router.post("/delete/post", ensureLoggedIn('/login'), urlencodedParser, deletePost, setAlertMessage, (req, res) => {
     res.redirect('/admin/post')
+})
+
+// Edit Comment
+router.post("/edit/comment", ensureLoggedIn('/login'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
+    res.redirect('/admin/comment')
 })
 
 export default router

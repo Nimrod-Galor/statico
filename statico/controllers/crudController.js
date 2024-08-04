@@ -604,7 +604,7 @@ export async function deletePost(req, res, next){
     }
 }
 
-function commentValidation(postid, parent, body){
+function commentValidation(postid, parent, body, publish = false){
     // Validate user Data
     let errorMsg = []
 
@@ -613,7 +613,7 @@ function commentValidation(postid, parent, body){
         errorMsg.push('Invalid Post')
     }
 
-    if(parent != ''){
+    if(parent && parent != ''){
         if(!isValid(parent, "objectid")){
             errorMsg.push('Invalid Comment')
         }
@@ -622,10 +622,15 @@ function commentValidation(postid, parent, body){
     if(!isValid(body, "body")){
         errorMsg.push('Invalid Comment')
     }
+    
+    if(!isValid(publish, "Boolean")){
+        errorMsg.push('Invalid Credentials')
+    }
 
     if(errorMsg.length != 0){
         throw new Error(errorMsg.join("</li><li>"))
     }
+    
 
     return true
 }
@@ -673,6 +678,7 @@ export async function getComment(req, res, next){
                     }
                 },
                 replies: {
+                    where:{publish: true},
                     select: {
                         id: true,
                         createdAt: true,
@@ -702,15 +708,6 @@ export async function getComment(req, res, next){
         next()
     }
 }
-
-
-// function deconstructComments(comments){
-//     return comments.map((item) => ({
-//         ...item,
-//         author: item.author.userName,
-//         replies: item.replies.length > 0 ? deconstructComments(item.replies): []
-//     }))
-// }
 
 /*  Create Comment  */
 export async function createComment(req, res, next){
@@ -742,6 +739,97 @@ export async function createComment(req, res, next){
 
         // Send Success json
         req.crud_response = {messageBody: `Comment was created successfuly`, messageTitle: 'Comment Created', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+/*  Edit Comment    */
+export async function editComment(req, res, next){
+    let {id, parent, comment, publish } = req.body
+
+    if(publish){
+        // Convert publish string to boolean
+        publish = stringToBoolean(publish)
+    }else{
+        publish = false
+    }
+
+    try{
+        // Validate user Data
+        commentValidation(id, parent, comment, publish)
+
+        const tmpComment = {
+            comment,
+            publish
+        }
+
+        // Delete Comment
+        await updateRow('comment', {id}, tmpComment)
+
+        // Send Success json
+        req.crud_response = {messageBody: `Comment "${comment}" was successfuly updated`, messageTitle: 'Comment Delete', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+// Function to fetch all comments and replies recursively
+async function fetchAllComments(commentId) {
+    const comment = findUnique('comment', {
+                        where: { id: commentId },
+                        include: { replies: true }
+                    })
+    // const comment = await prisma.comment.findUnique({
+    //     where: { id: commentId },
+    //     include: { replies: true }
+    // });
+
+    if (!comment) {
+        throw new Error(`Comment with id ${commentId} not found.`);
+    }
+
+    // Recursively fetch replies
+    const allComments = [comment];
+    for (const reply of comment.replies) {
+        const nestedComments = await fetchAllComments(reply.id);
+        allComments.push(...nestedComments);
+    }
+
+    return allComments;
+}
+
+/*  Delete Comment and replies*/
+export async function deleteComment(req, res, nect){
+    const {id} = req.body
+
+    try {
+        // Validate User data
+        if(!isValid(id, "objectid")){
+            throw new Error('Invalid Post')
+        }
+
+
+        // Fetch all comments and replies recursively
+        const commentsToDelete = await fetchAllComments(id);
+
+        // Delete comments and replies
+        for (const comment of commentsToDelete.reverse()) {
+            await deleteRow('comment', {id})
+            // await prisma.comment.delete({
+            //     where: { id: comment.id }
+            // });
+        }
+
+        req.crud_response = {messageBody: `Deleted comment with id ${id} and all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
