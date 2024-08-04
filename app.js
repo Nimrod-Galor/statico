@@ -14,11 +14,12 @@ import logger  from 'morgan'
 
 
 // routes
-import pageRouter from './routes/page.js'
-import postRouter from './routes/post.js'
-import authRouter from './routes/auth.js'
-import adminRouter from './statico/routes/admin.js'
-import adminApiRouter from './statico/routes/api.js'
+import pageRouter from './routes/pageRoute.js'
+import postRouter from './routes/postRoute.js'
+import authRouter from './routes/authRoute.js'
+import adminRouter from './statico/routes/adminRoute.js'
+import apiRouter from './statico/routes/apiRoute.js'
+import jsonAlerts from './statico/routes/jsonalerts.js'
 
 /* Test prisma */
 // import getBy, {createRow} from './db.js'
@@ -130,11 +131,12 @@ app.use(function(req, res, next) {
 // })
 
 // Routes
-app.use('/admin/api', adminApiRouter)
+app.use('/api', apiRouter)
 app.use('/admin', adminRouter)
 app.use('/', pageRouter)
 app.use('/', authRouter)
 app.use('/', postRouter)
+app.use('/json-alert', jsonAlerts)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

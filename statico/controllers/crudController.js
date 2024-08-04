@@ -280,9 +280,9 @@ function postValidations(id, title, body, publish, slug, metatitle, metadescript
     if( !isValid(title, "Title")){
         errorMsg.push('Invalid Title')
     }
-    // if(!isValid(body, "Body")){
-    //     errorMsg.push('Invalid Body')
-    // }
+    if(!isValid(body, "Body")){
+        errorMsg.push('Invalid Body')
+    }
     if(!isValid(publish, "Boolean")){
         errorMsg.push('Invalid Credentials')
     }
@@ -600,6 +600,69 @@ export async function deletePost(req, res, next){
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
+        next()
+    }
+}
+
+function commentValidation(postid, parent, body){
+    // Validate user Data
+    let errorMsg = []
+
+    
+    if(!isValid(postid, "objectid")){
+        errorMsg.push('Invalid Post')
+    }
+
+    if(parent != undefined){
+        if(!isValid(parent, "objectid")){
+            errorMsg.push('Invalid Comment')
+        }
+    }
+
+    if(!isValid(body, "body")){
+        errorMsg.push('Invalid Comment')
+    }
+
+    if(errorMsg.length != 0){
+        throw new Error(errorMsg.join("</li><li>"))
+    }
+
+    return true
+}
+
+/*  Create Comment  */
+export async function createComment(req, res, next){
+    const {post, parent, body } = req.body
+
+    try{
+        // Validate user Data
+        commentValidation(post, parent, body)
+
+        // Set new Comment object
+        const tmpComment = {
+            post: {
+                connect: {id: post}
+            },
+            author: {
+                connect: {id: req.user.id}
+            },
+            comment: body
+        }
+
+        if(parent){
+            tmpComment.parent = parent
+        }
+
+        // Create Comment
+        await createRow('comment', tmpComment)
+
+        // Send Success json
+        req.crud_response = {messageBody: `Comment was created successfuly`, messageTitle: 'Comment Created', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
         next()
     }
 }

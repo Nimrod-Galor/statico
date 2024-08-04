@@ -57,14 +57,17 @@ model Post {
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
   comment   String
-  publish   Boolean  @default(true)
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String   @db.ObjectId
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String   @db.ObjectId
+  publish   Boolean   @default(true)
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    String    @db.ObjectId
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String    @db.ObjectId
+  parentId  String?   @db.ObjectId // This field will hold the ID of the parent comment, if any
+  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("CommentToComment")
 }
 
 model Role {

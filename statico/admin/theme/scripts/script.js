@@ -109,11 +109,6 @@ function openModelView(modelName){
         }
     })
 
-    // change title
-    // document.getElementById(modelName).querySelector('h3').innerText = titleText
-    // // change button
-    // document.getElementById(modelName).querySelector('button[type="submit"]').innerText = buttonText
-    
     // open div
     document.querySelector('.horizontal-collapse').classList.add('open')
 }
@@ -144,37 +139,6 @@ function validateForm(event){
     event.submitter.disabled = true
     
     return true
-    //Post form data
-    // const formData = new FormData(form);
-    // const dataToSend = Object.fromEntries(formData);
-
-    // // disabel fieldset
-    // form[0].disabled = true
-    // //  send data
-    // fetchData(form.action, "POST", dataToSend)
-}
-
-async function fetchData(action, method, dataToSend){
-    await fetch(action, {
-        method,
-        body: JSON.stringify(dataToSend),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log('data', data)
-        // close model
-        closeModelView()
-        // show alert message
-        topAlert(data.messageType, data.messageTitle, data.messageBody)
-        // reload page
-        // ***ToDo
-    })
-    .catch(err => {
-        console.log('error', err)
-    })
 }
 
 function topAlert(type, title, body){

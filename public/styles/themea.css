@@ -11,7 +11,7 @@
     display: grid;
     grid-template-rows: 0fr;
     transition: grid-template-rows 250ms ease-out;
-    padding: 15px 0;
+    /* padding: 15px 0; */
 }
 
 .top-alert.open{
@@ -51,6 +51,31 @@
     border-radius: 8px;
     border: 1px solid #ededed
 }
+
+/*  Forms */
+.ck.ck-toolbar>.ck-toolbar__items button.ck-source-editing-button{
+    margin-left: 100px;
+}
+
+fieldset {
+    max-width: 600px;
+    min-width: unset;
+    padding: unset;
+    margin: unset;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+legend {
+    float: unset;
+    width: unset;
+    padding: unset;
+    margin-bottom: .5rem;
+    font-size: calc(1.275rem + .3vw);
+    line-height: inherit;
+}
+
 
 /*  Form Spiner */
 form button[type="submit"] .spinner-border{

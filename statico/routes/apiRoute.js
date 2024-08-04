@@ -3,7 +3,8 @@ import ensureLogIn from 'connect-ensure-login'
 // import bodyParser from 'body-parser'
 import  {   createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
-            createPost, editPost, deletePost
+            createPost, editPost, deletePost,
+            createComment
         } from '../controllers/crudController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -45,6 +46,11 @@ router.post("/edit/post", ensureLoggedIn('/login'), editPost, (req, res, next) =
 })
 //  Delete Post
 router.delete("/delete/post", ensureLoggedIn('/login'), deletePost, (req, res, next) => {
+    res.json(req.crud_response)
+})
+
+// Create Comment
+router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), createComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 
