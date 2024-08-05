@@ -16,7 +16,7 @@ async function countComments(){
             postComments.total = parseInt(data.messageBody)
             if(postComments.total > 0){
                 // load comments
-                getComments(1)
+                getComments()
             }else{
                 // no comments
                 document.querySelector('#loadin-comments').classList.add('d-none')
@@ -28,10 +28,16 @@ async function countComments(){
     })
 }
 
-async function getComments(page = 1){
+function loadMoreComments(){
+    document.getElementById('loadin-comments').classList.remove('d-none')
+    postComments.page++
+    getComments()
+}
+
+async function getComments(){
     console.log('get Comments')
     const post = document.getElementById('post-id').value
-    const dataToSend = {post, page}
+    const dataToSend = {post, page: postComments.page}
 
     // hide load more comments
     document.getElementById('load-more-comment-btn').classList.add('d-none')
@@ -44,12 +50,16 @@ async function getComments(page = 1){
 
         if(data.messageType === 'data'){
             constractComment(document.getElementById('comments'), data.messageBody, true)
-            if(postComments.total < postComments.loaded){
-                document.getElementById('load-more-comment-btn').classList.remove('d-none')
-            }
 
             postComments.comments.push(...data.messageBody)
             postComments.loaded += data.messageBody.length
+            
+            if(postComments.total > postComments.loaded){
+                document.getElementById('load-more-comment-btn').classList.remove('d-none')
+            }else{
+                document.getElementById('load-more-comment-btn').classList.add('d-none')
+            }
+
         }else{// Error
             alertComment(data)
         }
@@ -187,5 +197,6 @@ function alertComment(data, activeForm){
     activeForm.querySelector('.top-alert-body').innerHTML = `<li>${data.messageBody}</li>`
     activeForm.querySelector('.top-alert').classList.add('open')
 }
+
 
 document.addEventListener('DOMContentLoaded', countComments())

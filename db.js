@@ -109,8 +109,8 @@ async function deleteRows(collectionName, where){
 }
 
 /*  Count Rows */
-async function countRows(collectionName){
-  const res = await prisma[collectionName].count()
+async function countRows(collectionName, where){
+  const res = await prisma[collectionName].count({ where })
   .catch(err => {throw new Error(err)})
   // .finally(async () => {
   //   await prisma.$disconnect()

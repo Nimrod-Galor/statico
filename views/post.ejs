@@ -79,8 +79,7 @@
     <div class="container">
         <section class="comments-outer-wrapper">
             <div id="new-comment" class="new-comment-wrapper">
-
-                <form action="/api/create/comment" method="POST" class="create-comment-form" onsubmit="return postComment(event);" novalidate>
+                <form action="/api/create/comment" method="POST" class="create-comment-form w-50" onsubmit="return postComment(event);" novalidate>
                     <fieldset form="create-comment">
                         <legend class="create mb-2">Create Comment</legend>
 
@@ -123,12 +122,24 @@
                 </form>
             </div>
 
+           
+            
             <div class="comments-wrapper my-4 py-3">
+                
+                <fieldset class="float-end m-4 mt-0">
+                    <legend>Oreder By:</legend>
+                    <select id="comment-order-select" class="form-select" aria-label="Select Comment order">
+                        <option value="desc" selected>Newest First</option>
+                        <option value="asc">Oldest First</option>
+                    </select>
+                </fieldset>
+                
+
                 <ul id="comments" class="comments-list m-0 ps-4">
                     
                 </ul>
-                <div id="load-more-comment-btn" class="d-grid gap-2 col-6 mx-auto text-center d-none">
-                    <button type="button" class="btn btn-primary">
+                <div id="load-more-comment-btn" class="d-grid gap-2 col-6 mx-auto text-center d-none ps-4">
+                    <button type="button" class="btn btn-link" onclick="loadMoreComments()">
                         Load More Comments
                     </button>
                 </div>

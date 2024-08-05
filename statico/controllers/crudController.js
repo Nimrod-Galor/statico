@@ -1,4 +1,4 @@
-import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, disconnect} from '../../db.js'
+import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows, disconnect} from '../../db.js'
 import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
@@ -708,7 +708,7 @@ async function fetchAllComments(parentId, flaten, publish) {
 /*  Get comments    */
 export async function getComment(req, res, next){
     const {post, page = 1} = req.body
-
+    const commentsPerPage = 5
     try{
         // validate User data
         if(!isValid(post, "objectid")){
@@ -720,8 +720,8 @@ export async function getComment(req, res, next){
         }
 
         const query = {
-            "skip": parseInt(page - 1) * 10,
-            "take": 25,
+            "skip": parseInt(page - 1) * commentsPerPage,
+            "take": commentsPerPage,
             "where": {postId: post, publish: true, parent: null},
             
             "select": {
@@ -874,16 +874,13 @@ export async function countComments(req, res, next){
             throw new Error('Invalid Post')
         }
 
-        const query = {
-            where: {id: postid},
-            select: {
-                _count:{ select: {comments: true} }
-            }
-        }
+        const messageBody = await countRows('comment', {
+            postId: postid,
+            publish: true,
+            parent: null
+        })
 
-        const messageBody = await readRow('post', query)
-
-        req.crud_response = {messageBody: messageBody._count.comments, messageTitle: 'Count Comments', messageType: 'data'}
+        req.crud_response = {messageBody, messageTitle: 'Count Comments', messageType: 'data'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
