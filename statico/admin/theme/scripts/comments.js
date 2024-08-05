@@ -11,8 +11,17 @@ async function getComments(page = 1){
 
         if(data.messageType === 'data'){
             const comments = document.getElementById('comments')
-            constractComment(comments, data.messageBody, page)
+            if(data.messageBody.length == 0){
+                // no Comments found
+                comments.querySelector('li').innerHTML = 'Be the first to leave a comment.'
+            }else{
+                // remove loading spiner
+                comments.innerHTML = ''
+                // populate with comments
+                constractComment(comments, data.messageBody, page)
+            }
         }else{
+            // Error
             alertComment(data)
         }
     })
