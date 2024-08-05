@@ -111,10 +111,13 @@ function constractComment(parentObj, data, commentIndex){
         parentObj.appendChild(clone)
 
         if(data[i].replies && data[i].replies.length > 0){
+            // create new item
+            const li = document.createElement('li')
             // create new list
             const ul = document.createElement('ul')
+            li.appendChild(ul)
             // append new list to parenrt element
-            parentObj.appendChild(ul)
+            parentObj.appendChild(li)
             constractComment(ul, data[i].replies)
         }
     }

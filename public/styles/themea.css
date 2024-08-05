@@ -91,6 +91,10 @@ form.disabled button[type="submit"] .spinner-border{
     border: 1px solid #ededed;
 }
 
-.comments-list{
+.comments-list li:has(ul){
     list-style: none;
+}
+
+.comments-list li{
+    list-style: circle;
 }
