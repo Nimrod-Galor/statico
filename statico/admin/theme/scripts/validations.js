@@ -3,7 +3,7 @@ const regObjectID = /^[a-f\d]{24}$/i
 const regUserName = /^[A-Za-z][A-Za-z0-9_\-]{6,29}$/
 const regPassword = /^(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}$/
 const regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-const regString = /^[A-Z][a-z]*/
+const regString = /^[A-Za-z]*$/
 const regNumber = /^\d*$/
 const regTitle = /^[a-zA-Z0-9 \-_!@#$%&\(\)\*\/]{3,64}$/
 const regSlug = /^[a-zA-Z0-9\-_]{3,64}$/

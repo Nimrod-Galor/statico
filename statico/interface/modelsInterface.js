@@ -168,7 +168,11 @@ const modelsInterface = [
         }),
         "filters": [
             {name: "parent", key: "parentId", type: "ObjectID"}, 
-        ]
+        ],
+        "orderBy": {
+            datedesc: {createdAt: 'desc'},
+            dateasc: {createdAt: 'asc'}
+        }
     },
       
     {

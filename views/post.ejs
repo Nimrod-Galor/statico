@@ -128,9 +128,9 @@
                 
                 <fieldset class="float-end m-4 mt-0">
                     <legend>Oreder By:</legend>
-                    <select id="comment-order-select" class="form-select" aria-label="Select Comment order">
-                        <option value="desc" selected>Newest First</option>
-                        <option value="asc">Oldest First</option>
+                    <select id="comment-order-select" class="form-select" aria-label="Select Comment order" onchange="commentsReOrder(event)">
+                        <option value="datedesc" selected>Newest First</option>
+                        <option value="dateasc">Oldest First</option>
                     </select>
                 </fieldset>
                 

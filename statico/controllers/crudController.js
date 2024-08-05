@@ -707,7 +707,7 @@ async function fetchAllComments(parentId, flaten, publish) {
 
 /*  Get comments    */
 export async function getComment(req, res, next){
-    const {post, page = 1} = req.body
+    const {post, page = 1, order} = req.body
     const commentsPerPage = 5
     try{
         // validate User data
@@ -719,11 +719,14 @@ export async function getComment(req, res, next){
             throw new Error('Invalid Page Number')
         }
 
+        if(!isValid(order, "string")){
+            throw new Error('Invalid Order')
+        }
+
         const query = {
             "skip": parseInt(page - 1) * commentsPerPage,
             "take": commentsPerPage,
             "where": {postId: post, publish: true, parent: null},
-            
             "select": {
                 id: true,
                 createdAt: true,
@@ -735,8 +738,15 @@ export async function getComment(req, res, next){
                 },
                 replies: true
             },
-            "orderBy": {}
+            // "orderBy": {}
         }
+
+        if(order){
+            const commentModel = modelsInterface.find(item => item.name == 'Comment')
+            if( order in commentModel.orderBy){
+                query.orderBy = commentModel.orderBy[order]
+            }
+        } 
 
         // Get comments
         let comments = await readRows('comment', query)

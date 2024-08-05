@@ -1,11 +1,29 @@
+const commentsOrderEnum = {
+    dateDesc: 'datedesc',
+    dateAsc: 'dateasc'
+}
+
 let activeForm
 const postComments = {
     total: 0,
     loaded: 0,
     page: 1,
+    order: commentsOrderEnum.dateDesc,
     comments: []
 }
 
+function commentsReOrder(event){
+    console.log(event.currentTarget.value)
+    // reset postComments
+    postComments.loaded = 0
+    postComments.page = 1
+    postComments.order = event.currentTarget.value
+    postComments.comments = []
+    // clear comments from DOM
+    document.getElementById('comments').innerHTML = ''
+    // get comments
+    getComments()
+}
 
 async function countComments(){
     const postid = document.getElementById('post-id').value
@@ -37,7 +55,7 @@ function loadMoreComments(){
 async function getComments(){
     console.log('get Comments')
     const post = document.getElementById('post-id').value
-    const dataToSend = {post, page: postComments.page}
+    const dataToSend = {post, page: postComments.page, order: postComments.order}
 
     // hide load more comments
     document.getElementById('load-more-comment-btn').classList.add('d-none')
@@ -53,7 +71,7 @@ async function getComments(){
 
             postComments.comments.push(...data.messageBody)
             postComments.loaded += data.messageBody.length
-            
+
             if(postComments.total > postComments.loaded){
                 document.getElementById('load-more-comment-btn').classList.remove('d-none')
             }else{
@@ -75,7 +93,7 @@ function constractComment(parentObj, data, commentIndex){
         const clone = commentTemplate.content.cloneNode(true)
 
         if(commentIndex){
-            clone.querySelector('.comment-index').innerText = postComments.loaded + 1 +i
+            clone.querySelector('.comment-index').innerText = postComments.order === commentsOrderEnum.dateDesc ? postComments.total - (postComments.loaded + i) : postComments.loaded + 1 + i
         }
         clone.querySelector('.comment-author').innerText = data[i].author.userName
         clone.querySelector('.comment-createdat').innerText = data[i].createdAt
