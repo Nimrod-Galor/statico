@@ -114,6 +114,10 @@ function stringToBoolean(str){
     return undefined
 }
 
+/****************************************/
+/** User                                */
+/****************************************/
+
 /** Create User */
 export async function createUser(req, res, next){
     //  Get user data
@@ -278,6 +282,11 @@ export async function deleteUser(req, res, next){
     }
 }
 
+/****************************************/
+/** Page                                */
+/****************************************/
+
+// Validations for Post and Page
 function postValidations(id, title, body, publish, slug, metatitle, metadescription){
     let errorMsg = []
 
@@ -458,6 +467,11 @@ export async function deletePage(req, res, next){
     }
 }
 
+
+/****************************************/
+/** Post                                */
+/****************************************/
+
 /*  Create Post */
 export async function createPost(req, res, next){
     //  Get user data
@@ -609,9 +623,9 @@ export async function deletePost(req, res, next){
     }
 }
 
-
-/** Comments  */
-
+/****************************************/
+/** Comments                            */
+/****************************************/
 function commentValidation(postid, parent, body, publish = false){
     // Validate user Data
     let errorMsg = []
@@ -671,9 +685,9 @@ function commentValidation(postid, parent, body, publish = false){
 //     return allComments;
 // }
 
-async function fetchAllComments(parentId, flaten = true) {
+async function fetchAllComments(parentId, flaten, publish) {
     const query = {
-        "where": {parentId, publish: true},
+        "where": {parentId},
         "select": {
             id: true,
             createdAt: true,
@@ -687,13 +701,17 @@ async function fetchAllComments(parentId, flaten = true) {
         }
     }
 
+    if(publish != undefined){// allow selection of publish true, false and all
+        query.where.publish = publish
+    }
+
     // Get replies comments
     let comments = await readRows('comment', query)
     // Recursively fetch replies
     for(let i=0; i<comments.length; i++){
         if(comments[i].replies && comments[i].replies.length > 0){
             // get replies
-            const nestedComments = await fetchAllComments(comments[i].id, flaten);
+            const nestedComments = await fetchAllComments(comments[i].id, flaten, publish);
             if(flaten){
                 comments.push(...nestedComments)
             }else{
@@ -743,7 +761,7 @@ export async function getComment(req, res, next){
         for(let i=0; i<comments.length; i++){
             if(comments[i].replies && comments[i].replies.length > 0){
                 // get replies
-                const nestedComments = await fetchAllComments(comments[i].id, false);
+                const nestedComments = await fetchAllComments(comments[i].id, false, true);
                 comments[i].replies = [...nestedComments]
             }
         }
@@ -840,15 +858,14 @@ export async function deleteComment(req, res, next){
         // Validate User data
         validateDeleteData(id, header)
 
+        // get comment to delete
+        const commentsToDelete = [await findUnique('comment', {id})]
         // Fetch all comments and replies recursively
-        const commentsToDelete = await fetchAllComments(id);
+        commentsToDelete.push(... await fetchAllComments(id, true))
 
         // Delete comments and replies
         for (const comment of commentsToDelete.reverse()) {
             await deleteRow('comment', {id: comment.id})
-            // await prisma.comment.delete({
-            //     where: { id: comment.id }
-            // });
         }
 
         req.crud_response = {messageBody: `Deleted comment "${header}" And all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
