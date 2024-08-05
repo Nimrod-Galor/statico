@@ -4,7 +4,7 @@ import ensureLogIn from 'connect-ensure-login'
 import  {   createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost,
-            getComment, createComment, editComment, deleteComment
+            countComments, getComment, createComment, editComment, deleteComment
         } from '../controllers/crudController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -52,6 +52,10 @@ router.delete("/delete/post", ensureLoggedIn('/json-alert/login'), deletePost, (
 })
 
 /*  Comment    */
+// Count Comments
+router.post("/count/comments", countComments, (req, res, next) => {
+    res.json(req.crud_response)
+})
 // Get Comments
 router.post("/comments", getComment, (req, res, next) => {
     res.json(req.crud_response)
@@ -68,5 +72,6 @@ router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), editC
 router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), deleteComment, (req, res, next) => {
     res.json(req.crud_response)
 })
+
 
 export default router

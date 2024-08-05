@@ -129,6 +129,23 @@ async function countsRows(collectionsName){
   return res
 }
 
+/*  Count relations */
+async function countRelations(collectionName, select){
+  const res = await prisma[collectionName].findMany({
+    select: {
+      _count: {
+        select
+      },
+    },
+  })
+  .catch(err => {throw new Error(err)})
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+  return res
+}
+
+/*  Find Unique */
 async function findUnique(collectionName, where, select){
   const obj = {
     where
@@ -144,4 +161,4 @@ async function findUnique(collectionName, where, select){
   return res
 }
 
-export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows}
+export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows, countRelations}

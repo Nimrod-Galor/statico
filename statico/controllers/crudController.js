@@ -1,4 +1,4 @@
-import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows} from '../../db.js'
+import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRelations} from '../../db.js'
 import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
@@ -653,38 +653,6 @@ function commentValidation(postid, parent, body, publish = false){
     }
 }
 
-// Fetch all comments and replies recursively
-// async function fetchAllComments(commentId, flaten = true) {
-//     const comment = await findUnique('comment',  { id: commentId }, {
-//         id: true,
-//         createdAt: true,
-//         comment: true,
-//         author: {
-//             select: {
-//                 userName: true
-//             }
-//         },
-//         replies: true
-//     })
-
-//     if (!comment) {
-//         throw new Error(`Comment with id ${commentId} not found.`);
-//     }
-
-//     // Recursively fetch replies
-//     const allComments = [comment]
-//     for (let reply of comment.replies) {
-//         const nestedComments = await fetchAllComments(reply.id);
-//         if(flaten){
-//             allComments.push(...nestedComments);
-//         }else{
-//             reply = [...nestedComments]
-//         }
-//     }
-
-//     return allComments;
-// }
-
 async function fetchAllComments(parentId, flaten, publish) {
     const query = {
         "where": {parentId},
@@ -869,6 +837,34 @@ export async function deleteComment(req, res, next){
         }
 
         req.crud_response = {messageBody: `Deleted comment "${header}" And all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+/*  Count Comments  */
+export async function countComments(req, res, next){
+    const {postid} = req.body
+
+    try {
+        if(!isValid(postid, "objectid")){
+            throw new Error('Invalid Post')
+        }
+
+        const query = {
+            where: {id: postid},
+            select: {
+                _count:{ select: {comments: true} }
+            }
+        }
+
+        const messageBody = await readRow('post', query)
+
+        req.crud_response = {messageBody: messageBody._count.comments, messageTitle: 'Count Comments', messageType: 'data'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

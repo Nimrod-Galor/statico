@@ -1,27 +1,56 @@
 let activeForm
+const postComments = {
+    total: 0,
+    loaded: 0,
+    page: 1,
+    comments: []
+}
+
+
+async function countComments(){
+    const postid = document.getElementById('post-id').value
+    const dataToSend = {postid}
+    await fetchData('api/count/comments', "POST", dataToSend)
+    .then(data => {
+        if(data.messageType === 'data'){
+            postComments.total = parseInt(data.messageBody)
+            if(postComments.total > 0){
+                // load comments
+                getComments(1)
+            }else{
+                // no comments
+                document.querySelector('#loadin-comments').classList.add('d-none')
+                document.querySelector('#no-comments').classList.remove('d-none')
+            }
+        }else{// Error
+            alertComment(data)
+        }
+    })
+}
 
 async function getComments(page = 1){
     console.log('get Comments')
     const post = document.getElementById('post-id').value
     const dataToSend = {post, page}
 
+    // hide load more comments
+    document.getElementById('load-more-comment-btn').classList.add('d-none')
+
     await fetchData('api/comments', "POST", dataToSend)
     .then(data => {
         console.log('data', data)
+        // hide loading comments info
+        document.getElementById('loadin-comments').classList.add('d-none')
 
         if(data.messageType === 'data'){
-            const comments = document.getElementById('comments')
-            if(data.messageBody.length == 0){
-                // no Comments found
-                comments.querySelector('li').innerHTML = 'Be the first to leave a comment.'
-            }else{
-                // remove loading spiner
-                comments.innerHTML = ''
-                // populate with comments
-                constractComment(comments, data.messageBody, page)
+            constractComment(document.getElementById('comments'), data.messageBody, true)
+            if(postComments.total < postComments.loaded){
+                document.getElementById('load-more-comment-btn').classList.remove('d-none')
             }
-        }else{
-            // Error
+
+            postComments.comments.push(...data.messageBody)
+            postComments.loaded += data.messageBody.length
+        }else{// Error
             alertComment(data)
         }
     })
@@ -36,7 +65,7 @@ function constractComment(parentObj, data, commentIndex){
         const clone = commentTemplate.content.cloneNode(true)
 
         if(commentIndex){
-            clone.querySelector('.comment-index').innerText = commentIndex + i
+            clone.querySelector('.comment-index').innerText = postComments.loaded + 1 +i
         }
         clone.querySelector('.comment-author').innerText = data[i].author.userName
         clone.querySelector('.comment-createdat').innerText = data[i].createdAt
@@ -156,4 +185,4 @@ function alertComment(data, activeForm){
     activeForm.querySelector('.top-alert').classList.add('open')
 }
 
-document.addEventListener('DOMContentLoaded', getComments(1))
+document.addEventListener('DOMContentLoaded', countComments())
