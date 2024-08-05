@@ -39,22 +39,24 @@ function constractComment(parentObj, data, commentIndex){
                 activeForm.remove()
             }
             // Select Comment Form
-            const form = document.getElementById('create-comment')
+            const form = document.querySelector('.create-comment-form')
             // Clone Comment Form
             activeForm = form.cloneNode(true)
+            // reset id
+            activeForm.id = "reply-alert"
             // Update Legend
             activeForm.querySelector('legend').innerText = 'Reply Comment'
-            // Update aler id
-            // activeForm.querySelector('.top-alert').id = "reply-alert"
+            // Mark form as reply Form
+            // activeForm.classList.add("reply-alert")
             //Update hidden input parent comment id
             activeForm.querySelector('#parent-comment').value = event.target.dataset.parentComment
 
             //  Update alert close buttn click event
             const closebtn = activeForm.querySelector('.close-btn')
-            closebtn.click = ''
-            //**************** */
-            // ToDo add event to close alert and remove reply form
-            //**************** */
+            closebtn.onclick = () => {
+                activeForm.remove()
+                activeForm = undefined
+            }
 
             // upadate rest Button
             const cancelBtn = activeForm.querySelector('.reset')
@@ -109,9 +111,17 @@ async function postComment(event){
     await fetchData(activeForm.action, "POST", dataToSend)
     .then((data) => {
         console.log('data', data)
-        activeForm.classList.remove('disabled', 'was-validated')
-        activeForm[0].disabled = false
-        activeForm.reset()
+        if(activeForm.id == 'reply-alert'){// reply form
+            //remove Form Elements from DOM (but not the Alert)
+            activeForm.querySelector('.form-floating').remove()
+            activeForm.querySelectorAll('.btn').forEach(element => {
+                element.remove()
+            });
+        }else{// new comment form
+            activeForm.classList.remove('disabled', 'was-validated')
+            activeForm[0].disabled = false
+            activeForm.reset()
+        }
         alertComment(data, activeForm)
     })
 }
@@ -131,10 +141,10 @@ async function fetchData(action, method, dataToSend){
 }
 
 function alertComment(data, activeForm){
-    activeForm.querySelector('#comment-alert-type').classList.add(`alert-${data.messageType}`)
-    activeForm.querySelector('#comment-alert-title').innerText = data.messageTitle
-    activeForm.querySelector('#comment-alert-body').innerHTML = `<ul><li>${data.messageBody}</li></ul>`
-    activeForm.querySelector('#comment-alert').classList.add('open')
+    activeForm.querySelector('.top-alert-type').classList.add(`alert-${data.messageType}`)
+    activeForm.querySelector('.top-alert-title').innerText = data.messageTitle
+    activeForm.querySelector('.top-alert-body').innerHTML = `<li>${data.messageBody}</li>`
+    activeForm.querySelector('.top-alert').classList.add('open')
 }
 
 document.addEventListener('DOMContentLoaded', getComments(1))

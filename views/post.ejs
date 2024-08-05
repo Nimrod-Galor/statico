@@ -69,19 +69,19 @@
         <section class="comments-outer-wrapper">
             <div id="new-comment" class="new-comment-wrapper">
 
-                <form action="/api/create/comment" method="POST" id="create-comment" onsubmit="return postComment(event);" novalidate>
+                <form action="/api/create/comment" method="POST" class="create-comment-form" onsubmit="return postComment(event);" novalidate>
                     <fieldset form="create-comment">
                         <legend class="create mb-2">Create Comment</legend>
 
                         <div id="comment-alert" class="top-alert" role="alert">
                             <div>
-                                <div id="comment-alert-type" class="alert">
+                                <div class="alert top-alert-type">
                                     <div id="comment-alert-closebtn" class="top-alert-closebtn cursorPoint">
                                         <div class="close-btn" onclick="toggleClass('comment-alert', 'open')"></div>
                                     </div>
-                                    <div id="comment-alert-title" class="top-alert-title"></div>
+                                    <div class="top-alert-title"></div>
                                     <div class="top-alert-body">
-                                        <ul id="comment-alert-body" class="mb-0"></ul>
+                                        <ul class="top-alert-body mb-0"></ul>
                                     </div>
                                 </div>
                             </div>
