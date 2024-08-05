@@ -69,7 +69,7 @@ function constractComment(parentObj, data, commentIndex){
         }
         clone.querySelector('.comment-author').innerText = data[i].author.userName
         clone.querySelector('.comment-createdat').innerText = data[i].createdAt
-        clone.querySelector('.comment-content').innerText = data[i].comment
+        clone.querySelector('.comment-content').textContent = decodeHTML(data[i].comment)
         clone.querySelector('.btn-reply').dataset.parentComment = data[i].id
         clone.querySelector('.btn-reply').addEventListener('click', (event) => {
             if(activeForm){
@@ -84,14 +84,11 @@ function constractComment(parentObj, data, commentIndex){
             activeForm.id = "reply-alert"
             // Update Legend
             activeForm.querySelector('legend').innerText = 'Reply Comment'
-            // Mark form as reply Form
-            // activeForm.classList.add("reply-alert")
             //Update hidden input parent comment id
             activeForm.querySelector('#parent-comment').value = event.target.dataset.parentComment
 
             //  Update alert close buttn click event
-            const closebtn = activeForm.querySelector('.close-btn')
-            closebtn.onclick = () => {
+            activeForm.querySelector('.close-btn').onclick = () => {
                 activeForm.remove()
                 activeForm = undefined
             }
@@ -145,6 +142,9 @@ async function postComment(event){
     //Post form data
     const formData = new FormData(activeForm);
     const dataToSend = Object.fromEntries(formData);
+
+    // encode body
+    dataToSend.body = encodeHTML(dataToSend.body)
 
     // disabel fieldset
     activeForm[0].disabled = true

@@ -41,10 +41,19 @@ function validateForm(event){
     return true
 }
 
+// Function to encode HTML entities
 function encodeHTML(str) {
     return str.replace(/&/g, '&amp;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
               .replace(/"/g, '&quot;')
               .replace(/'/g, '&#39;');
+}
+
+const shadowTextArea = document.createElement('textarea');
+
+// Function to decode HTML entities
+function decodeHTML(str) {
+    shadowTextArea.innerHTML = str;
+    return shadowTextArea.value;
 }

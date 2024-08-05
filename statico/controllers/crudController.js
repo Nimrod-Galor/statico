@@ -789,7 +789,7 @@ export async function createComment(req, res, next){
         await createRow('comment', tmpComment)
 
         // Send Success json
-        req.crud_response = {messageBody: `Comment was created successfuly`, messageTitle: 'Comment Created', messageType: 'success'}
+        req.crud_response = {messageBody: 'Your comment is awaiting moderation.', messageTitle: 'Comment Created', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
