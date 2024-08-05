@@ -609,11 +609,13 @@ export async function deletePost(req, res, next){
     }
 }
 
+
+/** Comments  */
+
 function commentValidation(postid, parent, body, publish = false){
     // Validate user Data
     let errorMsg = []
 
-    
     if(!isValid(postid, "objectid")){
         errorMsg.push('Invalid Post')
     }
@@ -635,9 +637,71 @@ function commentValidation(postid, parent, body, publish = false){
     if(errorMsg.length != 0){
         throw new Error(errorMsg.join("</li><li>"))
     }
-    
+}
 
-    return true
+// Fetch all comments and replies recursively
+// async function fetchAllComments(commentId, flaten = true) {
+//     const comment = await findUnique('comment',  { id: commentId }, {
+//         id: true,
+//         createdAt: true,
+//         comment: true,
+//         author: {
+//             select: {
+//                 userName: true
+//             }
+//         },
+//         replies: true
+//     })
+
+//     if (!comment) {
+//         throw new Error(`Comment with id ${commentId} not found.`);
+//     }
+
+//     // Recursively fetch replies
+//     const allComments = [comment]
+//     for (let reply of comment.replies) {
+//         const nestedComments = await fetchAllComments(reply.id);
+//         if(flaten){
+//             allComments.push(...nestedComments);
+//         }else{
+//             reply = [...nestedComments]
+//         }
+//     }
+
+//     return allComments;
+// }
+
+async function fetchAllComments(parentId, flaten = true) {
+    const query = {
+        "where": {parentId, publish: true},
+        "select": {
+            id: true,
+            createdAt: true,
+            comment: true,
+            author: {
+                select: {
+                    userName: true
+                }
+            },
+            replies: true
+        }
+    }
+
+    // Get replies comments
+    let comments = await readRows('comment', query)
+    // Recursively fetch replies
+    for(let i=0; i<comments.length; i++){
+        if(comments[i].replies && comments[i].replies.length > 0){
+            // get replies
+            const nestedComments = await fetchAllComments(comments[i].id, flaten);
+            if(flaten){
+                comments.push(...nestedComments)
+            }else{
+                comments[i].replies = [...nestedComments]
+            }
+        }
+    }
+    return comments
 }
 
 /*  Get comments    */
@@ -654,20 +718,6 @@ export async function getComment(req, res, next){
             throw new Error('Invalid Page Number')
         }
 
-        const replies = {
-            select: {
-                id: true,
-                createdAt: true,
-                comment: true,
-                author: {
-                    select: {
-                        userName: true
-                    }
-                },
-                replies: this
-            }
-        }
-
         const query = {
             "skip": parseInt(page - 1) * 10,
             "take": 25,
@@ -682,27 +732,21 @@ export async function getComment(req, res, next){
                         userName: true
                     }
                 },
-                replies: {
-                    where:{publish: true},
-                    select: {
-                        id: true,
-                        createdAt: true,
-                        comment: true,
-                        author: {
-                            select: {
-                                userName: true
-                            }
-                        },
-                        replies
-                    }
-                }
+                replies: true
             },
             "orderBy": {}
         }
 
         // Get comments
         let comments = await readRows('comment', query)
-        // comments = deconstructComments(comments)
+        // Recursively fetch replies
+        for(let i=0; i<comments.length; i++){
+            if(comments[i].replies && comments[i].replies.length > 0){
+                // get replies
+                const nestedComments = await fetchAllComments(comments[i].id, false);
+                comments[i].replies = [...nestedComments]
+            }
+        }
 
         req.crud_response = {messageBody: comments, messageTitle: '', messageType: 'data'}
     }catch(errorMsg){
@@ -787,27 +831,6 @@ export async function editComment(req, res, next){
     }
 }
 
-// Function to fetch all comments and replies recursively
-async function fetchAllComments(commentId) {
-    const comment = await findUnique('comment',  { id: commentId }, { replies: true })
-    // const comment = await prisma.comment.findUnique({
-    //                     where: { id: commentId },
-    //                     include: { replies: true }
-    //                 })
-
-    if (!comment) {
-        throw new Error(`Comment with id ${commentId} not found.`);
-    }
-
-    // Recursively fetch replies
-    const allComments = [comment];
-    for (const reply of comment.replies) {
-        const nestedComments = await fetchAllComments(reply.id);
-        allComments.push(...nestedComments);
-    }
-
-    return allComments;
-}
 
 /*  Delete Comment and replies*/
 export async function deleteComment(req, res, next){

@@ -1,3 +1,5 @@
+let activeForm
+
 async function getComments(page = 1){
     console.log('get Comments')
     const post = document.getElementById('post-id').value
@@ -30,19 +32,39 @@ function constractComment(parentObj, data, commentIndex){
         clone.querySelector('.comment-author').innerText = data[i].author.userName
         clone.querySelector('.comment-createdat').innerText = data[i].createdAt
         clone.querySelector('.comment-content').innerText = data[i].comment
-        clone.querySelector('.btn-replay').dataset.parentComment = data[i].id
-        clone.querySelector('.btn-replay').addEventListener('click', (event) => {
+        clone.querySelector('.btn-reply').dataset.parentComment = data[i].id
+        clone.querySelector('.btn-reply').addEventListener('click', (event) => {
+            if(activeForm){
+                // if we have selected Form remove it from DOM
+                activeForm.remove()
+            }
+            // Select Comment Form
             const form = document.getElementById('create-comment')
-            const clone = form.cloneNode(true)
+            // Clone Comment Form
+            activeForm = form.cloneNode(true)
+            // Update Legend
+            activeForm.querySelector('legend').innerText = 'Reply Comment'
+            // Update aler id
+            // activeForm.querySelector('.top-alert').id = "reply-alert"
+            //Update hidden input parent comment id
+            activeForm.querySelector('#parent-comment').value = event.target.dataset.parentComment
 
-            clone.querySelector('legend').innerText = 'Replay Comment'
-            clone.querySelector('#parent-comment').value = event.target.dataset.parentComment
-            const cancelBtn = clone.querySelector('.reset')
+            //  Update alert close buttn click event
+            const closebtn = activeForm.querySelector('.close-btn')
+            closebtn.click = ''
+            //**************** */
+            // ToDo add event to close alert and remove reply form
+            //**************** */
+
+            // upadate rest Button
+            const cancelBtn = activeForm.querySelector('.reset')
             cancelBtn.type = 'button'
             cancelBtn.addEventListener('click', (event) => {
                 event.target.parentNode.parentNode.remove()
             })
-            event.target.parentNode.appendChild(clone)
+
+            // Append to fieldset
+            event.target.parentNode.appendChild(activeForm)
         })
 
         // append item to list
@@ -57,8 +79,6 @@ function constractComment(parentObj, data, commentIndex){
         }
     }
 }
-
-let activeForm
 
 async function postComment(event){
 
