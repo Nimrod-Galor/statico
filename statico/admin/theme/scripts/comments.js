@@ -69,6 +69,9 @@ async function getComments(){
         if(data.messageType === 'data'){
             constractComment(document.getElementById('comments'), data.messageBody, true)
 
+            // show orderBy
+            document.getElementById('comments-orderby').classList.remove('d-none')
+
             postComments.comments.push(...data.messageBody)
             postComments.loaded += data.messageBody.length
 
