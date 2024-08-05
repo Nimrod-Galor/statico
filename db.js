@@ -35,14 +35,19 @@ const prisma = new PrismaClient().$extends({
   },
 })
 
+
+function disconnect(){
+  prisma.$disconnect()
+}
+
 /*  Create */
 async function createRow(collectionName, data){
   console.log("create row")
   const res = await prisma[collectionName].create({data})
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
 
   return res
 }
@@ -51,9 +56,9 @@ async function createRow(collectionName, data){
 export async function readRows(collectionName, data = '') {
   const res = await prisma[collectionName].findMany(data)
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
@@ -61,9 +66,9 @@ export async function readRows(collectionName, data = '') {
 async function readRow(collectionName, data = '') {
   const res = await prisma[collectionName].findFirstOrThrow(data)
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
@@ -74,9 +79,9 @@ async function updateRow(collectionName, where, data){
     data
   })
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
 
   return res
 }
@@ -87,9 +92,9 @@ async function deleteRow(collectionName, where){
     where
   })
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
 }
 
 /*  Delete Many */
@@ -98,18 +103,18 @@ async function deleteRows(collectionName, where){
     where
   })
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
 }
 
 /*  Count Rows */
 async function countRows(collectionName){
   const res = await prisma[collectionName].count()
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
@@ -123,9 +128,9 @@ async function countsRows(collectionsName){
   }
   const res = await Promise.all(parr)
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
@@ -139,9 +144,9 @@ async function countRelations(collectionName, select){
     },
   })
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
@@ -155,10 +160,10 @@ async function findUnique(collectionName, where, select){
   }
   const res = await prisma[collectionName].findUnique(obj)
   .catch(err => {throw new Error(err)})
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  // .finally(async () => {
+  //   await prisma.$disconnect()
+  // })
   return res
 }
 
-export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows, countRelations}
+export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows, countRelations, disconnect}

@@ -1,4 +1,4 @@
-import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRelations} from '../../db.js'
+import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, disconnect} from '../../db.js'
 import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
@@ -54,6 +54,7 @@ export async function listContent(req, res, next){
         }
         //  Get models data
         let modelsData = await readRows(contentType, query)
+        
         // destruct nested fields
         if(selectedModel.destructur){
             modelsData = modelsData.map(selectedModel.destructur)
@@ -67,6 +68,7 @@ export async function listContent(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -183,6 +185,7 @@ export async function createUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -198,17 +201,18 @@ export async function editUser(req, res, next){
         //  Validate user data
         userValidations(id, email, username, password, role, emailverified)
 
-        // Validate role exists
-        const selectedRole = await findUnique('role', {id: role})
-        if(!selectedRole){
-            throw new Error('Invalid Role')
-        }
+        // redundant will throw error
+        // // Validate role exists
+        // const selectedRole = await findUnique('role', {id: role})
+        // if(!selectedRole){
+        //     throw new Error('Invalid Role')
+        // }
 
-        // Validate user exists
-        const selectedUser = await findUnique('user', {id})
-        if(!selectedUser){
-            throw new Error('Invalid User')
-        }
+        // // Validate user exists
+        // const selectedUser = await findUnique('user', {id})
+        // if(!selectedUser){
+        //     throw new Error('Invalid User')
+        // }
 
         //  Set user object
         const tmpUser = {
@@ -230,7 +234,7 @@ export async function editUser(req, res, next){
         }
 
         //  Update user
-        await updateRow('user', {id: selectedUser.id}, tmpUser)
+        await updateRow('user', {id}, tmpUser)
 
         // Send Success json
         req.crud_response = {messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'}
@@ -239,6 +243,7 @@ export async function editUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -278,6 +283,7 @@ export async function deleteUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -346,6 +352,7 @@ export async function createPage(req, res, next){
                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
+
             const postWithSlug = await findUnique('post', {slug})
             if(postWithSlug){
                 // post with same slug exist
@@ -374,6 +381,7 @@ export async function createPage(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -419,6 +427,7 @@ export async function editPage(req, res, next){
                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
+
             const postWithSlug = await findUnique('post', {slug})
             if(postWithSlug){
                 // post with same slug exist
@@ -440,6 +449,7 @@ export async function editPage(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -463,6 +473,7 @@ export async function deletePage(req, res, next){
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
+        disconnect()
         next()
     }
 }
@@ -497,6 +508,7 @@ export async function createPost(req, res, next){
                 req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
+
             const pageWithSlug = await findUnique('page', {slug})
             if(pageWithSlug){
                 // page with same slug exist
@@ -528,6 +540,7 @@ export async function createPost(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -564,7 +577,6 @@ export async function editPost(req, res, next){
             metadescription
         }
 
-
         if(slug != '' && slug != selectedPost.slug){
             // check if slug exist
             const postWithSlug = await findUnique('post', {slug})
@@ -573,6 +585,7 @@ export async function editPost(req, res, next){
                 req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
                 return
             }
+
             const pageWithSlug = await findUnique('page', {slug})
             if(pageWithSlug){
                 // page with same slug exist
@@ -593,6 +606,7 @@ export async function editPost(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -619,6 +633,7 @@ export async function deletePost(req, res, next){
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
+        disconnect()
         next()
     }
 }
@@ -740,6 +755,7 @@ export async function getComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -779,6 +795,7 @@ export async function createComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -813,6 +830,7 @@ export async function editComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -842,6 +860,7 @@ export async function deleteComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
@@ -870,6 +889,7 @@ export async function countComments(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
+        disconnect()
         next()
     }
 }
