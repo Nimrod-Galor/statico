@@ -112,18 +112,18 @@
                 </form>
             </div>
 
-            <div class="comments-wrapper my-4">
-                <ul id="comments" class="comments-list">
+            <div class="comments-wrapper my-4 py-3">
+                <ul id="comments" class="comments-list m-0 ps-4">
                     
                 </ul>
-                <div id="load-more-comment-btn" class="d-grid gap-2 col-6 mx-auto d-none">
-                    <button type="button" class="btn btn-primery">
+                <div id="load-more-comment-btn" class="d-grid gap-2 col-6 mx-auto text-center d-none">
+                    <button type="button" class="btn btn-primary">
                         Load More Comments
                     </button>
                 </div>
-                <div id="loadin-comments">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <span>Loading Comments...</span>
+                <div id="loadin-comments" class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary align-self-center me-2" role="status"></div>
+                    <span class="align-self-center">Loading Comments...</span>
                 </div>
                 <div id="no-comments" class="d-none">
                     Be the first to leave a comment.
