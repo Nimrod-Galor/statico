@@ -68,6 +68,8 @@ model Comment {
   parentId  String?   @db.ObjectId // This field will hold the ID of the parent comment, if any
   parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies   Comment[] @relation("CommentToComment")
+  likes     Int       @default(0)
+  dislikes  Int       @default(0)
 }
 
 model Role {
