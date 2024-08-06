@@ -1,3 +1,4 @@
+
 function deleteItemClick(header){
     return confirm(`Delete Item (${header})?`)
 }
@@ -10,7 +11,8 @@ function editItemClick(contentType, data){
     form.classList.add('edit')
     //enable fieldset
     form[0].disabled = false
-    // fill form
+    let selectedRoleName
+    // fill form elements with data
     for(const elmId in form.elements){
         // get value from data object
         let key = Object.keys(data).find(item => form.elements[elmId].name === item.toLowerCase())
@@ -27,6 +29,9 @@ function editItemClick(contentType, data){
                     form.elements[elmId].checked = data[key]
                 break;
                 case 'select-one':
+                    if(form.elements[elmId].id === 'user-role'){
+                        selectedRoleName = data[key]
+                    }
                     for(const op of form.elements[elmId].options){
                         if(op.label === data[key]){
                             op.selected = true
@@ -53,6 +58,11 @@ function editItemClick(contentType, data){
         }
     }
 
+    if(contentType === 'user' && document.getElementById('user-role').length === 0){
+        // update role list
+        populateRoleList(selectedRoleName)
+    }
+
     openModelView(`model-${contentType}`)
 }
 
@@ -65,8 +75,10 @@ function createItemClick(contentType, fields){
     form[0].disabled = false
     // reset inputs
     fields = JSON.parse(fields)
+    // loop for elements
     for(const elmId in form.elements){
-        let key = fields.find(item => form.elements[elmId].name === item.key.toLowerCase())
+        
+        let key = fields.find(item => form.elements[elmId].name === item.toLowerCase())
         if(key === undefined){
             // fields we dont have in fields interface
             if(form.elements[elmId].name === "password"){// password is a special case
@@ -95,6 +107,11 @@ function createItemClick(contentType, fields){
                 form.elements[elmId].value = ''
             break
         }
+    }
+
+    if(contentType === 'user' && document.getElementById('user-role').length === 0){
+        // update role list
+        populateRoleList()
     }
 
     openModelView(`model-${contentType}`)
@@ -149,6 +166,38 @@ function topAlert(type, title, body){
     document.getElementById('top-alert').querySelector('.alert').className = `alert alert-${type}`
     document.getElementById('top-alert-title').innerHTML = title;
     document.getElementById('top-alert-body').innerHTML = `<ul><li>${body}</li></ul>`;
+}
+
+function populateRoleList(selectedRoleName = '-'){
+    fetchData('/api/roles', 'POST', {})
+    .then((data) => {
+        if(data.messageType === 'data'){
+            const roleSelect = document.getElementById('user-role')
+            data.messageBody.map( (item) => {
+                let opt = document.createElement("option");
+                opt.value = item.id
+                opt.innerHTML = item.name;
+                opt.selected = item.name === selectedRoleName
+                roleSelect.append(opt);
+            });
+        }else{// Error
+            console.error(data.messageBody)
+        }
+    })
+}
+
+async function fetchData(action, method, dataToSend){
+    return fetch(action, {
+        method,
+        body: JSON.stringify(dataToSend),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(res => res.json())
+    .catch(err => {
+        console.log('error', err)
+    })
 }
 
 function capitalizeFirstLetter(string) {

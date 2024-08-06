@@ -6,7 +6,7 @@ import modelsInterface from '../interface/modelsInterface.js'
 import {readRows, countsRows} from '../../db.js'
 
 // get name of all models
-const modelsName = modelsInterface.map(item => item.name.toLowerCase())
+const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())
 
 /*  Setup   */
 export async function admin_post_setup(req, res){
@@ -50,35 +50,40 @@ export async function admin_dashboard(req, res, next){
         res.locals.hasMessages = true
     }
 
-    // count models
-    const counts = await countsRows(modelsName)
+    // count number of documents for every collection (model)
+    const documentsCount = await countsRows(modelsName)
+
     // update counts in models list
-    for(let i=0; i< counts.length; i++){
-        modelsInterface[i].count = counts[i]
+    for(let i=0; i< documentsCount.length; i++){
+        modelsInterface[modelsName[i]].count = documentsCount[i]
     }
 
-    // Get sidebat data
-    const sidebarData = modelsInterface.reduce((res, item) => {
-            res.push({
-                "name": item.name.toLocaleLowerCase(),
-                "header": item.header,
-                "count": item.count,
-                "selected": item.name.toLowerCase() == req.contentType,
-                "fields": JSON.stringify(item.fields)
-                // "fields": `"${JSON.stringify(item.fields)}"`
-            });
-            return res;
-    }, [])
+    // Set sidebat data
+    const sidebarData = {}
+    for (const [key, interFace] of Object.entries(modelsInterface)) {
+        // sidebarData[key] = (({ displayName, count, selectFields }) => ({ displayName, count, selectFields }))(modelsInterface[key]);
+        const tmpObj = (({ displayName, count, selectFields }) => ({ displayName, count, selectFields }))(interFace);
+        // destruct nested fields
+        if('destructur' in interFace){
+            tmpObj.selectFields = interFace.destructur(tmpObj.selectFields)
+            // sidebarData[key].selectFields = interFace.destructur({[req.contentType]: interFace.selectFields})
+        }
+        
+        tmpObj.selectFields = Object.keys(tmpObj.selectFields)
+        tmpObj.selected = key === req.contentType
 
+        sidebarData[key] = tmpObj
+    }
+    
     //  Get roles
-    const roles = await readRows('role', {select:{ id: true, name: true}})
+    // const roles = await readRows('role', {select:{ id: true, name: true}})
 
-    const modelHeaders = req.selectedModel?.fields || []
+    const modelHeaders = req.selectedModel?.displayFields || []
     const modelsData = req.modelsData || []
     const contentType = req.contentType || ''
-    const numberOfPages = Math.ceil(sidebarData.find(item => item.name === contentType).count / 10)
+    const numberOfPages = Math.ceil(sidebarData[contentType].count / 10)
     const currentPage = parseInt(req.query.page) || 1
-    res.render('dashboard', {user: req.user, sidebarData, contentType, modelsData, modelHeaders, roles, caption: '', numberOfPages, currentPage })
+    res.render('dashboard', {user: req.user, sidebarData, contentType, modelsData, modelHeaders, caption: '', numberOfPages, currentPage })
 }
 
 function stringToBoolean(str){

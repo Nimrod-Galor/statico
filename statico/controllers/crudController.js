@@ -1,4 +1,4 @@
-import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows, disconnect} from '../../db.js'
+import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows} from '../../db.js'
 import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
@@ -9,11 +9,12 @@ import crypto from 'crypto'
 export async function listContent(req, res, next){
     try{
         // get selected content type name
-        let contentType = req.params.contentType || modelsInterface[0].name
-        contentType = contentType.toLowerCase()
+        let contentType = req.params.contentType || Object.keys(modelsInterface)[0]//modelsInterface[0].name
+        // contentType = contentType.toLowerCase()
     
         // get selected model
-        const selectedModel = modelsInterface.find((model) => model.name.toLowerCase() == contentType)
+        // const selectedModelName = modelsInterface.find((modelName) => modelName == contentType)
+        const selectedModel = Object.entries(modelsInterface).find(([modelName,model]) => modelName === contentType)[1]
     
         // check we didnt get here by mistake
         if(selectedModel === undefined){
@@ -49,16 +50,17 @@ export async function listContent(req, res, next){
             "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
             "take": 10,
             where,
-            "select": selectedModel.select,
+            "select": selectedModel.selectFields,
             "orderBy": {}
         }
         //  Get models data
         let modelsData = await readRows(contentType, query)
         
         // destruct nested fields
-        if(selectedModel.destructur){
+        if('destructur' in selectedModel){
             modelsData = modelsData.map(selectedModel.destructur)
         }
+
 
         req.contentType = contentType
         req.selectedModel = selectedModel
@@ -68,7 +70,6 @@ export async function listContent(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -185,7 +186,6 @@ export async function createUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -243,7 +243,6 @@ export async function editUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -283,7 +282,6 @@ export async function deleteUser(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -381,7 +379,6 @@ export async function createPage(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -449,7 +446,6 @@ export async function editPage(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -473,7 +469,6 @@ export async function deletePage(req, res, next){
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
-        disconnect()
         next()
     }
 }
@@ -540,7 +535,6 @@ export async function createPost(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -606,7 +600,6 @@ export async function editPost(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -633,7 +626,6 @@ export async function deletePost(req, res, next){
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
-        disconnect()
         next()
     }
 }
@@ -746,7 +738,7 @@ export async function getComment(req, res, next){
         }
 
         if(order){
-            const commentModel = modelsInterface.find(item => item.name == 'Comment')
+            const commentModel = modelsInterface['comment']//.find(item => item.name == 'Comment')
             if( order in commentModel.orderBy){
                 query.orderBy = commentModel.orderBy[order]
             }
@@ -769,7 +761,6 @@ export async function getComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -809,7 +800,6 @@ export async function createComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -844,7 +834,6 @@ export async function editComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -874,7 +863,6 @@ export async function deleteComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -900,7 +888,6 @@ export async function countComments(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -922,7 +909,6 @@ export async function likeComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
         next()
     }
 }
@@ -944,7 +930,28 @@ export async function dislikeComment(req, res, next){
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }
     finally{
-        disconnect()
+        next()
+    }
+}
+
+
+
+/****************************************/
+/** Role                                */
+/****************************************/
+
+// list roles
+export async function listRoles(req, res, next){
+    try {
+        //  Get roles
+        const roles = await readRows('role', {select:{ id: true, name: true}})
+
+        req.crud_response = {messageBody: roles, messageTitle: 'Count Comments', messageType: 'data'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
         next()
     }
 }

@@ -1,19 +1,16 @@
-const modelsInterface = [
-    {
-        "name": "User",
-        "header": "Users",
-        "description": "",
-        "fields": [
-            {key: "userName", header: "User Name", type: "String"},//, visible: true, require: true},
-            // {key: "password", header: "Password", type: "String"},//, visible: false, require: true},
-            {key: "createDate", header: "Create Date", type: "DateTime"},//, visible: true, require: false},
-            {key: "email", header: "Email", type: "String"},//, visible: true, require: true},
-            {key: "emailVerified", header: "Verified", type: "Boolean", relation: "user", filter: "verified", filterKey: "emailVerified"},//, visible: true, require: false},
-            {key: "posts", header: "Posts", type: "Int", relation: "post", filter: "author", filterKey: 'id'},//, visible: true, require: false},
-            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "author", filterKey: 'id'},//, visible: true, require: false},
-            {key: "role", header: "Role", type: "String", relation: "user", filter: "role", filterKey: "roleId"},//, visible: true, require: true}
+const modelsInterface = {
+    user: {
+        displayName: "Users",
+        displayFields: [
+            {key: "userName", header: "User Name", type: "String"},
+            {key: "createDate", header: "Create Date", type: "DateTime"},
+            {key: "email", header: "Email", type: "String"},
+            {key: "emailVerified", header: "Verified", type: "Boolean", relation: "user", filter: "verified", filterKey: "emailVerified"},
+            {key: "posts", header: "Posts", type: "Int", relation: "post", filter: "author", filterKey: 'id'},
+            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "author", filterKey: 'id'},
+            {key: "role", header: "Role", type: "String", relation: "user", filter: "role", filterKey: "roleId"},
         ],
-        "select" : {
+        selectFields : {
             id: true,
             userName: true,
             createDate: true,
@@ -32,7 +29,7 @@ const modelsInterface = [
                 }
             }
         },
-        "destructur": (user) => ({
+        destructur: (user) => ({
             ...user,
             posts: user._count.posts,
             comments: user._count.comments,
@@ -40,24 +37,22 @@ const modelsInterface = [
             roleId: user.role.id,
             _count: undefined // optionally remove the original _count field
         }),
-        "filters": [
-            {"name": "username", key: "userName", type: "userName"}, // by user name 
-            {"name": "id", key: "id", type: "ObjectID"}, // by id
-            {"name": "verified", key: "emailVerified", type: "BooleanString"}, // filter users by emailVerified
-            {"name": "role", key: "roleId", type: "ObjectID"}
+        filters: [
+            {name: "username", key: "userName", type: "userName"}, // by user name 
+            {name: "id", key: "id", type: "ObjectID"}, // by id
+            {name: "verified", key: "emailVerified", type: "BooleanString"}, // filter users by emailVerified
+            {name: "role", key: "roleId", type: "ObjectID"}
         ]
     },
       
-    {
-        "name": "Page",
-        "header": "Pages",
-        "description": "",
-        "fields": [
+    page: {
+        displayName: "Pages",
+        displayFields: [
             {key: "title", header: "Title", type: "String"},
             {key: "slug", header: "Slug", type: "String"},
             {key: "publish", header: "Published", type: "Boolean"},
         ],
-        "select": {
+        selectFields: {
             id: true,
             metatitle: true,
             metadescription: true,
@@ -66,27 +61,24 @@ const modelsInterface = [
             slug: true,
             publish: true
         },
-        "filters": [
-            {"name": "published", key: "publish", type: "Boolean"} // filter pages by publish
+        filters: [
+            {name: "published", key: "publish", type: "Boolean"} // filter pages by publish
         ]
     },
 
-    {
-        "name": "Post",
-        "header": "Posts",
-        "description": "",
-        "fields": [
+    post: {
+        displayName: "Posts",
+        displayFields: [
             {key: "title", header: "Title", type: "String"},
             {key: "createDate", header: "Create Date", type: "DateTime"},
             {key: "updated", header: "Update Date", type: "DateTime"},
             {key: "slug", header: "Slug", type: "String"},
-            // {key: "body", header: "", type: "", "visible": },
             {key: "publish", header: "Published", type: "Boolean"},
             {key: "viewCount", header: "Views", type: "Int"},
             {key: "author", header: "Author", type: "String", relation: "post", filter: "author", filterKey: 'authorId'},
             {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post", filterKey: 'id'}
         ],
-        "select": {
+        selectFields: {
             id: true,
             metatitle: true,
             metadescription: true,
@@ -103,31 +95,27 @@ const modelsInterface = [
                 }
             },
             authorId: true,
-            // comments: true
             _count:{
                 select: {
                     comments: true
                 }
             }
-
         },
-        "destructur": (post) => ({
+        destructur: (post) => ({
             ...post,
             author: post.author.userName,
             comments: post._count.comments,
             _count: undefined
         }),
-        "filters": [
-            {"name": "id", key: "id", type: "ObjectID"}, // filter posts by Id
-            {"name": "author", key: "authorId", type: "ObjectID"} // filter posts by author
+        filters: [
+            {name: "id", key: "id", type: "ObjectID"}, // filter posts by Id
+            {name: "author", key: "authorId", type: "ObjectID"} // filter posts by author
         ]
     },
       
-    {
-        "name": "Comment",
-        "header": "Comments",
-        "description": "",
-        "fields": [
+    comment: {
+        displayName: "Comments",
+        displayFields: [
             {key: "comment", header: "Comment", type: "String"},
             {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "publish", header: "Published", type: "Boolean"},
@@ -135,7 +123,7 @@ const modelsInterface = [
             {key: "post", header: "Post", type: "String", relation: "post", filter: "id", filterKey: "postId" },
             {key: "replies", header: "Replies", type: "Int", relation: "comment", filter: "parent", filterKey: "id" }
         ],
-        "select": {
+        selectFields: {
             id: true,
             createdAt: true,
             comment: true,
@@ -159,36 +147,34 @@ const modelsInterface = [
                 }
             }
         },
-        "destructur": (comment) => ({
+        destructur: (comment) => ({
             ...comment,
             author: comment.author.userName,
             replies: comment._count.replies,
             post: comment.post.title,
             _count: undefined
         }),
-        "filters": [
+        filters: [
             {name: "parent", key: "parentId", type: "ObjectID"}, 
         ],
-        "orderBy": {
+        orderBy: {
             datedesc: {createdAt: 'desc'},
             dateasc: {createdAt: 'asc'}
         }
     },
       
-    {
-        "name": "Role",
-        "header": "Roles",
-        "description": "",
-        "fields": [
+    role: {
+        displayName: "Roles",
+        displayFields: [
             {key: "name", header: "Name", type: "String"},
             {key: "description", header: "Description", type: "String"}
         ],
-        "select": {
+        selectFields: {
             id: true,
             name: true,
             description: true
         }
     }
-]
+}
 
 export default modelsInterface

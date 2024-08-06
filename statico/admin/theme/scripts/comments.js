@@ -223,20 +223,6 @@ async function postComment(event){
     })
 }
 
-async function fetchData(action, method, dataToSend){
-    return fetch(action, {
-        method,
-        body: JSON.stringify(dataToSend),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(res => res.json())
-    .catch(err => {
-        console.log('error', err)
-    })
-}
-
 function alertComment(data, activeForm){
     activeForm.querySelector('.top-alert-type').classList.add(`alert-${data.messageType}`)
     activeForm.querySelector('.top-alert-title').innerText = data.messageTitle
