@@ -680,7 +680,9 @@ async function fetchAllComments(parentId, flaten, publish) {
                     userName: true
                 }
             },
-            replies: true
+            replies: true,
+            likes: true,
+            dislikes: true
         }
     }
 
@@ -736,7 +738,9 @@ export async function getComment(req, res, next){
                         userName: true
                     }
                 },
-                replies: true
+                replies: true,
+                likes: true,
+                dislikes: true
             },
             // "orderBy": {}
         }
@@ -891,6 +895,50 @@ export async function countComments(req, res, next){
         })
 
         req.crud_response = {messageBody, messageTitle: 'Count Comments', messageType: 'data'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        disconnect()
+        next()
+    }
+}
+
+/*  Like Comments  */
+export async function likeComment(req, res, next){
+    const {id} = req.body
+
+    try {
+        if(!isValid(id, "objectid")){
+            throw new Error('Invalid Post')
+        }
+
+        await updateRow('comment', {id}, { likes: { increment: 1 } })
+
+        req.crud_response = {messageBody: `Like Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        disconnect()
+        next()
+    }
+}
+
+/*  dislike Comments  */
+export async function dislikeComment(req, res, next){
+    const {id} = req.body
+
+    try {
+        if(!isValid(id, "objectid")){
+            throw new Error('Invalid Post')
+        }
+
+        await updateRow('comment', {id}, { dislikes: { increment: 1 } })
+
+        req.crud_response = {messageBody: `Dislike Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

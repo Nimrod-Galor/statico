@@ -135,6 +135,26 @@ function constractComment(parentObj, data, commentIndex){
             event.target.parentNode.appendChild(activeForm)
         })
 
+        clone.querySelector('.likes').innerText = data[i].likes > 0 ? data[i].likes : ''
+        clone.querySelector('.like-btn').dataset.commentId = data[i].id
+        clone.querySelector('.like-btn').addEventListener('click', (event) => {
+            event.currentTarget.parentNode.disabled = true
+            if(isFirstVote(event.currentTarget.dataset.commentId), 'like'){
+                const dataToSend = {id: event.currentTarget.dataset.commentId}
+                fetchData('api/like/comment', "POST", dataToSend)
+            }
+        })
+
+        clone.querySelector('.dislikes').innerText = data[i].dislikes > 0 ? data[i].likes : ''
+        clone.querySelector('.dislike-btn').dataset.commentId = data[i].id
+        clone.querySelector('.dislike-btn').addEventListener('click', (event) => {
+            event.currentTarget.parentNode.disabled = true
+            if(isFirstVote(event.currentTarget.dataset.commentId, 'dislike')){
+                const dataToSend = {id: event.currentTarget.dataset.commentId}
+                fetchData('api/dislike/comment', "POST", dataToSend)
+            }
+        })
+
         // append item to list
         parentObj.appendChild(clone)
 
@@ -151,10 +171,15 @@ function constractComment(parentObj, data, commentIndex){
     }
 }
 
-async function postComment(event){
+function isFirstVote(commentId, vote){
+    if(getCookie(commentId) == ""){// cookie not found. first vote
+        setCookie(commentId, vote, 128)
+        return true
+    }
+    return false
+}
 
-    console.log("create comments")
-    
+async function postComment(event){
     event.preventDefault()
     event.stopPropagation()
 

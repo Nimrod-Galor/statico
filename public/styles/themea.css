@@ -98,3 +98,11 @@ form.disabled button[type="submit"] .spinner-border{
 .comments-list li{
     list-style: circle;
 }
+
+
+fieldset.comment-voting{
+    padding: unset;
+    margin: unset;
+    border: none;
+    border-radius: unset;
+}
