@@ -5,7 +5,7 @@ import  {   createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost,
             countComments, getComment, createComment, editComment, deleteComment, likeComment, dislikeComment,
-            listRoles
+            listRoles, editeRole
         } from '../controllers/crudController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -85,6 +85,10 @@ router.post("/dislike/comment", ensureLoggedIn('/json-alert/logintocomment'), di
 /*  Role    */
 // get Roles
 router.post("/roles", ensureLoggedIn('/json-alert/login'), listRoles, (req, res, next) => {
+    res.json(req.crud_response)
+})
+// update role
+router.post("/edit/role", ensureLoggedIn('/json-alert/login'), editeRole, (req, res, next) => {
     res.json(req.crud_response)
 })
 

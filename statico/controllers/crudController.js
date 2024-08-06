@@ -940,13 +940,52 @@ export async function dislikeComment(req, res, next){
 /** Role                                */
 /****************************************/
 
-// list roles
+// List roles
 export async function listRoles(req, res, next){
     try {
         //  Get roles
         const roles = await readRows('role', {select:{ id: true, name: true}})
 
         req.crud_response = {messageBody: roles, messageTitle: 'Count Comments', messageType: 'data'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+function roleValidations(id, name, description){
+    // Validate user Data
+    let errorMsg = []
+
+    if(!isValid(id, "objectid")){
+        errorMsg.push('Invalid Role')
+    }
+    if( !isValid(name, "username")){
+        errorMsg.push('Invalid Name')
+    }
+    if(!isValid(description, "metadescription")){
+        errorMsg.push('Invalid Description')
+    }
+    
+    if(errorMsg.length != 0){
+        throw new Error(errorMsg.join("</li><li>"))
+    }
+
+    return true
+}
+// Edit Role
+export async function editeRole(req, res, next){
+    const {id, name, description} = req.body
+
+    try {
+        roleValidations(id, name, description)
+
+        await updateRow('role', {id}, { name, description })
+
+        req.crud_response = {messageBody: `Rolet ${name} was successfuly updated`, messageTitle: 'Role updated', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

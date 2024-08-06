@@ -350,15 +350,31 @@
                     <div id="model-role" class="content-type-wrapp d-none">
                         <form id="create-role" action="/admin/create/role" method="POST" onsubmit="validateForm(event)" novalidate>
                             <fieldset form="create-role">
-                                <legend class="create mb-2">Create Role</legend>
                                 <legend class="edit mb-2">Edit Role</legend>
                                 <input type="hidden" id="role-id" name="id" value="" />
-                                <button type="submit" class="create btn btn-primary">
-                                    <div class="spinner-border" role="status">
-                                        <span class="visually-hidden">Loading...</span>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="role-name" name="name" pattern="[A-Za-z0-9_\-]{4,20}">
+                                    <label for="metadescription">Name</label>
+                                    <div class="valid-feedback">
+                                        Looks good!
                                     </div>
-                                    Create
-                                </button>
+                                    <div class="invalid-feedback">
+                                        Invalid Role Name
+                                    </div>    
+                                </div>
+                                <div class="form-floating mb-1">
+                                    <input type="text" class="form-control" id="role-description" name="description" pattern="[a-zA-Z0-9 \-_!@#$%&*\(\)\+\/\'\.]{1,256}">
+                                    <label for="metadescription">Role Description</label>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Invalid Role Description
+                                    </div>    
+                                </div>
+                                <div id="passwordHelpBlock" class="form-text mb-3">
+                                    * This is for naming purposes only, and have no effect on Role Permission!
+                                  </div>
                                 <button type="submit" class="edit btn btn-primary">
                                     <div class="spinner-border" role="status">
                                         <span class="visually-hidden">Loading...</span>
@@ -407,11 +423,13 @@
                                     <%})%>
                                     <td class="text-end">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <%if(contentType != 'role'){%>
                                             <form action="/admin/delete/<%-contentType.toLowerCase()%>" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                                 <input type="hidden" name="id" value="<%=data.id%>"/>
                                                 <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
                                                 <button type="submit" class="btn btn-warning">Delete</button>
                                             </form>
+                                            <%}%>
                                             <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
                                         </div>
                                     </td>

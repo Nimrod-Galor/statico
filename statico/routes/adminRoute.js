@@ -5,7 +5,8 @@ import  { listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
     createPost, editPost, deletePost,
-    editComment, deleteComment
+    editComment, deleteComment,
+    editeRole
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
 
@@ -76,4 +77,8 @@ router.post("/delete/comment", ensureLoggedIn('/login'), urlencodedParser, delet
     res.redirect('/admin/comment')
 })
 
+// Edit Role
+router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {
+    res.redirect('/admin/role')
+})
 export default router
