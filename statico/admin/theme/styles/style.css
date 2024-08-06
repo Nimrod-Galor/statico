@@ -141,3 +141,8 @@ form.create button[type="submit"].edit{
 form.edit button[type="submit"].create{
     display: none;
 }
+
+
+.horizontal-collapse table td{
+    max-width: 20vw;
+}
