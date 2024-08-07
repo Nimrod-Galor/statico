@@ -13,7 +13,7 @@ export function ensureAuthorized(key, redirect){
         if(isAuthorized(key, req.user.roleId)){
             next()
         }else{
-            req.session.messages = ['You are not authorized to view this page!'];
+            req.session.messages = [`You are not authorized to view this page! ("${req.originalUrl}")`];
             req.session.messageType = 'warning'
             req.session.messageTitle = 'Unauthorized'
             res.redirect(redirect)

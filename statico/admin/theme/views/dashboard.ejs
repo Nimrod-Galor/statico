@@ -142,13 +142,9 @@
                                     </div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="user-role" name="role" aria-label="Floating label select example">
-                                        <!-- < % roles.forEach((role) => { %>
-                                            <option value="< %-role.id%>">< %-role.name%></option>
-                                        < %})%> -->
-                                        
-                                    </select>
+                                    <select class="form-select" id="user-role" name="role" aria-label="Floating label select example" onchange="updateRoleDescription(event)"></select>
                                     <label for="role">Role</label>
+                                    <div id="user-role-RoleHelpBlock" class="form-text mb-3"></div>
                                 </div>
                                 <button type="submit" class="create btn btn-primary">
                                     <div class="spinner-border" role="status">
@@ -385,9 +381,9 @@
                                         Invalid Role Description
                                     </div>    
                                 </div>
-                                <div id="passwordHelpBlock" class="form-text mb-3">
+                                <div id="editRoleHelpBlock" class="form-text mb-3">
                                     * This is for naming purposes only, and have no effect on Role Permissions!
-                                  </div>
+                                </div>
                                 <button type="submit" class="edit btn btn-primary">
                                     <div class="spinner-border" role="status">
                                         <span class="visually-hidden">Loading...</span>
@@ -418,7 +414,6 @@
                         <tbody class="table-group-divider">
                             <% modelsData.forEach((data) => {%>
                                 <tr>
-                                    <!-- < %- JSON.stringify(data) %> -->
                                     <% modelHeaders.forEach((field) => {%>
                                         <td>
                                             <% if(field.relation){ %>

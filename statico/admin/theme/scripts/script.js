@@ -91,7 +91,9 @@ function createItemClick(contentType, fields){
                 form.elements[elmId].checked = true
             break;
             case 'select-one':
-                form.elements[elmId].options[0].selected = true
+                if(form.elements[elmId].options.length > 0){
+                    form.elements[elmId].options[0].selected = true
+                }
             break
             case "textarea":
                     switch(contentType){
@@ -173,13 +175,22 @@ function populateRoleList(selectedRoleName = '-'){
     .then((data) => {
         if(data.messageType === 'data'){
             const roleSelect = document.getElementById('user-role')
-            data.messageBody.map( (item) => {
+            data.messageBody.sort((a, b) => b.default == true ? 1 : -1).map( (item) => {
                 let opt = document.createElement("option");
                 opt.value = item.id
                 opt.innerHTML = item.name;
-                opt.selected = item.name === selectedRoleName
+                opt.dataset.description = item.description
+                if(item.name === selectedRoleName){
+                    opt.selected = true
+                    document.getElementById('user-role-RoleHelpBlock').innerText = `* ${item.description}`
+                }
+                
                 roleSelect.append(opt);
             });
+
+            if(selectedRoleName === '-'){
+                document.getElementById('user-role-RoleHelpBlock').innerText = `* ${data.messageBody[0].description}`
+            }
         }else{// Error
             console.error(data.messageBody)
         }
@@ -210,4 +221,8 @@ function updatePostBody(){
 
 function updatePageBody(){
     document.getElementById('page-body').value = window.pageEditor.getData();
+}
+
+function updateRoleDescription(event){
+    document.getElementById('user-role-RoleHelpBlock').innerText = `* ${event.currentTarget.options[event.currentTarget.selectedIndex].dataset.description}`
 }

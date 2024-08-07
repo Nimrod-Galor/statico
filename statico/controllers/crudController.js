@@ -23,7 +23,7 @@ export async function listContent(req, res, next){
         }
     
         // build models data query string
-        const where = {}
+        const where = req.where || {}
         // const orderBy = {}
         if(req.params[0]){
             // check for extra parmas
@@ -944,7 +944,7 @@ export async function dislikeComment(req, res, next){
 export async function listRoles(req, res, next){
     try {
         //  Get roles
-        const roles = await readRows('role', {select:{ id: true, name: true}})
+        const roles = await readRows('role', {select:{ id: true, name: true, description: true, default: true}})
 
         req.crud_response = {messageBody: roles, messageTitle: 'Count Comments', messageType: 'data'}
     }catch(errorMsg){

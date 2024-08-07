@@ -1,7 +1,7 @@
 import express from 'express'
 import createError from 'http-errors'
 import {findUnique} from '../db.js'
-// import {get_index, get_postById, get_postBySlug} from '../controllers/pageController.js'
+import {isAuthorized} from '../statico/admin/permissions/permissions.js'
 
 const router = express.Router();
 
@@ -14,7 +14,11 @@ async function getPage(req, res, next){
             return next(createError(404, 'Resource not found'));
         }
 
-        res.render('page', { user: req.user, pageData })
+        res.locals.permissions = {
+            "view_admin_page": isAuthorized("view_admin_page", req.user.roleId)
+        }
+
+        res.render('page', { user: req.user,  pageData })
     }catch(err){
         console.log(err)
         // post not found

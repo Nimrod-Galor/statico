@@ -10,14 +10,25 @@ import  { listContent,
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
 import {getPermissions} from '../controllers/permissionsController.js'
-import {ensureAuthorized} from '../admin/permissions/permissions.js'
+import {ensureAuthorized, filterByPermissions} from '../admin/permissions/permissions.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
+function setAlertMessage(req, res, next){
+    //  Set alert message
+    req.session.messages = [req.crud_response.messageBody]
+    req.session.messageType = req.crud_response.messageType
+    req.session.messageTitle = req.crud_response.messageTitle
+    next()
+}
 
+// list Users
+router.get(["/:user?", "/:user?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_admin_page', '/'), filterByPermissions('list_users'), listContent, admin_dashboard(), (req, res) => {
+    res.render('dashboard', {user: req.user, caption: '' })
+})
 //  Create User
 router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, createUser, setAlertMessage, (req, res) => {
     res.redirect('/admin/user')
@@ -76,18 +87,10 @@ router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissio
 })
 
 // get content (list content for dashboard)
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_users', '/'), listContent, admin_dashboard(), (req, res) => {
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_admin_page', '/'), listContent, admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 
-
-function setAlertMessage(req, res, next){
-    //  Set alert message
-    req.session.messages = [req.crud_response.messageBody]
-    req.session.messageType = req.crud_response.messageType
-    req.session.messageTitle = req.crud_response.messageTitle
-    next()
-}
 
 // initial Setup
 router.post("/setup",urlencodedParser, admin_post_setup)

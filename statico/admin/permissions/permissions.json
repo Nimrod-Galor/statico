@@ -1,21 +1,26 @@
 {
     "66b32418c07ee0ecebe9589c": {
-        "view_users": {"allow": false, "where": "" }
+        "view_admin_page": {"allow": false},
+        "list_users": {"allow": false}
     },
 
     "66b32418c07ee0ecebe9589d": {
-        "view_users": {"allow": false, "where": "" }
+        "view_admin_page": {"allow": false},
+        "list_users": {"allow": false}
     },
 
     "66b32417c07ee0ecebe9589a": {
-        "view_users": {"allow": true, "where": {"roleId": "66b32418c07ee0ecebe9589d"}}
+        "view_admin_page": {"allow": true},
+        "list_users": {"allow": true, "where": {"roleId": "66b32418c07ee0ecebe9589d"}}
     },
 
     "66b32418c07ee0ecebe9589b": {
-        "view_users": {"allow": true, "where": { "OR": [ { "roleId": "66b32418c07ee0ecebe9589d" }, { "roleId": "66b32417c07ee0ecebe9589a" } ] } }
+        "view_admin_page": {"allow": true},
+        "list_users": {"allow": true, "where": { "OR": [ { "roleId": "66b32418c07ee0ecebe9589d" }, { "roleId": "66b32417c07ee0ecebe9589a" } ] } }
     },
 
     "66b3240bc07ee0ecebe95896": {
-        "view_users": {"allow": true, "where": {} }
+        "view_admin_page": {"allow": true},
+        "list_users": {"allow": true, "where": {} }
     }
 }
