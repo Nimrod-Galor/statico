@@ -21,6 +21,7 @@ import adminRouter from './statico/routes/adminRoute.js'
 import apiRouter from './statico/routes/apiRoute.js'
 import jsonAlerts from './statico/routes/jsonalerts.js'
 
+
 /* Test prisma */
 // import getBy, {createRow} from './db.js'
 
@@ -84,7 +85,7 @@ passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser))
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
-        cb(null, { id: user.id, username: user.userName })
+        cb(null, { id: user.id, username: user.userName, roleId: user.roleId })
     })
 })
 

@@ -1,0 +1,21 @@
+{
+    "subscriber": {
+        "view_users": {"allow": false, "where": {} }
+    },
+
+    "contributor": {
+        "view_users": {"allow": false, "where": {} }
+    },
+
+    "author": {
+        "view_users": {"allow": true, "where": {"roleId": "contributor"}}
+    },
+
+    "editor": {
+        "view_users": {"allow": true, "where": { "OR": [ { "roleId": "contributor" }, { "roleId": "author" } ] } }
+    },
+
+    "admin": {
+        "view_users": {"allow": true, "where": {} }
+    }
+}
