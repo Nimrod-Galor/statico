@@ -1,10 +1,10 @@
 {
     "subscriber": {
-        "view_users": {"allow": false, "where": {} }
+        "view_users": {"allow": false, "where": "" }
     },
 
     "contributor": {
-        "view_users": {"allow": false, "where": {} }
+        "view_users": {"allow": false, "where": "" }
     },
 
     "author": {

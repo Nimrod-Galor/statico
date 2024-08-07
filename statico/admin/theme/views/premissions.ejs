@@ -89,7 +89,58 @@
             </div>
 
             <div>
-                Permissions
+                <table class="table  table-striped-columns caption-top">
+                    <caption class="text-center fs-4 bg-warning-subtle">Roles Permissions</caption>
+                    <thead class="table-primary">
+                        <tr>
+                            <th>
+                                &nbsp;
+                            </th>
+                            <%roleName.forEach((role) => {%>
+                                <th scope="col" colspan="2" class="text-center text-capitalize" style="width:<%= Math.floor(100 / roleName.length)%>%">
+                                    <!-- < %-adminRole = role[0]% > -->
+                                    <%=role%>
+                                </th>
+                            <%})%>
+                        </tr>
+                        <tr>
+                            <th style="width:50px">Permission Key</th>
+                            <%roleName.forEach(() => {%>
+                                <th colspan="2">
+                                    <div class="d-flex">
+                                        <div class="w-25">
+                                            Allowed
+                                        </div>
+                                        <div class="flex-grow-1 ps-3">
+                                            Filter
+                                        </div>
+                                    </div>
+                                </th>
+                            <%})%>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <%Object.entries(permissions[adminRoleId]).forEach((permissionKey) => {%>
+                            <tr>
+                                <td>
+                                    <%=permissionKey[0]%>
+                                </td>
+                                <%Object.entries(permissions).forEach((role) => {%>
+                                    <td colspan="2">
+                                        <div class="d-flex">
+                                            <div class="w-25">
+                                                <%=role[1][permissionKey[0]].allow%>
+                                            </div>
+                                            <div class="flex-grow-1 ps-3">
+                                                <%=JSON.stringify(role[1][permissionKey[0]].where)%>
+                                            </div>
+                                        </div>
+                                    </td>
+                                <%})%>
+                            </tr>
+                        <%})%>
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>

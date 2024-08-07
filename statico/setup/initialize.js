@@ -1,4 +1,3 @@
- 
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs, { unlink } from 'node:fs/promises'

@@ -1,0 +1,31 @@
+ 
+import permissions from '../admin/permissions/permissions.json' assert { type: "json" }
+import {readRows} from '../../db.js'
+
+export async function getPermissions(req, res, next){
+    // get roles
+    const roles = await readRows('role', {select: {id: true, name: true}})
+    // update  role name
+    res.locals.roleName = []
+    for(let i =0; i <roles.length; i++){
+        res.locals.roleName.push(roles[i].name)
+    }
+    // set admin role id
+    res.locals.adminRoleId = getAdminRoleId()
+    res.locals.permissions = permissions
+    next()
+}
+
+function getAdminRoleId(){
+    let maxKeys = 0
+    let objIndex = 0
+    for(let i =0; i < permissions.length; i++){
+        const objLength = Object.keys(permissions[i]).length
+        if(objLength > maxKeys){
+            maxKeys = objLength
+            objIndex = 1
+        }
+    }
+
+    return Object.keys(permissions)[objIndex]
+}

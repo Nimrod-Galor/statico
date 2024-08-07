@@ -3,7 +3,7 @@ import createError from 'http-errors'
 // import createUser from '../../modules/createUser.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
-import {readRows, countsRows} from '../../db.js'
+import {countsRows} from '../../db.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())

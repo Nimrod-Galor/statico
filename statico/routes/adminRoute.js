@@ -9,6 +9,8 @@ import  { listContent,
     editeRole
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
+import {getPermissions} from '../controllers/permissionsController.js'
+import {ensureAuthorized} from '../admin/permissions/permissions.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -69,12 +71,12 @@ router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole,
     res.redirect('/admin/role')
 })
 
-router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissions'), (req, res) => {
+router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissions'), getPermissions, (req, res) => {
     res.render('premissions', {user: req.user, caption: '' })
 })
 
 // get content (list content for dashboard)
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), listContent, admin_dashboard(), (req, res) => {
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_users', '/'), listContent, admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 

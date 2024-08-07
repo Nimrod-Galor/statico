@@ -1,10 +1,10 @@
 {
     "66b32418c07ee0ecebe9589c": {
-        "view_users": {"allow": false, "where": {} }
+        "view_users": {"allow": false, "where": "" }
     },
 
     "66b32418c07ee0ecebe9589d": {
-        "view_users": {"allow": false, "where": {} }
+        "view_users": {"allow": false, "where": "" }
     },
 
     "66b32417c07ee0ecebe9589a": {
