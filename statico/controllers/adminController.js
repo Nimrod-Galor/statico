@@ -76,12 +76,13 @@ export function admin_dashboard(contentType){
             sidebarData[key] = tmpObj
         }
 
-        req.sidebarData = sidebarData
-        req.modelHeaders = req.selectedModel?.displayFields || []
-        req.modelsData = req.modelsData || []
-        req.contentType = req.contentType || contentType || ''
-        req.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
-        req.currentPage = parseInt(req.query.page) || 1
+        
+        res.locals.sidebarData = sidebarData
+        res.locals.modelHeaders = req.selectedModel?.displayFields || []
+        res.locals.modelsData = req.modelsData || []
+        res.locals.contentType = req.contentType || contentType || ''
+        res.locals.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
+        res.locals.currentPage = parseInt(req.query.page) || 1
 
         next()
     }

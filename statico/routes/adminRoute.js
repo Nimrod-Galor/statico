@@ -70,12 +70,12 @@ router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole,
 })
 
 router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissions'), (req, res) => {
-    res.render('premissions', {user: req.user, sidebarData: req.sidebarData, contentType: req.contentType, modelsData: '', modelHeaders: '', caption: '', numberOfPages: '', currentPage: '' })
+    res.render('premissions', {user: req.user, caption: '' })
 })
 
 // get content (list content for dashboard)
 router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), listContent, admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, sidebarData: req.sidebarData, contentType: req.contentType, modelsData: req.modelsData, modelHeaders: req.modelHeaders, caption: '', numberOfPages: req.numberOfPages, currentPage: req.currentPage })
+    res.render('dashboard', {user: req.user, caption: '' })
 })
 
 
