@@ -93,13 +93,17 @@
                     <caption class="text-center fs-4 bg-warning-subtle">Roles Permissions</caption>
                     <thead class="table-primary">
                         <tr>
-                            <th>
+                            <th style="width:5%">
                                 &nbsp;
                             </th>
                             <%roles.forEach((role) => {%>
-                                <th scope="col" colspan="2" class="text-center text-capitalize" style="width:<%= Math.floor(100 / roles.length)%>%">
-                                    <!-- < %-adminRole = role[0]% > -->
-                                    <%=role.name%>
+                                <th scope="col" colspan="2" class="align-top" style="width:19%">
+                                    <div class="text-center text-capitalize">
+                                        <%=role.name%>
+                                    </div>
+                                    <p class="text-break form-text fw-lighter p-0 m-0">
+                                        <%=role.description%>
+                                    </p>
                                 </th>
                             <%})%>
                         </tr>

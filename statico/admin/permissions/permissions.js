@@ -24,7 +24,11 @@ export function ensureAuthorized(key, redirect){
 export function filterByPermissions(key){
     return function(req, res, next){
         try{
-            req.where = permissions[req.user.roleId][key].where
+            let where = permissions[req.user.roleId][key].where
+            if("authorId" in where){
+                where.authorId = req.user.id
+            }
+            req.where = where
         }catch(err){
             req.where = {id: null}
         }

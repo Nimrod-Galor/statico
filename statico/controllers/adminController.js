@@ -4,6 +4,7 @@ import createError from 'http-errors'
 import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import {countsRows} from '../../db.js'
+import {isAuthorized} from '../admin/permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())
@@ -83,7 +84,27 @@ export function admin_dashboard(contentType){
         res.locals.contentType = req.contentType || contentType || ''
         res.locals.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
         res.locals.currentPage = parseInt(req.query.page) || 1
-
+        
+        // Set permissions
+        res.locals.permissions = {}
+        switch(res.locals.contentType){
+            case 'user':
+                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+            break
+            case 'page':
+                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+            break
+            case 'post':
+                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+            break
+            case 'comment':
+                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+            break
+            case 'role':
+                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+            break
+        }
+        
         next()
     }
 }
