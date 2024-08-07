@@ -15,20 +15,7 @@ const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
-// initial Setup
-router.post("/setup",urlencodedParser, admin_post_setup)
 
-// get content
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), listContent, admin_dashboard)
-//, "/create/:contentType", "/adit/:contentType", "delete/:contentType"
-
-function setAlertMessage(req, res, next){
-    //  Set alert message
-    req.session.messages = [req.crud_response.messageBody]
-    req.session.messageType = req.crud_response.messageType
-    req.session.messageTitle = req.crud_response.messageTitle
-    next()
-}
 //  Create User
 router.post("/create/user", ensureLoggedIn('/login'), urlencodedParser, createUser, setAlertMessage, (req, res) => {
     res.redirect('/admin/user')
@@ -81,4 +68,26 @@ router.post("/delete/comment", ensureLoggedIn('/login'), urlencodedParser, delet
 router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {
     res.redirect('/admin/role')
 })
+
+router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissions'), (req, res) => {
+    res.render('premissions', {user: req.user, sidebarData: req.sidebarData, contentType: req.contentType, modelsData: '', modelHeaders: '', caption: '', numberOfPages: '', currentPage: '' })
+})
+
+// get content (list content for dashboard)
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), listContent, admin_dashboard(), (req, res) => {
+    res.render('dashboard', {user: req.user, sidebarData: req.sidebarData, contentType: req.contentType, modelsData: req.modelsData, modelHeaders: req.modelHeaders, caption: '', numberOfPages: req.numberOfPages, currentPage: req.currentPage })
+})
+
+
+function setAlertMessage(req, res, next){
+    //  Set alert message
+    req.session.messages = [req.crud_response.messageBody]
+    req.session.messageType = req.crud_response.messageType
+    req.session.messageTitle = req.crud_response.messageTitle
+    next()
+}
+
+// initial Setup
+router.post("/setup",urlencodedParser, admin_post_setup)
+
 export default router

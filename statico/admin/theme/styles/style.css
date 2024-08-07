@@ -53,6 +53,10 @@
 
 
 /*  Sidebar */
+#sidebar.permissions .modelAddBtn{
+    display: none;
+}
+
 #sidebar .comment .modelAddBtn{
     display: none;
 }
