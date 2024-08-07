@@ -96,16 +96,16 @@
                             <th>
                                 &nbsp;
                             </th>
-                            <%roleName.forEach((role) => {%>
-                                <th scope="col" colspan="2" class="text-center text-capitalize" style="width:<%= Math.floor(100 / roleName.length)%>%">
+                            <%roles.forEach((role) => {%>
+                                <th scope="col" colspan="2" class="text-center text-capitalize" style="width:<%= Math.floor(100 / roles.length)%>%">
                                     <!-- < %-adminRole = role[0]% > -->
-                                    <%=role%>
+                                    <%=role.name%>
                                 </th>
                             <%})%>
                         </tr>
                         <tr>
                             <th style="width:50px">Permission Key</th>
-                            <%roleName.forEach(() => {%>
+                            <%roles.forEach(() => {%>
                                 <th colspan="2">
                                     <div class="d-flex">
                                         <div class="w-25">
@@ -120,19 +120,19 @@
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
-                        <%Object.entries(permissions[adminRoleId]).forEach((permissionKey) => {%>
+                        <%Object.keys(permissions[adminRoleId]).forEach((permissionKey) => {%>
                             <tr>
                                 <td>
-                                    <%=permissionKey[0]%>
+                                    <%=permissionKey%>
                                 </td>
-                                <%Object.entries(permissions).forEach((role) => {%>
+                                <%roles.forEach((role) => {%>
                                     <td colspan="2">
                                         <div class="d-flex">
                                             <div class="w-25">
-                                                <%=role[1][permissionKey[0]].allow%>
+                                                <%=permissions[role.id][permissionKey].allow%>
                                             </div>
-                                            <div class="flex-grow-1 ps-3">
-                                                <%=JSON.stringify(role[1][permissionKey[0]].where)%>
+                                            <div>
+                                                <%=JSON.stringify(permissions[role.id][permissionKey].where)%>
                                             </div>
                                         </div>
                                     </td>

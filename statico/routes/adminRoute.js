@@ -26,7 +26,7 @@ function setAlertMessage(req, res, next){
 }
 
 // list Users
-router.get(["/:user?", "/:user?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_admin_page', '/'), filterByPermissions('list_users'), listContent, admin_dashboard(), (req, res) => {
+router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_admin_page', '/'), filterByPermissions('list_users'), listContent, admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create User
@@ -82,8 +82,9 @@ router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole,
     res.redirect('/admin/role')
 })
 
+// Permission Page
 router.get("/permissions",  ensureLoggedIn('/login'), admin_dashboard('permissions'), getPermissions, (req, res) => {
-    res.render('premissions', {user: req.user, caption: '' })
+    res.render('permissions', {user: req.user, caption: '' })
 })
 
 // get content (list content for dashboard)
