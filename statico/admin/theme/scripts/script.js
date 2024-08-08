@@ -41,10 +41,10 @@ function editItemClick(contentType, data){
                 case "textarea":
                     switch(contentType){
                         case "page":
-                            window.pageEditor.setData(data[key])
+                            window.pageEditor.setData(decodeHTML(data[key]))
                         break
                         case "post":
-                            window.postEditor.setData(data[key])
+                            window.postEditor.setData(decodeHTML(data[key]))
                         break
                         case "comment":
                             form.elements[elmId].value = data[key]
@@ -145,10 +145,9 @@ function toggleClass(objId, className){
 }
 
 function validateForm(event){
-    // event.preventDefault();
     const form = event.currentTarget
     form.classList.add('was-validated')
-    
+
     if (!form.checkValidity()) {// validation Failed
         event.preventDefault()
         event.stopPropagation()
@@ -175,7 +174,14 @@ function populateRoleList(selectedRoleName = '-'){
     .then((data) => {
         if(data.messageType === 'data'){
             const roleSelect = document.getElementById('user-role')
-            data.messageBody.sort((a, b) => b.default == true ? 1 : -1).map( (item) => {
+            const rolesOrder = {
+                "admin": 4,
+                "editor": 3,
+                "author": 2,
+                "contributor": 1,
+                "subscriber": 0,
+            }
+            data.messageBody.sort((a,b) => rolesOrder[a.name] < rolesOrder[b.name] ? -1 : 1).map( (item) => {
                 let opt = document.createElement("option");
                 opt.value = item.id
                 opt.innerHTML = item.name;
@@ -215,12 +221,29 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// Function to encode HTML entities
+function encodeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+}
+
+
+// Function to decode HTML entities
+function decodeHTML(str) {
+    const shadowTextArea = document.createElement('textarea');
+    shadowTextArea.innerHTML = str;
+    return shadowTextArea.value;
+}
+
 function updatePostBody(){
-    document.getElementById('post-body').value = window.postEditor.getData();
+    document.getElementById('post-body').value = encodeHTML(window.postEditor.getData())
 }
 
 function updatePageBody(){
-    document.getElementById('page-body').value = window.pageEditor.getData();
+    document.getElementById('page-body').value = encodeHTML(window.pageEditor.getData())
 }
 
 function updateRoleDescription(event){

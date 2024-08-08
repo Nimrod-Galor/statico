@@ -51,19 +51,23 @@
                                 <%=model.displayName%>
                             </a>
                         <%}%>
-                        <div class="pointer modelAddBtn" onclick="createItemClick('<%=modelName%>', '<%=JSON.stringify(model.selectFields)%>')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                        <%if(permissions[modelName]["create_content_item"]){%>
+                            <div class="pointer modelAddBtn" onclick="createItemClick('<%=modelName%>', '<%=JSON.stringify(model.selectFields)%>')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                 </svg>
-                        </div>
+                            </div>
+                        <%}%>
                     </li>
                 <%}%>
-                <li class="list-group-item list-group-item-action d-flex flex-row">
-                    <a href="/admin/permissions" class="d-block w-100 me-2 text-decoration-none fw-bold">
-                        Permissions
-                    </a>
-                </li>
+                <%if(permissions["view_permissions_page"]){%>
+                    <li class="list-group-item list-group-item-action d-flex flex-row">
+                        <a href="/admin/permissions" class="d-block w-100 me-2 text-decoration-none fw-bold">
+                            Permissions
+                        </a>
+                    </li>
+                <%}%>
             </ul>
         </div>
         <main class="col-md-9 ms-sm-auto col-lg-10 ps-4 pe-4">
@@ -163,7 +167,7 @@
                     </div>
                     <!-- Page -->
                     <div id="model-page" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
-                        <form id="create-page" action="/admin/create/page" method="POST" style="max-width: 80%;" onsubmit="updatePageBody();validateForm(event)" novalidate>
+                        <form id="create-page" action="/admin/create/page" method="POST" style="max-width: 80%;" onsubmit="return validateForm(event)" novalidate>
                             <fieldset form="create-page">
                                 <legend class="create mb-2">Create Page</legend>
                                 <legend class="edit mb-2">Edit Page</legend>
@@ -179,7 +183,8 @@
                                     </div>    
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                    <div id="page-editor"></div>
+                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 0px;padding: 0;min-height: unset;border:0 none;" required></textarea>
                                     <label for="body">Body</label>
                                     <div class="valid-feedback">
                                         Looks good!
@@ -257,7 +262,8 @@
                                     </div>    
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 500px" required></textarea>
+                                    <div id="post-editor"></div>
+                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 0px;padding: 0;min-height: unset;border:0 none;" required></textarea>
                                     <label for="body">Body</label>
                                     <div class="valid-feedback">
                                         Looks good!
@@ -319,7 +325,7 @@
                     </div>
                     <!-- Comments -->
                     <div id="model-comment" class="content-type-wrapp d-none">
-                        <form id="create-comment" action="/admin/create/comment" method="POST" onsubmit="validateForm(event)" novalidate>
+                        <form id="create-comment" action="/admin/create/comment" method="POST" onsubmit="return validateForm(event)" novalidate>
                             <fieldset form="create-comment">
                                 <legend class="create mb-2">Create Comment</legend>
                                 <legend class="edit mb-2">Edit Comment</legend>
@@ -357,7 +363,7 @@
                     </div>
                     <!-- Roles -->
                     <div id="model-role" class="content-type-wrapp d-none">
-                        <form id="create-role" action="/admin/create/role" method="POST" onsubmit="validateForm(event)" novalidate>
+                        <form id="create-role" action="/admin/create/role" method="POST" onsubmit="return validateForm(event)" novalidate>
                             <fieldset form="create-role">
                                 <legend class="edit mb-2">Edit Role</legend>
                                 <input type="hidden" id="role-id" name="id" value="" />
@@ -429,18 +435,20 @@
                                             <%}%>
                                         </td>
                                     <%})%>
-                                    <td class="text-end">
-                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <%if(contentType != 'role'){%>
-                                            <form action="/admin/delete/<%-contentType.toLowerCase()%>" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
-                                                <input type="hidden" name="id" value="<%=data.id%>"/>
-                                                <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
-                                                <button type="submit" class="btn btn-warning">Delete</button>
-                                            </form>
-                                            <%}%>
-                                            <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
-                                        </div>
-                                    </td>
+                                    <%if(permissions["edit_content_item"]){%>
+                                        <td class="text-end">
+                                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                                <%if(contentType != 'role'){%>
+                                                <form action="/admin/delete/<%-contentType.toLowerCase()%>" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
+                                                    <input type="hidden" name="id" value="<%=data.id%>"/>
+                                                    <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
+                                                    <button type="submit" class="btn btn-warning">Delete</button>
+                                                </form>
+                                                <%}%>
+                                                <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
+                                            </div>
+                                        </td>
+                                    <%}%>
                                 </tr>
                             <%})%>
                         </tbody>
@@ -491,14 +499,11 @@
         }
     </script>
 
-    <script type="text/javascript">
-        let pageEditor
-    </script>
     <script type="module">
         import {ClassicEditor, Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing, AutoLink, Link, List} from 'ckeditor5';
 
         // Page
-        ClassicEditor.create( document.querySelector( '.page-body-textarea' ), {
+        ClassicEditor.create( document.querySelector( '#page-editor' ), {
             plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
             toolbar: {
                 items: [
@@ -511,17 +516,17 @@
                     'bulletedList', 'numberedList', '|',
                 ]
             },
-            placeholder: 'Enter your text here...'
+            placeholder: 'Enter your Page text here...'
         })
         .then( newEditor => {
-            window.pageEditor = newEditor;
+            window.pageEditor = newEditor
         })
         .catch( error => {
-            console.error( error );
+            console.error( error )
         });
 
         // Post
-        ClassicEditor.create( document.querySelector( '.post-body-textarea' ), {
+        ClassicEditor.create( document.querySelector( '#post-editor' ), {
             plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
             toolbar: {
                 items: [
@@ -534,13 +539,13 @@
                     'bulletedList', 'numberedList', '|',
                 ]
             },
-            placeholder: 'Enter your text here...'
+            placeholder: 'Enter your Post here...'
         })
         .then( newEditor => {
-            window.postEditor = newEditor;
+            window.postEditor = newEditor
         })
         .catch( error => {
-            console.error( error );
+            console.error( error )
         });
 
     </script>

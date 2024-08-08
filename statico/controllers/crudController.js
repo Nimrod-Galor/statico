@@ -220,7 +220,7 @@ export async function editUser(req, res, next){
             emailVerified: emailverified,
             userName: username,
             role: {
-                connect: {id: selectedRole.id}
+                connect: {id: role}
             }
         }
 
