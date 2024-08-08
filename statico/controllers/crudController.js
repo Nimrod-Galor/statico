@@ -4,6 +4,13 @@ import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
+function encodeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+}
 
 /*  admin list content  */
 export async function listContent(req, res, next){
@@ -330,6 +337,8 @@ export async function createPage(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
+    body = encodeHTML(body)
+
     if(publish){
         // Convert publish string to boolean
         publish = stringToBoolean(publish)
@@ -387,6 +396,8 @@ export async function createPage(req, res, next){
 export async function editPage(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
+
+    body = encodeHTML(body)
 
     if(publish){
         // Convert publish string to boolean
@@ -483,6 +494,8 @@ export async function createPost(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
+    body = encodeHTML(body)
+
     if(publish){
         // Convert publish string to boolean
         publish = stringToBoolean(publish)
@@ -543,6 +556,8 @@ export async function createPost(req, res, next){
 export async function editPost(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
+
+    body = encodeHTML(body)
 
     if(publish){
         // Convert publish string to boolean
@@ -767,7 +782,9 @@ export async function getComment(req, res, next){
 
 /*  Create Comment  */
 export async function createComment(req, res, next){
-    const {post, parent, body } = req.body
+    let {post, parent, body } = req.body
+
+    body = encodeHTML(body)
 
     try{
         // Validate user Data
@@ -807,6 +824,8 @@ export async function createComment(req, res, next){
 /*  Edit Comment    */
 export async function editComment(req, res, next){
     let {id, parent, comment, publish } = req.body
+
+    comment = encodeHTML(comment)
 
     if(publish){
         // Convert publish string to boolean
