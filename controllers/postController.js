@@ -1,4 +1,5 @@
 import createError from 'http-errors'
+import he from 'he'
 import {findUnique} from '../db.js'
 
 export function get_index(req, res){
@@ -16,6 +17,8 @@ export async function get_postById(req, res, next){
             // post not found
             return next(createError(404, 'Resource not found'));
         }
+
+        postData.body = he.decode(postData.body)
 
         res.render('post', { user: req.user, postData })
     }catch(err){
@@ -39,12 +42,16 @@ export async function get_postBySlug(req, res, next){
                 // post not found
                 return next(createError(404, 'Resource not found'));
             }
+            postData.body = he.decode(postData.body)
             res.render('page', { user: req.user, pageData })
+        }else{
+            postData.body = he.decode(postData.body)
+            res.render('post', { user: req.user, postData })
         }
-        res.render('post', { user: req.user, postData })
     }catch(err){
         console.log(err)
         // post not found
         return next(err);
     }
 }
+

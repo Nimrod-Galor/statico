@@ -108,11 +108,11 @@ export function admin_dashboard(contentType){
         }
         // for every page permissions (sidbar)
         res.locals.permissions["view_permissions_page"] = isAuthorized("view_permissions_page", req.user.roleId)
-        res.locals.permissions["user"] = {"create_content_item": isAuthorized("create_user", req.user.roleId)}
-        res.locals.permissions["page"] = {"create_content_item": isAuthorized("create_page", req.user.roleId)}
-        res.locals.permissions["post"] = {"create_content_item": isAuthorized("create_post", req.user.roleId)}
-        res.locals.permissions["comment"] = {"create_content_item": false } // not available
-        res.locals.permissions["role"] = {"create_content_item": false } // not available
+        res.locals.permissions["user"] = {"create_content_item": isAuthorized("create_user", req.user.roleId), "list_users": isAuthorized("list_users", req.user.roleId)}
+        res.locals.permissions["page"] = {"create_content_item": isAuthorized("create_page", req.user.roleId), "list_pages": isAuthorized("list_pages", req.user.roleId)}
+        res.locals.permissions["post"] = {"create_content_item": isAuthorized("create_post", req.user.roleId), "list_posts": isAuthorized("list_posts", req.user.roleId)}
+        res.locals.permissions["comment"] = {"create_content_item": false, "list_comments": isAuthorized("list_comments", req.user.roleId) }
+        res.locals.permissions["role"] = {"create_content_item": false, "list_roles": isAuthorized("list_roles", req.user.roleId) }
 
         next()
     }
