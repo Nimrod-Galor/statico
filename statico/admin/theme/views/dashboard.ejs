@@ -183,7 +183,8 @@
                                     </div>    
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 500px;" required></textarea>
+                                    <div id="pageEditor"></div>
+                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 0;padding: 0;border:0 none;min-height: unset;" required></textarea>
                                     <label for="body">Body</label>
                                     <div class="valid-feedback">
                                         Looks good!
@@ -261,7 +262,8 @@
                                     </div>    
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 500px;" required></textarea>
+                                    <div id="postEditor"></div>
+                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 0; padding: 0; border:0 none;min-height: unset;" required></textarea>
                                     <label for="body">Body</label>
                                     <div class="valid-feedback">
                                         Looks good!
@@ -501,7 +503,7 @@
         import {ClassicEditor, Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing, AutoLink, Link, List} from 'ckeditor5';
 
         // Page
-        ClassicEditor.create( document.querySelector( '#page-body' ), {
+        ClassicEditor.create( document.querySelector( '#pageEditor' ), {
             plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
             toolbar: {
                 items: [
@@ -517,6 +519,10 @@
             placeholder: 'Enter your Page text here...'
         })
         .then( newEditor => {
+            const textarea = document.getElementById('page-body')
+            newEditor.model.document.on( 'change:data', () => {
+                textarea.value = newEditor.getData()
+            } );
             window.pageEditor = newEditor
         })
         .catch( error => {
@@ -524,7 +530,7 @@
         });
 
         // Post
-        ClassicEditor.create( document.querySelector( '#post-body' ), {
+        ClassicEditor.create( document.querySelector( '#postEditor' ), {
             plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
             toolbar: {
                 items: [
@@ -540,6 +546,10 @@
             placeholder: 'Enter your Post here...'
         })
         .then( newEditor => {
+            const textarea = document.getElementById('post-body')
+            newEditor.model.document.on( 'change:data', () => {
+                textarea.value = newEditor.getData()
+            } );
             window.postEditor = newEditor
         })
         .catch( error => {

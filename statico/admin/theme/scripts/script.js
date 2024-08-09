@@ -221,6 +221,14 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function encodeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+}
+
 function decodeHTML(str) {
     const shadowTextArea = document.createElement('textarea');
     shadowTextArea.innerHTML = str;
@@ -228,13 +236,14 @@ function decodeHTML(str) {
 }
 
 function updatePostBody(){
-    document.getElementById('post-body').value = window.postEditor.getData()
+    document.getElementById('post-body').value = encodeHTML(window.postEditor.getData())
 }
 
 function updatePageBody(){
-    document.getElementById('page-body').value = window.pageEditor.getData()
+    document.getElementById('page-body').value = encodeHTML(window.pageEditor.getData())
 }
 
 function updateRoleDescription(event){
     document.getElementById('user-role-RoleHelpBlock').innerText = `* ${event.currentTarget.options[event.currentTarget.selectedIndex].dataset.description}`
 }
+
