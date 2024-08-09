@@ -4,16 +4,17 @@ import ensureLogIn from 'connect-ensure-login'
 import  {   listContent, createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost,
-            countComments, getComment, createComment, editComment, deleteComment, likeComment, dislikeComment,
+            countComments, listComments, createComment, editComment, deleteComment, likeComment, dislikeComment,
             listRoles, editeRole
         } from '../controllers/crudController.js'
 import {ensureAuthorized, filterByPermissions} from '../admin/permissions/permissions.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
+
 /*  User    */
 // List users
-router.get(["/users", "users?/*"], ensureLoggedIn('/json-alert/login'), filterByPermissions('list_users'), listContent('user'), (req, res, next) => {
+router.get(["/users", "users?/*"], ensureLoggedIn('/json-alert/login'), ensureAuthorized('list_users'), filterByPermissions('list_users'), listContent('user'), (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Create User
@@ -30,6 +31,10 @@ router.delete("/delete/user", ensureLoggedIn('/json-alert/login'), ensureAuthori
 })
 
 /*  Page    */
+// List pages
+router.get(["/pages", "pages?/*"], ensureLoggedIn('/json-alert/login'), ensureAuthorized('list_pages'), filterByPermissions('list_pages'), listContent('post'), (req, res, next) => {
+    res.json(req.crud_response)
+})
 //  Create Page
 router.post("/create/page", ensureLoggedIn('/json-alert/login'), ensureAuthorized('create_page'), createPage, (req, res, next) => {
     res.json(req.crud_response)
@@ -45,7 +50,7 @@ router.delete("/delete/page", ensureLoggedIn('/json-alert/login'), ensureAuthori
 
 /*  Post    */
 // List posts
-router.get(["/posts", "posts?/*"], ensureLoggedIn('/json-alert/login'), filterByPermissions('list_posts'), listContent('post'), (req, res, next) => {
+router.get(["/posts", "posts?/*"], ensureLoggedIn('/json-alert/login'), ensureAuthorized('list_posts'), filterByPermissions('list_posts'), listContent('post'), (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Create Post
@@ -66,20 +71,20 @@ router.delete("/delete/post", ensureLoggedIn('/json-alert/login'), ensureAuthori
 router.post("/count/comments", countComments, (req, res, next) => {
     res.json(req.crud_response)
 })
-// Get Comments
-router.post("/comments", getComment, (req, res, next) => {
+// List Comments
+router.post("/comments", listComments, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Create Comment
-router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), createComment, (req, res, next) => {
+router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('create_comment'), createComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Edit Comment
-router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), editComment, (req, res, next) => {
+router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('edit_comment'), editComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Delete Comment
-router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), deleteComment, (req, res, next) => {
+router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('delete_comments'), deleteComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Like Comment
@@ -92,12 +97,12 @@ router.post("/dislike/comment", ensureLoggedIn('/json-alert/logintocomment'), di
 })
 
 /*  Role    */
-// get Roles
-router.post("/roles", ensureLoggedIn('/json-alert/login'), listRoles, (req, res, next) => {
+// List Roles
+router.post("/roles", ensureLoggedIn('/json-alert/login'), ensureAuthorized('list_roles'), filterByPermissions('list_roles'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 // update role
-router.post("/edit/role", ensureLoggedIn('/json-alert/login'), editeRole, (req, res, next) => {
+router.post("/edit/role", ensureLoggedIn('/json-alert/login'), ensureAuthorized('edit_role'), editeRole, (req, res, next) => {
     res.json(req.crud_response)
 })
 

@@ -706,7 +706,7 @@ async function fetchAllComments(parentId, flaten, publish) {
 }
 
 /*  Get comments    */
-export async function getComment(req, res, next){
+export async function listComments(req, res, next){
     const {post, page = 1, order} = req.body
     const commentsPerPage = 5
     try{

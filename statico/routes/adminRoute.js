@@ -77,16 +77,17 @@ router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('delete_p
 })
 
 // Edit Comment
-router.post("/edit/comment", ensureLoggedIn('/login'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
+router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('edit_comment'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
     res.redirect('/admin/comment')
 })
+
 // Delete Comment
-router.post("/delete/comment", ensureLoggedIn('/login'), urlencodedParser, deleteComment, setAlertMessage, (req, res) => {
+router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('delete_comments'), urlencodedParser, deleteComment, setAlertMessage, (req, res) => {
     res.redirect('/admin/comment')
 })
 
 // Edit Role
-router.post("/edit/role", ensureLoggedIn('/login'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {
+router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('edit_role'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {
     res.redirect('/admin/role')
 })
 

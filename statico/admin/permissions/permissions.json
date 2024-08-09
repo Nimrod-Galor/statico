@@ -14,9 +14,10 @@
         "create_post": {"allow": false },
         "edit_post": {"allow": false },
         "publish_post": {"allow": false },
-        "list_comments": {"allow": false },
-        "create_comment": {"allow": false },
+        "list_comments": {"allow":  true, "where": {} },
+        "create_comment": {"allow": true },
         "edit_comment": {"allow": false },
+        "delete_comment": {"allow": false},
         "list_roles": {"allow": false },
         "edit_role": {"allow": false }
     },
@@ -35,9 +36,10 @@
         "create_post": {"allow": true },
         "edit_post": {"allow": true },
         "publish_post": {"allow": false },
-        "list_comments": {"allow": false },
-        "create_comment": {"allow": false },
+        "list_comments": {"allow":  true, "where": {} },
+        "create_comment": {"allow": true },
         "edit_comment": {"allow": false },
+        "delete_comment": {"allow": false},
         "list_roles": {"allow": false },
         "edit_role": {"allow": false }
     },
@@ -56,9 +58,10 @@
         "create_post": {"allow": true },
         "edit_post": {"allow": true },
         "publish_post": {"allow": true },
-        "list_comments": {"allow": true, "where": { "authorId": "user.id" } },
+        "list_comments": {"allow": true, "where": {} },
         "create_comment": {"allow": true },
-        "edit_comment": {"allow": false },
+        "edit_comment": {"allow": true, "where": { "authorId": "user.id" } },
+        "delete_comment": {"allow": true, "where": { "authorId": "user.id" } },
         "list_roles": {"allow": false },
         "edit_role": {"allow": false }
     },
@@ -80,6 +83,7 @@
         "list_comments": {"allow": true, "where": {} },
         "create_comment": {"allow": true },
         "edit_comment": {"allow": true, "where": {} },
+        "delete_comment": {"allow": false, "where": {}},
         "list_roles": {"allow": true },
         "edit_role": {"allow": true, "where": {} }
     },
@@ -101,6 +105,7 @@
         "list_comments": {"allow": true, "where": {}},
         "create_comment": {"allow": true },
         "edit_comment": {"allow": true, "where": {}},
+        "delete_comment": {"allow": false, "where": {}},
         "list_roles": {"allow": true, "where": {}},
         "edit_role": {"allow": true, "where": {}}
     }
