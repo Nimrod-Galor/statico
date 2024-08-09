@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
-
+import {isAuthorized} from './statico/admin/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
@@ -152,7 +152,14 @@ app.use(function(err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error', { user: req.user });
+    if(req.originalUrl.includes('/api/')){
+        // return json response
+        res.json(err)
+    }else{
+        res.locals.permissions = { "view_admin_page": isAuthorized("view_admin_page", req.user?.roleId) }
+        // render Error page
+        res.render('error', { user: req.user });
+    }
 })
 
 

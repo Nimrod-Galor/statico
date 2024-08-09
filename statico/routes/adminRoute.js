@@ -43,7 +43,7 @@ router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('delete_u
 })
 
 // list Pages
-router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('view_admin_page', '/'), filterByPermissions('list_pages'), listContent('page'), admin_dashboard(), (req, res) => {
+router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('list_pages', '/'), filterByPermissions('list_pages'), listContent('page'), admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create Page

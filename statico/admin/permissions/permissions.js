@@ -1,3 +1,4 @@
+import createError from 'http-errors'
 import permissions from './permissions.json' assert { type: "json" }
 
 export function isAuthorized(key, roleId){
@@ -13,10 +14,7 @@ export function ensureAuthorized(key, redirect = '/'){
         if(isAuthorized(key, req.user.roleId)){
             next()
         }else{
-            req.session.messages = [`You are not authorized to view this page! ("${req.originalUrl}")`];
-            req.session.messageType = 'warning'
-            req.session.messageTitle = 'Unauthorized'
-            res.redirect(redirect)
+            next(createError(403, `You are not authorized to view this page! ("${req.originalUrl}")`, {messages: `You are not authorized to view this page! ("${req.originalUrl}")`, messageType: 'warning', messageTitle: 'Forbidden'}))
         }
     }
 }
