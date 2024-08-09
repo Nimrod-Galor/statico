@@ -8,7 +8,7 @@ export function isAuthorized(key, roleId){
     }
 }
 
-export function ensureAuthorized(key, redirect){
+export function ensureAuthorized(key, redirect = '/'){
     return function(req, res, next){
         if(isAuthorized(key, req.user.roleId)){
             next()

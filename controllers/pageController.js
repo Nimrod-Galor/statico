@@ -12,7 +12,7 @@ export async function getPage(req, res, next){
         }
 
         res.locals.permissions = {
-            "view_admin_page": isAuthorized("view_admin_page", req.user.roleId)
+            "view_admin_page": isAuthorized("view_admin_page", req.user?.roleId)
         }
 
         res.render('page', { user: req.user,  pageData })

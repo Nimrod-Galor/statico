@@ -45,7 +45,7 @@ export async function admin_post_setup(req, res){
 export function admin_dashboard(contentType){
     return async function(req, res, next){
         // check for errors
-        if(req.crud_response){
+        if(req.crud_response && req.crud_response.messageType != 'data'){
             res.locals.messages = [req.crud_response.messageBody];
             res.locals.messageTitle = req.crud_response.messageTitle
             res.locals.messageType = req.crud_response.messageType
@@ -97,6 +97,7 @@ export function admin_dashboard(contentType){
             break
             case 'post':
                 res.locals.permissions["edit_content_item"] = isAuthorized("edit_post", req.user.roleId)
+                res.locals.permissions["publish_content_item"] = isAuthorized("publish_post", req.user.roleId)
             break
             case 'comment':
                 res.locals.permissions["edit_content_item"] = isAuthorized("edit_comment", req.user.roleId)

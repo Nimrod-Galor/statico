@@ -1,75 +1,77 @@
 import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows} from '../../db.js'
+import {isAuthorized} from '../admin/permissions/permissions.js'
 import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
 import crypto from 'crypto'
 
 /*  admin list content  */
-export async function listContent(req, res, next){
-    try{
-        // get selected content type name
-        let contentType = req.params.contentType || Object.keys(modelsInterface)[0]//modelsInterface[0].name
-        // contentType = contentType.toLowerCase()
-    
-        // get selected model
-        // const selectedModelName = modelsInterface.find((modelName) => modelName == contentType)
-        const selectedModel = Object.entries(modelsInterface).find(([modelName,model]) => modelName === contentType)[1]
-    
-        // check we didnt get here by mistake
-        if(selectedModel === undefined){
-            next(createError(404, 'Resource not found'))
-            return
-        }
-    
-        // build models data query string
-        const where = req.where || {}
-        // const orderBy = {}
-        if(req.params[0]){
-            // check for extra parmas
-            const paramsArr = req.params[0].split('/')
-            for(let i=0; i<paramsArr.length;i++){
-                const param = paramsArr[i]
-                // check if param of type filter 
-                const filter = selectedModel.filters.find(f => f.name == param)
-                if(filter){
-                    let filterOn = paramsArr[++i]
-                    // check if filteron is valid
-                    if(isValid(filterOn, filter.type)){
-                        if(filter.type === "BooleanString"){
-                            filterOn = stringToBoolean(filterOn)
+export function listContent(contentType){
+    return async function(req, res, next){
+        try{
+            // get selected content type name
+            contentType = contentType || req.params.contentType || Object.keys(modelsInterface)[0]
+            
+            // get selected model
+            const selectedModel = Object.entries(modelsInterface).find(([modelName,model]) => modelName === contentType)[1]
+        
+            // check we didnt get here by mistake
+            if(selectedModel === undefined){
+                next(createError(404, 'Resource not found'))
+                return
+            }
+        
+            // build models data query string
+            const where = req.where || {}
+            // const orderBy = {}
+            if(req.params[0]){
+                // check for extra parmas
+                const paramsArr = req.params[0].split('/')
+                for(let i=0; i<paramsArr.length;i++){
+                    const param = paramsArr[i]
+                    // check if param of type filter 
+                    const filter = selectedModel.filters.find(f => f.name == param)
+                    if(filter){
+                        let filterOn = paramsArr[++i]
+                        // check if filteron is valid
+                        if(isValid(filterOn, filter.type)){
+                            if(filter.type === "BooleanString"){
+                                filterOn = stringToBoolean(filterOn)
+                            }
+                            // set filter
+                            where[filter.key] = filterOn
                         }
-                        // set filter
-                        where[filter.key] = filterOn
                     }
                 }
             }
-        }
-    
-        const query = {
-            "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
-            "take": 10,
-            where,
-            "select": selectedModel.selectFields,
-            "orderBy": {}
-        }
-        //  Get models data
-        let modelsData = await readRows(contentType, query)
         
-        // destruct nested fields
-        if('destructur' in selectedModel){
-            modelsData = modelsData.map(selectedModel.destructur)
+            const query = {
+                "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
+                "take": 10,
+                where,
+                "select": selectedModel.selectFields,
+                "orderBy": {}
+            }
+            //  Get models data
+            let modelsData = await readRows(contentType, query)
+            
+            // destruct nested fields
+            if('destructur' in selectedModel){
+                modelsData = modelsData.map(selectedModel.destructur)
+            }
+
+            req.contentType = contentType
+            req.selectedModel = selectedModel
+            req.modelsData = modelsData
+            // response for api
+            req.crud_response = {messageBody: modelsData, messageTitle: 'Success', messageType: 'data'}
+        }catch(errorMsg){
+            //  Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
         }
-
-
-        req.contentType = contentType
-        req.selectedModel = selectedModel
-        req.modelsData = modelsData
-    }catch(errorMsg){
-        //  Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
+        finally{
+            next()
+        }
     }
 }
 
@@ -568,6 +570,11 @@ export async function editPost(req, res, next){
             publish,
             metatitle,
             metadescription
+        }
+
+        // check if user have publisg permission
+        if(isAuthorized('publish_post', req.user.roleId)){
+            tmpPost.publish = publish
         }
 
         if(slug != '' && slug != selectedPost.slug){
