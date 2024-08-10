@@ -4,7 +4,7 @@ import createError from 'http-errors'
 import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import {countsRows} from '../../db.js'
-import {isAuthorized, getRolePermissions} from '../admin/permissions/permissions.js'
+import {isAuthorized, getPermissionFilter, getRolePermissions} from '../admin/permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())
@@ -53,7 +53,17 @@ export function admin_dashboard(contentType){
         }
 
         // count number of documents for every collection (model)
-        const documentsCount = await countsRows(modelsName)
+        // const documentsCount = await countsRows(modelsName)
+        const countModels = []
+        const countSelectes = []
+        for(let i = 0; i <modelsName.length; i++){
+            if(isAuthorized(modelsName[i], 'list', req.user.roleId)){
+                countModels.push(modelsName[i])
+                
+                countSelectes.push(getPermissionFilter(modelsName[i], req.user))
+            }
+        }
+        const documentsCount = await countsRows(countModels, countSelectes)
 
         // update counts in models list
         for(let i=0; i< documentsCount.length; i++){

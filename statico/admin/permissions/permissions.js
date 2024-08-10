@@ -19,16 +19,24 @@ export function ensureAuthorized(contentType, key, redirect = '/'){
     }
 }
 
+export function getPermissionFilter(contentType, user){
+    try{
+        if("authorId" in permissions[user.roleId][contentType].list.where){
+            return  {"authorId": user.id}
+        }else{
+            return permissions[user.roleId][contentType].list.where
+        }
+    }catch(err){
+        return {id: "00a00000a00aa0aaaaa0000a"}
+    }
+}
+
 export function filterByPermissions(contentType){
     return function(req, res, next){
         try{
-            let where = {}
-            if("authorId" in permissions[req.user.roleId][contentType].list.where){
-                where.authorId = req.user.id
-            }
-            req.where = where
+            req.where = getPermissionFilter(contentType, req.user)
         }catch(err){
-            req.where = {id: null}
+            req.where = {id: "00a00000a00aa0aaaaa0000a"}
         }
         finally{
             next()

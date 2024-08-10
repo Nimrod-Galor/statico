@@ -26,7 +26,7 @@ function setAlertMessage(req, res, next){
 }
 
 // list Users
-router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
+router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create User
@@ -60,7 +60,7 @@ router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', '
 })
 
 // list Posts
-router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {
+router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create Post

@@ -120,11 +120,11 @@ async function countRows(collectionName, where){
 
 
 /*  Count Multiple Rows*/
-async function countsRows(collectionsName){
+async function countsRows(collectionsName, where){
   //const res = await prisma[collectionName].count()
   let parr = []
   for(let i=0; i<collectionsName.length; i++){
-    parr.push(prisma[collectionsName[i]].count())
+    parr.push(prisma[collectionsName[i]].count({where: where[i]}))
   }
   const res = await Promise.all(parr)
   .catch(err => {throw new Error(err)})
@@ -135,19 +135,18 @@ async function countsRows(collectionsName){
 }
 
 /*  Count relations */
-async function countRelations(collectionName, select){
-  const res = await prisma[collectionName].findMany({
-    select: {
-      _count: {
-        select
+async function countRelations(collectionsName, select){
+  let parr = []
+  for(let i=0; i<collectionsName.length; i++){
+    const res = await prisma[collectionsName[i]].findMany({
+      select: {
+        _count: {
+          select: select[i]
+        },
       },
-    },
-  })
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+    })
+  }
+  return await Promise.all(parr)
 }
 
 /*  Find Unique */
