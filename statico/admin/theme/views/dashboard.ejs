@@ -418,7 +418,7 @@
                                         <%-field.header%>
                                     </th>
                                 <%})%>
-                                <%if(permissions[contentType].edit?.allow){%>
+                                <%if(permissions[contentType].edit.allow){%>
                                     <th>&nbsp;</th>
                                 <%}%>
                             </tr>
@@ -444,14 +444,17 @@
                                     <%if(permissions[contentType].edit.allow){%>
                                         <td class="text-end">
                                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                                <%if(contentType != 'role'){%>
+                                                <%if(permissions[contentType].delete.allow && (!permissions[contentType].delete.where.authorId || permissions[contentType].delete.where.authorId === data.authorId)){%>
                                                 <form action="/admin/delete/<%-contentType.toLowerCase()%>" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                                     <input type="hidden" name="id" value="<%=data.id%>"/>
                                                     <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
                                                     <button type="submit" class="btn btn-warning">Delete</button>
                                                 </form>
                                                 <%}%>
-                                                <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
+                                                
+                                                <%if(!("authorId" in permissions[contentType].edit.where) || permissions[contentType].edit.where.authorId === data.authorId){%>
+                                                    <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
+                                                <%}%>
                                             </div>
                                         </td>
                                     <%}%>
