@@ -96,10 +96,14 @@
                             <th style="width:5%">
                                 &nbsp;
                             </th>
+                            <th style="width:5%">
+                                &nbsp;
+                            </th>
                             <%roles.forEach((role) => {%>
-                                <th scope="col" colspan="2" class="align-top" style="width:19%">
+                                <th scope="col" colspan="2" class="align-top" style="width:18%">
                                     <div class="text-center text-capitalize">
-                                        <%=role.name%>
+                                        <%=role.name%><br>
+                                        <%=role.id%>
                                     </div>
                                     <p class="text-break form-text fw-lighter p-0 m-0">
                                         <%=role.description%>
@@ -108,7 +112,8 @@
                             <%})%>
                         </tr>
                         <tr>
-                            <th style="width:50px">Permission Key</th>
+                            <th style="width:50px">Content</th>
+                            <th style="width:50px">Operation</th>
                             <%roles.forEach(() => {%>
                                 <th colspan="2">
                                     <div class="d-flex">
@@ -124,25 +129,32 @@
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
-                        <%Object.keys(permissions[adminRoleId]).forEach((permissionKey) => {%>
+                        <%for (const [contentTypeKey, contentTypeObj] of Object.entries(permissions[adminRoleId])){%>
                             <tr>
-                                <td>
-                                    <%=permissionKey%>
+                                <td rowspan="<%=Object.keys(contentTypeObj).length + 1%>">
+                                    <%=contentTypeKey%>
                                 </td>
-                                <%roles.forEach((role) => {%>
-                                    <td colspan="2">
-                                        <div class="d-flex">
-                                            <div class="w-25">
-                                                <%=permissions[role.id][permissionKey].allow%>
-                                            </div>
-                                            <div>
-                                                <%=JSON.stringify(permissions[role.id][permissionKey].where)%>
-                                            </div>
-                                        </div>
-                                    </td>
-                                <%})%>
                             </tr>
-                        <%})%>
+                            <%for (const [operationKey, operationObj] of Object.entries(contentTypeObj)){%>
+                                <tr>
+                                    <td>
+                                        <%=operationKey%>
+                                    </td>
+                                    <%roles.forEach((role) => {%>
+                                        <td colspan="2">
+                                            <div class="d-flex">
+                                                <div class="w-25">
+                                                    <%=permissions[role.id][contentTypeKey][operationKey].allow%>
+                                                </div>
+                                                <div>
+                                                    <%=JSON.stringify(permissions[role.id][contentTypeKey][operationKey].where)%>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    <%})%>
+                                </tr>
+                            <%}%>
+                        <%}%>
                     </tbody>
                 </table>
             </div>

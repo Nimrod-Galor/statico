@@ -1,17 +1,17 @@
 import createError from 'http-errors'
 import permissions from './permissions.json' assert { type: "json" }
 
-export function isAuthorized(key, roleId){
+export function isAuthorized(contentType, key, roleId){
     try{
-        return permissions[roleId][key].allow
+        return permissions[roleId][contentType][key].allow
     }catch(err){
         return false
     }
 }
 
-export function ensureAuthorized(key, redirect = '/'){
+export function ensureAuthorized(contentType, key, redirect = '/'){
     return function(req, res, next){
-        if(isAuthorized(key, req.user.roleId)){
+        if(isAuthorized(contentType, key, req.user.roleId)){
             next()
         }else{
             next(createError(403, `You are not authorized to view this page! ("${req.originalUrl}")`, {messages: `You are not authorized to view this page! ("${req.originalUrl}")`, messageType: 'warning', messageTitle: 'Forbidden'}))
@@ -19,11 +19,11 @@ export function ensureAuthorized(key, redirect = '/'){
     }
 }
 
-export function filterByPermissions(key){
+export function filterByPermissions(contentType){
     return function(req, res, next){
         try{
-            let where = permissions[req.user.roleId][key].where
-            if("authorId" in where){
+            let where = {}
+            if("authorId" in permissions[req.user.roleId][contentType].list.where){
                 where.authorId = req.user.id
             }
             req.where = where
@@ -34,4 +34,8 @@ export function filterByPermissions(key){
             next()
         }
     }
+}
+
+export function getRolePermissions(roleId){
+    return structuredClone(permissions[roleId])
 }

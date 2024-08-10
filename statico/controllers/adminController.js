@@ -4,7 +4,7 @@ import createError from 'http-errors'
 import isValid from '../admin/theme/scripts/validations.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import {countsRows} from '../../db.js'
-import {isAuthorized} from '../admin/permissions/permissions.js'
+import {isAuthorized, getRolePermissions} from '../admin/permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())
@@ -85,34 +85,44 @@ export function admin_dashboard(contentType){
         res.locals.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
         res.locals.currentPage = parseInt(req.query.page) || 1
         
-        // Set permissions
-        res.locals.permissions = {}
-        // per page permissions
-        switch(res.locals.contentType){
-            case 'user':
-                res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
-            break
-            case 'page':
-                res.locals.permissions["edit_content_item"] = isAuthorized("edit_page", req.user.roleId)
-            break
-            case 'post':
-                res.locals.permissions["edit_content_item"] = isAuthorized("edit_post", req.user.roleId)
-                res.locals.permissions["publish_content_item"] = isAuthorized("publish_post", req.user.roleId)
-            break
-            case 'comment':
-                res.locals.permissions["edit_content_item"] = isAuthorized("edit_comment", req.user.roleId)
-            break
-            case 'role':
-                res.locals.permissions["edit_content_item"] = isAuthorized("edit_role", req.user.roleId)
-            break
+        // Get permissions
+        const permissions = getRolePermissions(req.user.roleId)
+        // update authorId
+        for (const [contentType, typePermissions] of Object.entries(permissions)) {
+            for (const [key, operation] of Object.entries(typePermissions)) {
+                if("where" in operation && "authorId" in operation.where){
+                    operation.where.authorId = req.user.id
+                }
+            }
         }
-        // for every page permissions (sidbar)
-        res.locals.permissions["view_permissions_page"] = isAuthorized("view_permissions_page", req.user.roleId)
-        res.locals.permissions["user"] = {"create_content_item": isAuthorized("create_user", req.user.roleId), "list_users": isAuthorized("list_users", req.user.roleId)}
-        res.locals.permissions["page"] = {"create_content_item": isAuthorized("create_page", req.user.roleId), "list_pages": isAuthorized("list_pages", req.user.roleId)}
-        res.locals.permissions["post"] = {"create_content_item": isAuthorized("create_post", req.user.roleId), "list_posts": isAuthorized("list_posts", req.user.roleId)}
-        res.locals.permissions["comment"] = {"create_content_item": false, "list_comments": isAuthorized("list_comments", req.user.roleId) }
-        res.locals.permissions["role"] = {"create_content_item": false, "list_roles": isAuthorized("list_roles", req.user.roleId) }
+
+        res.locals.permissions = permissions
+        // // per page permissions
+        // switch(res.locals.contentType){
+        //     case 'user':
+        //         res.locals.permissions["edit_content_item"] = isAuthorized("edit_user", req.user.roleId)
+        //     break
+        //     case 'page':
+        //         res.locals.permissions["edit_content_item"] = isAuthorized("edit_page", req.user.roleId)
+        //     break
+        //     case 'post':
+        //         res.locals.permissions["edit_content_item"] = isAuthorized("edit_post", req.user.roleId)
+        //         res.locals.permissions["publish_content_item"] = isAuthorized("publish_post", req.user.roleId)
+        //     break
+        //     case 'comment':
+        //         res.locals.permissions["edit_content_item"] = isAuthorized("edit_comment", req.user.roleId)
+        //     break
+        //     case 'role':
+        //         res.locals.permissions["edit_content_item"] = isAuthorized("edit_role", req.user.roleId)
+        //     break
+        // }
+        // // for every page permissions (sidbar)
+        // res.locals.permissions["view_permissions_page"] = isAuthorized("view_permissions_page", req.user.roleId)
+        // res.locals.permissions["user"] = {"create_content_item": isAuthorized("create_user", req.user.roleId), "list_users": isAuthorized("list_users", req.user.roleId)}
+        // res.locals.permissions["page"] = {"create_content_item": isAuthorized("create_page", req.user.roleId), "list_pages": isAuthorized("list_pages", req.user.roleId)}
+        // res.locals.permissions["post"] = {"create_content_item": isAuthorized("create_post", req.user.roleId), "list_posts": isAuthorized("list_posts", req.user.roleId)}
+        // res.locals.permissions["comment"] = {"create_content_item": false, "list_comments": isAuthorized("list_comments", req.user.roleId) }
+        // res.locals.permissions["role"] = {"create_content_item": false, "list_roles": isAuthorized("list_roles", req.user.roleId) }
 
         next()
     }
