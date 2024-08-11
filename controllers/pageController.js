@@ -11,8 +11,9 @@ export async function getPage(req, res, next){
             return next(createError(404, 'Resource not found'));
         }
 
-        res.locals.permissions = {
-            "view_admin_page": isAuthorized("view_admin_page", req.user?.roleId)
+        res.locals.permissions = {"admin_page": {
+                "view": isAuthorized("admin_page", "view", req.user?.roleId)
+            }
         }
 
         res.render('page', { user: req.user,  pageData })

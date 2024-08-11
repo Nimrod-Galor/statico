@@ -65,7 +65,7 @@
             "list": {"allow": true, "where": { "authorId": "user.id" } },
             "create": {"allow": true },
             "edit": {"allow": true, "where": { "authorId": "user.id" } },
-            "delete": {"allow": false, "where": { "authorId": "user.id" } },
+            "delete": {"allow": false },
             "publish": {"allow": false }
         },
         "comment": {

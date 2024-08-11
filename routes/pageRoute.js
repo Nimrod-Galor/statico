@@ -3,6 +3,6 @@ import {getPage} from '../controllers/pageController.js'
 
 const router = express.Router();
 
-router.get(['/', '/home'], getPage)
+router.get(['/', '/home'],  getPage)
 
 export default router

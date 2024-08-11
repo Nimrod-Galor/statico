@@ -2,7 +2,7 @@
 import permissions from '../admin/permissions/permissions.json' assert { type: "json" }
 import {readRows} from '../../db.js'
 
-export async function getPermissions(req, res, next){
+export async function allRolesPermissions(req, res, next){
     const rolesOrder = {
         "admin": 0,
         "editor": 1,

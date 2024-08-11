@@ -156,7 +156,7 @@ app.use(function(err, req, res, next) {
         // return json response
         res.json(err)
     }else{
-        res.locals.permissions = { "view_admin_page": isAuthorized("view_admin_page", req.user?.roleId) }
+        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
         // render Error page
         res.render('error', { user: req.user });
     }

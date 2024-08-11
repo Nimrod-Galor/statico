@@ -9,7 +9,7 @@ import  { listContent,
     editeRole
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
-import {getPermissions} from '../controllers/permissionsController.js'
+import {allRolesPermissions} from '../controllers/permissionsController.js'
 import {ensureAuthorized, filterByPermissions} from '../admin/permissions/permissions.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -92,7 +92,7 @@ router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'ed
 })
 
 // Permission Page
-router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), admin_dashboard('permissions'), getPermissions, (req, res) => {
+router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
     res.render('permissions', {user: req.user, caption: '' })
 })
 
