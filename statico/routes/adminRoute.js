@@ -6,7 +6,8 @@ import  { listContent,
     createPage, editPage, deletePage,
     createPost, editPost, deletePost,
     editComment, deleteComment,
-    editeRole
+    editeRole,
+    bulkDelete, bulkPublish
 } from '../controllers/crudController.js'
 import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
 import {allRolesPermissions} from '../controllers/permissionsController.js'
@@ -59,10 +60,17 @@ router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', '
     res.redirect('/admin/page')
 })
 // bulk delete
-router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'delete'), urlencodedParser, deletePage, setAlertMessage, (req, res) => {
+router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'delete'), urlencodedParser, bulkDelete('page'), setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
 //bulk publish
+router.post("/page/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'publish'), urlencodedParser, bulkPublish('page', true), setAlertMessage, (req, res) => {
+    res.redirect('/admin/page')
+})
+//bulk unpublish
+router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'publish'), urlencodedParser, bulkPublish('page', false), setAlertMessage, (req, res) => {
+    res.redirect('/admin/page')
+})
 
 // list Posts
 router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {

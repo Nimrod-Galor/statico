@@ -274,9 +274,20 @@ function bulkOperation(event){
     }
 
     const contentType = document.getElementById("contentType").value
-    let deleteMsg = `Delete ${contentType}:`
+    let deleteMsg = `${operation} ${contentType}:`
+
+    const operationPermission = operation === 'unpublish'? 'publish' : operation
     for(let i=0; i < checks.length; i++){
+        // set confirmation message
         deleteMsg += '\n' + checks[i].dataset.header
+        
+        // check all item meet action permissions
+        if(!checks[i].dataset[`allow${operationPermission}`]){
+            event.preventDefault()
+            event.stopPropagation()
+            topAlert("warning", "invalidSelection", `You have no permission to ${operation} Some of the items selected!<br> click <button class="btn btn-link m-0 p-0 align-baseline" onclick="removeNopermissionBulkitems()">here</button> to uncheck these items.`)
+            return false
+        }
     }
 
     if(!confirm(deleteMsg)){
@@ -288,15 +299,14 @@ function bulkOperation(event){
     const form = event.currentTarget
     form.action += `/bulk/${operation}`
 
-    // check all item meet action permissions
     for(let i=0; i < checks.length; i++){
-        if(!checks[i].dataset[`allow${operation}`]){
-            event.preventDefault()
-            event.stopPropagation()
-            topAlert("warning", "invalidSelection", `You have no permission to ${operation} Some of the items selected!<br> click <button class="btn btn-link m-0 p-0 align-baseline" onclick="removeNopermissionBulkitems()">here</button> to uncheck these items.`)
-            return false
-        }
-        form.appendChild(checks[i])
+        // create checkbox
+        const check = document.createElement("input")
+        check.type = "checkbox"
+        check.name = "id"
+        check.value = checks[i].value
+        check.checked = true
+        form.appendChild(check)
         // create input hidden for header information
         const header = document.createElement("input")
         header.type = "hidden"

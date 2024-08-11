@@ -250,13 +250,7 @@ export async function editUser(req, res, next){
 
 function validateDeleteData(id, header){
     //  Validate user data
-    if(typeof(id) === "object"){
-        for(let i=0; i< id.length; i++){
-            if(!isValid(id[i], "objectid")){
-                throw new Error('Invalid User')
-            }
-        }
-    }else if(!isValid(id, "objectid")){
+    if(!isValid(id, "objectid")){
         throw new Error('Invalid User')
     }
 
@@ -419,8 +413,8 @@ export async function editPage(req, res, next){
             throw new Error('Invalid Page')
         }
 
-        // Set new Post object
-        const tmpPost = {
+        // Set new Page object
+        const tmpPage = {
             title,
             body,
             publish,
@@ -467,25 +461,15 @@ export async function editPage(req, res, next){
 export async function deletePage(req, res, next){
     //  Get user data
     let {id, header} = req.body
-    let messageBody = ''
+
     try{
         //  Validate user data
         validateDeleteData(id, header)
 
-        //  Delete Page
-        if(typeof(id) === "object"){
-            messageBody = []
-            for(let i=0; i< id.length; i++){
-                await deleteRow('page', {id: id[i]})
-                messageBody.push(`Page "${header[i]}" was successfuly deleted`)
-            }
-        }else{
-            await deleteRow('page', {id})
-            messageBody = `Page "${header}" was successfuly deleted`
-        }
+        await deleteRow('page', {id})
 
         // Send Success json
-        req.crud_response = {messageBody, messageTitle: 'Page Delete', messageType: 'success'}
+        req.crud_response = {messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -1019,5 +1003,97 @@ export async function editeRole(req, res, next){
     }
     finally{
         next()
+    }
+}
+
+
+/*  Bulk operations */
+function validateBulkData(id, header){
+    if(Array.isArray(id)){
+        for(let i=0; i< id.length; i++){
+            if(!isValid(id[i], "objectid")){
+                throw new Error('Invalid User')
+            }
+
+            if(!isValid(header[i], "body")){
+                throw new Error('Invalid Header')
+            }
+        }
+    }else{
+        if(!isValid(id, "objectid")){
+            throw new Error('Invalid User')
+        }
+
+        if(!isValid(header, "body")){
+            throw new Error('Invalid Header')
+        }
+    }
+}
+
+// Delete
+export function bulkDelete(contentType){
+    return async function(req, res, next){
+        //  Get user data
+        let {id, header} = req.body
+        let messageBody = ''
+        try{
+            //  Validate user data
+            validateBulkData(id, header)
+
+            //  Delete
+            if(Array.isArray(id)){
+                messageBody = []
+                for(let i=0; i< id.length; i++){
+                    await deleteRow(contentType, {id: id[i]})
+                    messageBody.push(`${contentType} "${header[i]}" was successfuly deleted`)
+                }
+            }else{
+                await deleteRow(contentType, {id})
+                messageBody = `${contentType} "${header}" was successfuly deleted`
+            }
+
+            // Send Success json
+            req.crud_response = {messageBody, messageTitle: `${contentType} Delete`, messageType: 'success'}
+        }catch(errorMsg){
+            // Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+        }
+        finally{
+            next()
+        }
+    }
+}
+
+// Update publish
+export function bulkPublish(contentType, publish){
+    return async function(req, res, next){
+        //  Get user data
+        let {id, header} = req.body
+        let messageBody = ''
+        try{
+            //  Validate user data
+            validateBulkData(id, header)
+
+            //  Publish
+            if(Array.isArray(id)){
+                messageBody = []
+                for(let i=0; i< id.length; i++){
+                    await updateRow(contentType, {id: id[i]}, {publish})
+                    messageBody.push(`${contentType} "${header[i]}" was successfuly published`)
+                }
+            }else{
+                await updateRow(contentType, {id: id}, {publish})
+                messageBody = `${contentType} "${header}" was successfuly published`
+            }
+
+            // Send Success json
+            req.crud_response = {messageBody, messageTitle: `${contentType} Published`, messageType: 'success'}
+        }catch(errorMsg){
+            // Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+        }
+        finally{
+            next()
+        }
     }
 }
