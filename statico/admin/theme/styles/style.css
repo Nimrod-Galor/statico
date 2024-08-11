@@ -169,3 +169,6 @@ form.edit button[type="submit"].create{
     background-position: right calc(.375em + .1875rem) center;
     background-size: calc(.75em + .375rem) calc(.75em + .375rem);
 }
+
+/* bulk operations form */
+#bulk-form input[type="checkbox"]{ visibility: hidden;}

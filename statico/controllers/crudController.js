@@ -250,13 +250,19 @@ export async function editUser(req, res, next){
 
 function validateDeleteData(id, header){
     //  Validate user data
-    if(!isValid(id, "objectid")){
+    if(typeof(id) === "object"){
+        for(let i=0; i< id.length; i++){
+            if(!isValid(id[i], "objectid")){
+                throw new Error('Invalid User')
+            }
+        }
+    }else if(!isValid(id, "objectid")){
         throw new Error('Invalid User')
-   }
+    }
 
-   if(!isValid(header, "body")){
-       throw new Error('Invalid Header')
-   }
+    if(!isValid(header, "body")){
+        throw new Error('Invalid Header')
+    }
 }
 
 export async function deleteUser(req, res, next){
@@ -296,8 +302,14 @@ function postValidations(id, title, body, publish, slug, metatitle, metadescript
     let errorMsg = []
 
     if(id != undefined){
-        if(!isValid(id, "objectid")){
-            errorMsg.push('Invalid Post')
+        if(typeof(id) === "object"){
+            for(let i=0; i< id.length; i++){
+                if(!isValid(id[i], "objectid")){
+                    throw new Error('Invalid User')
+                }
+            }
+        }else if(!isValid(id, "objectid")){
+            throw new Error('Invalid User')
         }
     }
     if( !isValid(title, "Title")){
@@ -453,23 +465,32 @@ export async function editPage(req, res, next){
 
 /*  Delete Page */
 export async function deletePage(req, res, next){
-     //  Get user data
-     let {id, header} = req.body
+    //  Get user data
+    let {id, header} = req.body
+    let messageBody = ''
+    try{
+        //  Validate user data
+        validateDeleteData(id, header)
 
-     try{
-         //  Validate user data
-         validateDeleteData(id, header)
+        //  Delete Page
+        if(typeof(id) === "object"){
+            messageBody = []
+            for(let i=0; i< id.length; i++){
+                await deleteRow('page', {id: id[i]})
+                messageBody.push(`Page "${header[i]}" was successfuly deleted`)
+            }
+        }else{
+            await deleteRow('page', {id})
+            messageBody = `Page "${header}" was successfuly deleted`
+        }
 
-         //  Delete Page
-         await deleteRow('page', {id})
- 
-         // Send Success json
-         req.crud_response = {messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'}
-     }catch(errorMsg){
-         // Send Error json
-         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-     }
-     finally{
+        // Send Success json
+        req.crud_response = {messageBody, messageTitle: 'Page Delete', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
         next()
     }
 }

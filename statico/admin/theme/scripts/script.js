@@ -235,15 +235,85 @@ function decodeHTML(str) {
     return shadowTextArea.value;
 }
 
-function updatePostBody(){
-    document.getElementById('post-body').value = encodeHTML(window.postEditor.getData())
-}
+// function updatePostBody(){
+//     document.getElementById('post-body').value = encodeHTML(window.postEditor.getData())
+// }
 
-function updatePageBody(){
-    document.getElementById('page-body').value = encodeHTML(window.pageEditor.getData())
-}
+// function updatePageBody(){
+//     document.getElementById('page-body').value = encodeHTML(window.pageEditor.getData())
+// }
 
 function updateRoleDescription(event){
     document.getElementById('user-role-RoleHelpBlock').innerText = `* ${event.currentTarget.options[event.currentTarget.selectedIndex].dataset.description}`
 }
 
+function bulkInvert(){
+    // invert all checkbox selections
+    const checks = document.querySelectorAll('.item-check')
+    for(let i=0; i < checks.length; i++){
+        checks[i].checked = !checks[i].checked
+    }
+}
+
+function bulkOperation(event){
+    const checks = document.querySelectorAll('.item-check:checked')
+    // check if any items where selected
+    if(checks.length === 0){
+        event.preventDefault()
+        event.stopPropagation()
+        alert("No items selected!")
+        return false
+    }
+    const operation = document.getElementById('bulk-action').value
+    // check if any action was selected
+    if(operation === ""){
+        event.preventDefault()
+        event.stopPropagation()
+        alert("No action selected!")
+        return false
+    }
+
+    const contentType = document.getElementById("contentType").value
+    let deleteMsg = `Delete ${contentType}:`
+    for(let i=0; i < checks.length; i++){
+        deleteMsg += '\n' + checks[i].dataset.header
+    }
+
+    if(!confirm(deleteMsg)){
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+    }
+
+    const form = event.currentTarget
+    form.action += `/bulk/${operation}`
+
+    // check all item meet action permissions
+    for(let i=0; i < checks.length; i++){
+        if(!checks[i].dataset[`allow${operation}`]){
+            event.preventDefault()
+            event.stopPropagation()
+            topAlert("warning", "invalidSelection", `You have no permission to ${operation} Some of the items selected!<br> click <button class="btn btn-link m-0 p-0 align-baseline" onclick="removeNopermissionBulkitems()">here</button> to uncheck these items.`)
+            return false
+        }
+        form.appendChild(checks[i])
+        // create input hidden for header information
+        const header = document.createElement("input")
+        header.type = "hidden"
+        header.name = "header"
+        header.value = checks[i].dataset.header
+        form.appendChild(header)
+    }
+
+    return true
+}
+
+function removeNopermissionBulkitems(){
+    const checks = document.querySelectorAll('.item-check:checked')
+    const operation = document.getElementById('bulk-action').value
+    for(let i=0; i < checks.length; i++){
+        if(!checks[i].dataset[`allow${operation}`]){
+            checks[i].checked = false
+        }
+    }
+}

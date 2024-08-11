@@ -19,7 +19,7 @@ const router = express.Router()
 
 function setAlertMessage(req, res, next){
     //  Set alert message
-    req.session.messages = [req.crud_response.messageBody]
+    req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
     req.session.messageType = req.crud_response.messageType
     req.session.messageTitle = req.crud_response.messageTitle
     next()
@@ -58,6 +58,11 @@ router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'ed
 router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), urlencodedParser, deletePage, setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
+// bulk delete
+router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'delete'), urlencodedParser, deletePage, setAlertMessage, (req, res) => {
+    res.redirect('/admin/page')
+})
+//bulk publish
 
 // list Posts
 router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {
@@ -76,6 +81,11 @@ router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('post', '
     res.redirect('/admin/post')
 })
 
+
+// list Comments
+router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthorized('comment', 'list', '/'), filterByPermissions('comment'), listContent('comment'), admin_dashboard(), (req, res) => {
+    res.render('dashboard', {user: req.user, caption: '' })
+})
 // Edit Comment
 router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
     res.redirect('/admin/comment')
@@ -86,6 +96,10 @@ router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('comme
     res.redirect('/admin/comment')
 })
 
+// list Roles
+router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), admin_dashboard(), (req, res) => {
+    res.render('dashboard', {user: req.user, caption: '' })
+})
 // Edit Role
 router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {
     res.redirect('/admin/role')

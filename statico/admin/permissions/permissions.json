@@ -7,18 +7,24 @@
         "permissions_page": {
             "view": {"allow": false }
         },
+        "bulk_operations": {
+            "publish": {"allow": false},
+            "delete": {"allow": false}
+        },
 
         "user": {
             "list": {"allow": false },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "page": {
             "list": {"allow": false },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "post": {
             "list": {"allow": false },
@@ -37,7 +43,8 @@
         "role": {
             "list": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         }
     },
 
@@ -48,18 +55,24 @@
         "permissions_page": {
             "view": {"allow": false }
         },
+        "bulk_operations": {
+            "publish": {"allow": false},
+            "delete": {"allow": false}
+        },
 
         "user": {
             "list": {"allow": false },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "page": {
             "list": {"allow": false },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "post": {
             "list": {"allow": true, "where": { "authorId": "user.id" } },
@@ -78,7 +91,8 @@
         "role": {
             "list": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false}
+            "delete": {"allow": false},
+            "publish": {"allow": false }
         }
     },
 
@@ -89,18 +103,24 @@
         "permissions_page": {
             "view": {"allow": false }
         },
+        "bulk_operations": {
+            "publish": {"allow": false},
+            "delete": {"allow": false}
+        },
 
         "user": {
             "list": {"allow": true, "where": { "roleId": "66b32417c07ee0ecebe9589a"} },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "page": {
             "list": {"allow": false },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "post": {
             "list": {"allow": true, "where": { "authorId": "user.id" } },
@@ -119,7 +139,8 @@
         "role": {
             "list": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         }
     },
 
@@ -130,18 +151,24 @@
         "permissions_page": {
             "view": {"allow": false }
         },
+        "bulk_operations": {
+            "publish": {"allow": true},
+            "delete": {"allow": false}
+        },
 
         "user": {
-            "list": {"allow": true, "where": { "OR": [ { "roleId": "66b32417c07ee0ecebe9589a" }, { "roleId": "66b32418c07ee0ecebe9589b" }  ] } },
+            "list": {"allow": true, "where": { "OR": [ { "roleId": "66b32417c07ee0ecebe9589a" }, { "roleId": "66b32418c07ee0ecebe9589b" }, { "roleId": "66b32418c07ee0ecebe9589d"}  ] } },
             "create": {"allow": false },
             "edit": {"allow": false },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "page": {
             "list": {"allow": true, "where": {} },
             "create": {"allow": true },
             "edit": {"allow": true, "where": {} },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         },
         "post": {
             "list": {"allow": true, "where": {} },
@@ -152,15 +179,16 @@
         },
         "comment": {
             "list": {"allow": true, "where": {} },
-            "create": {"allow": true },
+            "create": {"allow": true, "where": {}  },
             "edit": {"allow": true, "where": {} },
-            "delete": {"allow": false, "where": {} },
-            "publish": {"allow": false}
+            "delete": {"allow": true, "where": {} },
+            "publish": {"allow": true,  "where": {}  }
         },
         "role": {
             "list": {"allow": true, "where": {} },
             "edit": {"allow": true, "where": {} },
-            "delete": {"allow": false }
+            "delete": {"allow": false },
+            "publish": {"allow": false }
         }
     },
 
@@ -171,18 +199,24 @@
         "permissions_page": {
             "view": {"allow": true}
         },
+        "bulk_operations": {
+            "publish": {"allow": true },
+            "delete": {"allow": true}
+        },
 
         "user": {
             "list": {"allow": true, "where": {} },
             "create": {"allow": true},
             "edit": {"allow": true, "where": {} },
-            "delete": {"allow": true, "where": {}}
+            "delete": {"allow": true, "where": {}},
+            "publish": {"allow": true, "where": {} }
         },
         "page": {
             "list": {"allow": true, "where": {} },
             "create": {"allow": true },
             "edit": {"allow": true, "where": {} },
-            "delete": {"allow": true, "where": {} }
+            "delete": {"allow": true, "where": {} },
+            "publish": {"allow": true, "where": {} }
         },
         "post": {
             "list": {"allow": true, "where": {} },
@@ -201,7 +235,8 @@
         "role": {
             "list": {"allow": true, "where": {} },
             "edit": {"allow": true, "where": {}},
-            "delete": {"allow": false}
+            "delete": {"allow": false},
+            "publish": {"allow": true, "where": {} }
         }
     }
 }
