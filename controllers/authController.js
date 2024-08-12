@@ -28,6 +28,7 @@ export function auth_logout(req, res, next) {
 export function auth_get_signup(req, res, next) {
     res.render('signup')
 }
+
 /*  Signup POST */
 export async function auth_post_singup(req, res, next) {
   try{

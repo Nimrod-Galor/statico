@@ -21,15 +21,6 @@ import adminRouter from './statico/routes/adminRoute.js'
 import apiRouter from './statico/routes/apiRoute.js'
 import jsonAlerts from './statico/routes/jsonalerts.js'
 
-
-/* Test prisma */
-// import getBy, {createRow} from './db.js'
-
-// getBy('role', {"name": "subscriber2"})
-// .then((role) => console.log('test prisma', role))
-// .catch((err) => console.error('test prisma err', err))
-/* Test prisma END*/
-
 const app = express()
 
 // view engine setup
@@ -39,7 +30,7 @@ app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'statico/a
 app.set('view engine', 'ejs')
 
 
-// MIddleWare
+
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -47,13 +38,16 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, 'public')))
 // admin
 app.use(express.static(path.join(__dirname, 'statico/admin/theme')))
+
 app.use(cookieParser())
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
-    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })//'mongodb://localhost/test-app'
+    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })
 }))
+
 app.use(passport.authenticate('session'))
 
 
@@ -95,12 +89,6 @@ passport.deserializeUser(function(user, cb) {
     })
 })
 
-
-
-
-
-
-
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     var msgs = req.session.messages || [];
@@ -114,22 +102,6 @@ app.use(function(req, res, next) {
     req.session.messageTitle = ''
     next();
 });
-
-// Session-persisted message middleware
-// app.use(function(req, res, next){
-//     var err = req.session.error
-//     var msg = req.session.success
-//     delete req.session.error
-//     delete req.session.success
-//     res.locals.message = ''
-//     if (err){
-//         res.locals.message = err
-//     }
-//     if (msg){
-//         res.locals.message = '<p class="msg success">' + msg + '</p>'
-//     }
-//     next()
-// })
 
 // Routes
 app.use('/api', apiRouter)
@@ -161,8 +133,5 @@ app.use(function(err, req, res, next) {
         res.render('error', { user: req.user });
     }
 })
-
-
-// module.exports  = app
 
 export default app
