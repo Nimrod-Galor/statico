@@ -15,7 +15,7 @@
   "author": "Nimrod Galor",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.17.0",
+    "@prisma/client": "^5.18.0",
     "body-parser": "^1.20.2",
     "connect-ensure-login": "^0.1.1",
     "connect-mongo": "^5.1.0",
@@ -35,6 +35,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
-    "prisma": "^5.17.0"
+    "prisma": "^5.18.0"
   }
 }

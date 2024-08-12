@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import crypto from 'crypto'
-import {readRow} from './db.js'
+import {findUnique, readRow} from './db.js'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
@@ -45,12 +45,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
-    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })
+    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
+    cookie: { maxAge: 1000 * 60 * 1 } // 1 minutes session expiry by default
 }))
 
 app.use(passport.authenticate('session'))
-
-
 
 async function authenticateUser(email, password, done) {
     try{
@@ -88,6 +87,42 @@ passport.deserializeUser(function(user, cb) {
         return cb(null, user)
     })
 })
+
+// Remember me
+app.use(async (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    const tokenCookie = req.cookies.remember_me;
+    if (!tokenCookie) {
+        return next();
+    }
+
+    try{
+        const token = await findUnique('RememberMeToken',{ token: tokenCookie }, {userId: true})
+        if(!token){
+           return  next()
+        }
+
+        const user = await findUnique('user', { id: token.userId } )
+        req.logIn(user, err => {
+            if (err) {
+                return next(err)
+            }
+            return next()
+        })
+        // req.logIn((user, err) => {
+        //     if (err) {
+        //         return next(err)
+        //     }
+        //     next();
+        // })
+    }catch(err){
+        next(err)
+    }
+})
+
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {
@@ -129,6 +164,7 @@ app.use(function(err, req, res, next) {
         res.json(err)
     }else{
         res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        debugger
         // render Error page
         res.render('error', { user: req.user });
     }
