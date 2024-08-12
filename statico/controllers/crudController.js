@@ -1074,20 +1074,21 @@ export function bulkPublish(contentType, publish){
             //  Validate user data
             validateBulkData(id, header)
 
+            const action = req.originalUrl.includes('unpublish') ? 'unpublish' : 'publish'
             //  Publish
             if(Array.isArray(id)){
                 messageBody = []
                 for(let i=0; i< id.length; i++){
                     await updateRow(contentType, {id: id[i]}, {publish})
-                    messageBody.push(`${contentType} "${header[i]}" was successfuly published`)
+                    messageBody.push(`${contentType} "${header[i]}" was successfuly ${action}`)
                 }
             }else{
                 await updateRow(contentType, {id: id}, {publish})
-                messageBody = `${contentType} "${header}" was successfuly published`
+                messageBody = `${contentType} "${header}" was successfuly ${action}`
             }
 
             // Send Success json
-            req.crud_response = {messageBody, messageTitle: `${contentType} Published`, messageType: 'success'}
+            req.crud_response = {messageBody, messageTitle: `${contentType} ${action}`, messageType: 'success'}
         }catch(errorMsg){
             // Send Error json
             req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

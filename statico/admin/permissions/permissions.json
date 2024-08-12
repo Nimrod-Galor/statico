@@ -8,8 +8,7 @@
             "view": {"allow": false }
         },
         "bulk_operations": {
-            "publish": {"allow": false},
-            "delete": {"allow": false}
+            "exe": {"allow": false}
         },
 
         "user": {
@@ -56,8 +55,7 @@
             "view": {"allow": false }
         },
         "bulk_operations": {
-            "publish": {"allow": false},
-            "delete": {"allow": false}
+            "exe": {"allow": false}
         },
 
         "user": {
@@ -104,8 +102,7 @@
             "view": {"allow": false }
         },
         "bulk_operations": {
-            "publish": {"allow": false},
-            "delete": {"allow": false}
+            "exe": {"allow": false}
         },
 
         "user": {
@@ -152,8 +149,7 @@
             "view": {"allow": false }
         },
         "bulk_operations": {
-            "publish": {"allow": true},
-            "delete": {"allow": false}
+            "exe": {"allow": true}
         },
 
         "user": {
@@ -200,8 +196,7 @@
             "view": {"allow": true}
         },
         "bulk_operations": {
-            "publish": {"allow": true },
-            "delete": {"allow": true}
+            "exe": {"allow": true }
         },
 
         "user": {

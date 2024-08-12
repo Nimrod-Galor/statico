@@ -60,15 +60,15 @@ router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', '
     res.redirect('/admin/page')
 })
 // bulk delete
-router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'delete'), urlencodedParser, bulkDelete('page'), setAlertMessage, (req, res) => {
+router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'delete'), urlencodedParser, bulkDelete('page'), setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
 //bulk publish
-router.post("/page/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'publish'), urlencodedParser, bulkPublish('page', true), setAlertMessage, (req, res) => {
+router.post("/page/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), urlencodedParser, bulkPublish('page', true), setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
 //bulk unpublish
-router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'publish'), urlencodedParser, bulkPublish('page', false), setAlertMessage, (req, res) => {
+router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), urlencodedParser, bulkPublish('page', false), setAlertMessage, (req, res) => {
     res.redirect('/admin/page')
 })
 
@@ -88,6 +88,18 @@ router.post("/edit/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'ed
 router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'delete'), urlencodedParser, deletePost, setAlertMessage, (req, res) => {
     res.redirect('/admin/post')
 })
+// bulk delete
+router.post("/post/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'delete'), urlencodedParser, bulkDelete('post'), setAlertMessage, (req, res) => {
+    res.redirect('/admin/post')
+})
+//bulk publish
+router.post("/post/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), urlencodedParser, bulkPublish('post', true), setAlertMessage, (req, res) => {
+    res.redirect('/admin/post')
+})
+//bulk unpublish
+router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), urlencodedParser, bulkPublish('post', false), setAlertMessage, (req, res) => {
+    res.redirect('/admin/post')
+})
 
 
 // list Comments
@@ -98,9 +110,20 @@ router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthoriz
 router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
     res.redirect('/admin/comment')
 })
-
 // Delete Comment
 router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'delete'), urlencodedParser, deleteComment, setAlertMessage, (req, res) => {
+    res.redirect('/admin/comment')
+})
+// bulk delete
+router.post("/comment/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'delete'), urlencodedParser, bulkDelete('comment'), setAlertMessage, (req, res) => {
+    res.redirect('/admin/comment')
+})
+//bulk publish
+router.post("/comment/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), urlencodedParser, bulkPublish('comment', true), setAlertMessage, (req, res) => {
+    res.redirect('/admin/comment')
+})
+//bulk unpublish
+router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), urlencodedParser, bulkPublish('comment', false), setAlertMessage, (req, res) => {
     res.redirect('/admin/comment')
 })
 
@@ -120,9 +143,9 @@ router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissi
 
 
 // get content (list content for dashboard)
-router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), listContent(), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
-})
+// router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), listContent(), admin_dashboard(), (req, res) => {
+//     res.render('dashboard', {user: req.user, caption: '' })
+// })
 
 
 // initial Setup

@@ -413,9 +413,11 @@
                         <caption class="text-center fs-4 bg-warning-subtle"><%=caption%></caption>
                         <thead class="table-primary">
                             <tr>
-                                <th>
-                                    <input type="checkbox" id="bulk_invert" onchange="bulkInvert()" />
-                                </th>
+                                <%if(contentType != 'role'){%>
+                                    <th>
+                                        <input type="checkbox" id="bulk_invert" onchange="bulkInvert()" />
+                                    </th>
+                                <%}%>
                                 <% modelHeaders.forEach((field) => {%>
                                     <th scope="col">
                                         <%-field.header%>
@@ -429,6 +431,7 @@
                         <tbody class="table-group-divider">
                             <% modelsData.forEach((data) => {%>
                                 <tr>
+                                    <%if(contentType != 'role'){%>
                                     <td>
                                         <input type="checkbox" class="item-check" name="id" value="<%=data.id%>"
                                         data-header="<%=data[modelHeaders[0].key]%>"
@@ -439,6 +442,7 @@
                                             (permissions[contentType].delete.allow === true &&
                                             (!permissions[contentType].delete.where?.authorId || permissions[contentType].delete.where?.authorId === data.authorId))%>" />
                                     </td>
+                                    <%}%>
                                     <% modelHeaders.forEach((field) => {%>
                                         <td>
                                             <% if(field.relation){ %>
@@ -474,7 +478,7 @@
                                 </tr>
                             <%})%>
                         </tbody>
-                        <%if(permissions.bulk_operations.publish.allow === true || permissions.bulk_operations.delete.allow === true){%>
+                        <%if(contentType != 'role' && permissions.bulk_operations.exe.allow === true){%>
                         <tfoot>
                             <tr>
                                 <td colspan="<%=modelHeaders.length + 2%>">
@@ -485,11 +489,11 @@
                                             <div class="col-sm-2">
                                                 <select class="form-select" id="bulk-action" aria-label="select bulk action">
                                                     <option value="" selected>Select bulk action</option>
-                                                    <%if(permissions.bulk_operations.publish.allow === true){%>
+                                                    <%if(permissions[contentType].publish.allow === true){%>
                                                         <option value="publish">Publish</option>
                                                         <option value="unpublish">Unpublish</option>
                                                     <%}%>
-                                                    <%if(permissions.bulk_operations.delete.allow === true){%>
+                                                    <%if(permissions[contentType].delete.allow === true){%>
                                                         <option value="delete">Delete</option>
                                                     <%}%>
                                                 </select>
