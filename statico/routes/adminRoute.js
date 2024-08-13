@@ -143,9 +143,9 @@ router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissi
 
 
 // get content (list content for dashboard)
-// router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), listContent(), admin_dashboard(), (req, res) => {
-//     res.render('dashboard', {user: req.user, caption: '' })
-// })
+router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), listContent(), admin_dashboard(), (req, res) => {
+    res.render('dashboard', {user: req.user, caption: '' })
+})
 
 
 // initial Setup

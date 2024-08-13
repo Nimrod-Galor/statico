@@ -42,7 +42,7 @@ export async function get_postBySlug(req, res, next){
                 // post not found
                 return next(createError(404, 'Resource not found'));
             }
-            postData.body = he.decode(postData.body)
+            pageData.body = he.decode(pageData.body)
             res.render('page', { user: req.user, pageData })
         }else{
             postData.body = he.decode(postData.body)

@@ -46,7 +46,7 @@ app.use(session({
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
     store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
-    cookie: { maxAge: 1000 * 60 * 1 } // 1 minutes session expiry by default
+    cookie: { maxAge: 1000 * 60 * 30 } // 30 minutes session expiry by default
 }))
 
 app.use(passport.authenticate('session'))
@@ -112,17 +112,10 @@ app.use(async (req, res, next) => {
             }
             return next()
         })
-        // req.logIn((user, err) => {
-        //     if (err) {
-        //         return next(err)
-        //     }
-        //     next();
-        // })
     }catch(err){
         next(err)
     }
 })
-
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {
@@ -164,7 +157,6 @@ app.use(function(err, req, res, next) {
         res.json(err)
     }else{
         res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-        debugger
         // render Error page
         res.render('error', { user: req.user });
     }
