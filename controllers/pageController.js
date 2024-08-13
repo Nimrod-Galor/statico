@@ -3,11 +3,12 @@ import {findUnique} from '../db.js'
 import {isAuthorized} from '../statico/admin/permissions/permissions.js'
 
 export async function getPage(req, res, next){
+    const slug = req.params.slug || 'home'
     try{
-        //  Get post data
-        const pageData = await findUnique('page', {slug: 'home'})
+        //  Get page data
+        const pageData = await findUnique('page', { slug })
         if(!pageData){
-            // post not found
+            // page not found
             return next(createError(404, 'Resource not found'));
         }
 
@@ -19,7 +20,7 @@ export async function getPage(req, res, next){
         res.render('page', { user: req.user,  pageData })
     }catch(err){
         console.log(err)
-        // post not found
+        // page not found
         return next(err);
     }
 }
