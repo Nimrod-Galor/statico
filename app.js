@@ -55,7 +55,7 @@ app.use(passport.authenticate('session'))
 async function authenticateUser(email, password, done) {
     try{
         // const user = await getBy('user', {email})
-        const user = await readRow('user', {where:{email}})
+        const user = await readRow('user', {where: { email, emailVerified: true } })
 
         if (email != user.email) {
             return done(null, false, { message: 'Incorrect username or password.' })
@@ -146,11 +146,6 @@ app.use(function(req, res, next) {
 })
 
 // error handler
-// app.use(errorPage)
-
-
-app.use(function(req, res, next) {
-    console.log('asdfsf')
-})
+app.use(errorPage)
 
 export default app

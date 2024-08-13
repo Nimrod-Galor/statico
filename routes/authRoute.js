@@ -2,10 +2,18 @@ import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 import {createUser} from '../statico/controllers/crudController.js'
 import {auth_post_login, auth_logout, auth_post_singup, verifyEmail} from '../controllers/authController.js'
-import {sendVerificationMail} from '../statico/controllers/mailController.js'
+import {sendVerificationMailMiddleware} from '../statico/controllers/mailController.js'
 
 
 const router = express.Router();
+
+function setAlertMessage(req, res, next){
+    //  Set alert message
+    req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
+    req.session.messageType = req.crud_response.messageType
+    req.session.messageTitle = req.crud_response.messageTitle
+    next()
+}
 
 /** GET /login  */
 router.get('/login', ensureLogIn.ensureLoggedOut('/'), (req, res, next) => {
@@ -24,11 +32,12 @@ router.get('/signup', ensureLogIn.ensureLoggedOut('/'), (req, res, next) => {
 })
 
 /* POST /signup */
-router.post('/signup', createUser, sendVerificationMail, auth_post_singup)
+router.post('/signup', createUser, sendVerificationMailMiddleware, auth_post_singup)
 
 /*  Email verification  */
-router.get('/verify/:token', verifyEmail, (req, res, next) => {
-    res.render('page', { user: req.user })
+router.get('/verify/:token', verifyEmail, setAlertMessage, (req, res, next) => {
+    // res.render('page', { user: req.user })
+    res.redirect('/login')
 })
 
 export default router

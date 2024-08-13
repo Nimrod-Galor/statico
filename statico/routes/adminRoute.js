@@ -13,7 +13,7 @@ import {initialize} from '../setup/initialize.js'
 import {admin_dashboard} from '../controllers/adminController.js'
 import {allRolesPermissions} from '../controllers/permissionsController.js'
 import {ensureAuthorized, filterByPermissions, isAuthorized} from '../admin/permissions/permissions.js'
-import {sendVerificationMail} from '../controllers/mailController.js'
+import {sendVerificationMailMiddleware} from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -33,7 +33,7 @@ router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('us
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), urlencodedParser, createUser, setAlertMessage, sendVerificationMail, (req, res) => {
+router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), urlencodedParser, createUser, setAlertMessage, sendVerificationMailMiddleware, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Edit User

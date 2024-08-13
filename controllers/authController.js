@@ -11,6 +11,10 @@ export function auth_post_login(req, res, next){
       return next(err)
     }
     if (!user) {
+      //  Set alert message
+      req.session.messages = [info.message]
+      req.session.messageType = 'warning'
+      req.session.messageTitle = 'Alert'
       return res.redirect('/login')
     }
 
@@ -100,14 +104,17 @@ export async function verifyEmail(req, res, next){
       return next( createError(400, 'Invalid or expired token') )
     }
 
-    user.emailVerified = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpires = undefined;
+    const tmpUser = {
+      emailVerified: true,
+      verificationToken: undefined,
+      verificationTokenExpires: undefined
+    }
 
-    await updateRow('user', {id: user.id})
+    await updateRow('user', {id: user.id}, tmpUser)
 
     // Send Success json
     req.crud_response = {messageBody: `Email verified successfully!`, messageTitle: 'Email Verification', messageType: 'success'}
+    next()
   } catch (error) {
     next( createError(500, 'Server error') );
   }

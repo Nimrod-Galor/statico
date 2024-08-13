@@ -17,7 +17,9 @@ export async function initialize(req, res, next){
     .then(async (roles) => {
         // console.log('roles', roles)
         if(roles > 0){
-            throw new Error('Installation has already been completed', "")
+            // throw new Error('Installation has already been completed', "")
+            // return next(createError(406))
+            throw createError(406, 'Installation has already been completed')
         }
     }).then(async () => {// ****  Create Roles
         // Update Progress
@@ -92,7 +94,7 @@ export async function initialize(req, res, next){
         const verificationToken = !emailverified ? jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' }) : undefined
 
         // Set token and expiration date
-        const verificationTokenExpires = !emailverified ? Date.now() + 3600000 : undefined // 1 hour
+        const verificationTokenExpires = !emailverified ? new Date(Date.now() + 3600000) : undefined // 1 hour
 
         // // hash passowrd
         const salt = crypto.randomBytes(16)
@@ -115,7 +117,8 @@ export async function initialize(req, res, next){
         await prisma.user.create({data: adminUser})
         // Verification mail
         if(!emailverified){
-            sendVerificationMail(req, res, next)
+            const host = req.host
+            sendVerificationMail(email, username, host, verificationToken)
             progress.push(`Email verification code sent to: ${email}.`)
         }
     })
@@ -209,14 +212,15 @@ export async function initialize(req, res, next){
         // Send Success json
         req.crud_response = {messageBody: progress, messageTitle: 'Success', messageType: 'success'}
 
+        next()
     })
     .catch((err) => {
         //  Send Error json
         // req.crud_response = {messageBody: err.message, messageTitle: 'Error', messageType: 'danger'}
-        next(createError(500, err.message))
+        // next(createError(500, err.message))
+        next(err)
     })
     .finally(async () => {
         await prisma.$disconnect()
-        next()
     })
 }

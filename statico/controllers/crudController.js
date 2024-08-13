@@ -156,10 +156,11 @@ export async function createUser(req, res, next){
         const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
 
         // Create a verification token
+        // we need this variable down in the sendmail middleware.
         req.verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Set token and expiration date
-        const verificationTokenExpires = Date.now() + 3600000; // 1 hour
+        const verificationTokenExpires = new Date(Date.now() + 3600000) // 1 hour
         
         //  Set new user object
         const tmpUser = {

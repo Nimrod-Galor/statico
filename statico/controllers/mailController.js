@@ -23,25 +23,26 @@ async function sendMail(from, to, subject, text, html){
     console.log("Message sent: %s", info.messageId);
 }
 
-
-
-export function sendVerificationMail(req, res, next){
+export function sendVerificationMailMiddleware(req, res, next){
     //  Get user data
-    let {email, username, password, role, emailverified = 'true'} = req.body
+    let {email, username} = req.body
+    const verificationToken = req.verificationToken
+    const host = req.host
+    sendVerificationMail(email, username, host, verificationToken)
+    next()
+}
 
-    // Convert emailverified string to boolean
-    emailverified = emailverified ? true : false
-
+// export function sendVerificationMail(req, res, next){
+export function sendVerificationMail(email, username, host, verificationToken){
     const from = '"Statico Admin" <admin@statico.com>'
     const to = email
     const subject = "Statico Email verification"
     const text = `Hello ${username}
-                You registered an account on Statico, before being able to use your account you need to verify that this is your email address here: ${req.host}/verify/${req.verificationToken}
+                You registered an account on Statico, before being able to use your account you need to verify that this is your email address here: ${host}/verify/${verificationToken}
                 Kind Regards, Statico`
     const html = `Hello ${username}
-    You registered an account on Statico, before being able to use your account you need to verify that this is your email address by clicking <a href="${req.host}/verify/${req.verificationToken}">here</a>
+    You registered an account on Statico, before being able to use your account you need to verify that this is your email address by clicking <a href="${host}/verify/${verificationToken}">here</a>
     Kind Regards, Statico`
 
     sendMail(from, to, subject, text, html)
-    // next()
 }
