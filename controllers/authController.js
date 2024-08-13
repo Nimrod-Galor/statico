@@ -29,7 +29,7 @@ export function auth_post_login(req, res, next){
 
         try{
           const newToken = createRow('RememberMeToken', { token, userId: req.user.id })
-          res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 }); // 30 days
+          res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
           return res.redirect('/'); // Redirect to the home page
         }catch(err){
           return next(err)

@@ -1,6 +1,7 @@
 import createError from 'http-errors'
 import he from 'he'
 import {findUnique} from '../db.js'
+import {isAuthorized} from '../statico/admin/permissions/permissions.js'
 
 export function get_index(req, res){
     const postData = {}
@@ -31,6 +32,11 @@ export async function get_postById(req, res, next){
 
 export async function get_postBySlug(req, res, next){
     const slug = req.params.slug
+
+    res.locals.permissions = {"admin_page": {
+            "view": isAuthorized("admin_page", "view", req.user?.roleId)
+        }
+    }
 
     try{
         //  Get post data
