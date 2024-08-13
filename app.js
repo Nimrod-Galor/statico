@@ -11,7 +11,8 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
-import {isAuthorized} from './statico/admin/permissions/permissions.js'
+import {errorPage} from './controllers/pageController.js'
+// import {isAuthorized} from './statico/admin/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
@@ -134,8 +135,8 @@ app.use(function(req, res, next) {
 // Routes
 app.use('/api', apiRouter)
 app.use('/admin', adminRouter)
-app.use('/', pageRouter)
 app.use('/', authRouter)
+app.use('/', pageRouter)
 app.use('/', postRouter)
 app.use('/json-alert', jsonAlerts)
 
@@ -145,21 +146,11 @@ app.use(function(req, res, next) {
 })
 
 // error handler
-app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+// app.use(errorPage)
 
-    // render the error page
-    res.status(err.status || 500);
-    if(req.originalUrl.includes('/api/')){
-        // return json response
-        res.json(err)
-    }else{
-        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-        // render Error page
-        res.render('error', { user: req.user });
-    }
+
+app.use(function(req, res, next) {
+    console.log('asdfsf')
 })
 
 export default app

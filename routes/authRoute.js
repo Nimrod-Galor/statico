@@ -1,7 +1,9 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 import {createUser} from '../statico/controllers/crudController.js'
-import {auth_post_login, auth_logout, auth_post_singup} from '../controllers/authController.js'
+import {auth_post_login, auth_logout, auth_post_singup, verifyEmail} from '../controllers/authController.js'
+import {sendVerificationMail} from '../statico/controllers/mailController.js'
+
 
 const router = express.Router();
 
@@ -22,6 +24,11 @@ router.get('/signup', ensureLogIn.ensureLoggedOut('/'), (req, res, next) => {
 })
 
 /* POST /signup */
-router.post('/signup', createUser, auth_post_singup)
+router.post('/signup', createUser, sendVerificationMail, auth_post_singup)
+
+/*  Email verification  */
+router.get('/verify/:token', verifyEmail, (req, res, next) => {
+    res.render('page', { user: req.user })
+})
 
 export default router

@@ -24,3 +24,20 @@ export async function getPage(req, res, next){
         return next(err);
     }
 }
+
+export function errorPage(req, res, next){
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    if(req.originalUrl.includes('/api/')){
+        // return json response
+        res.json(err)
+    }else{
+        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        // render Error page
+        res.render('error', { user: req.user });
+    }
+}

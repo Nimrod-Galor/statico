@@ -17,18 +17,20 @@ datasource db {
 }
 
 model User {
-  id            String            @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime          @default(now())
-  email         String            @unique
-  emailVerified Boolean           @default(false)
-  password      String
-  salt          String
-  userName      String?
-  role          Role              @relation(fields: [roleId], references: [id])
-  roleId        String            @db.ObjectId
-  posts         Post[]
-  comments      Comment[]
-  token         RememberMeToken[]
+  id                       String            @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                DateTime          @default(now())
+  email                    String            @unique
+  password                 String
+  salt                     String
+  userName                 String?
+  role                     Role              @relation(fields: [roleId], references: [id])
+  roleId                   String            @db.ObjectId
+  posts                    Post[]
+  comments                 Comment[]
+  token                    RememberMeToken[]
+  emailVerified            Boolean           @default(false)
+  verificationToken        String?
+  verificationTokenExpires DateTime?
 }
 
 model RememberMeToken {

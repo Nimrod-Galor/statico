@@ -1,13 +1,16 @@
+import createError from 'http-errors'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs, { unlink } from 'node:fs/promises'
 import { PrismaClient } from '@prisma/client'
 // import { error } from 'console'
 import crypto from 'crypto'
+import { sendVerificationMail } from '../controllers/mailController.js'
 
 const prisma = new PrismaClient()
 
-export default async function initialize(email, emailVerified, password, userName){
+export async function initialize(req, res, next){
+    let {email, emailverified, password, username} = req.body
     const progress = []
     // check for defaul roles
     return await prisma.role.count()
@@ -80,7 +83,16 @@ export default async function initialize(email, emailVerified, password, userNam
     })
     .then(async (adminRole) => {// ****  Create Admin user
         // Update Progress
-        progress.push(`Admin user (${userName}) Created.`)
+        progress.push(`Admin user (${username}) Created.`)
+
+        // send verification Email
+        emailverified = emailverified ? false : true
+
+        // Create a verification token
+        const verificationToken = !emailverified ? jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' }) : undefined
+
+        // Set token and expiration date
+        const verificationTokenExpires = !emailverified ? Date.now() + 3600000 : undefined // 1 hour
 
         // // hash passowrd
         const salt = crypto.randomBytes(16)
@@ -88,18 +100,24 @@ export default async function initialize(email, emailVerified, password, userNam
     
         // create admin user
         const adminUser = {
-        email,
-        emailVerified,
-        password: key.toString('hex'),
-        salt: salt.toString('hex'),
-        userName,
-        role: {
-            connect: {id: adminRole.id}
-            }
+            email,
+            emailVerified : emailverified,
+            password: key.toString('hex'),
+            salt: salt.toString('hex'),
+            userName: username,
+            role: {
+                connect: {id: adminRole.id}
+                },
+            verificationToken,
+            verificationTokenExpires
         }
     
         await prisma.user.create({data: adminUser})
-        // return
+        // Verification mail
+        if(!emailverified){
+            sendVerificationMail(req, res, next)
+            progress.push(`Email verification code sent to: ${email}.`)
+        }
     })
     .then(async () => {// ****  Create Default Pages
         // Update Progress
@@ -187,69 +205,18 @@ export default async function initialize(email, emailVerified, password, userNam
         const filePath = path.join( __dirname, '..', '..', 'public', 'index.html')
         await unlink(filePath)
 
-        return {message: progress, success: true}
+
+        // Send Success json
+        req.crud_response = {messageBody: progress, messageTitle: 'Success', messageType: 'success'}
+
     })
     .catch((err) => {
-        return err
+        //  Send Error json
+        // req.crud_response = {messageBody: err.message, messageTitle: 'Error', messageType: 'danger'}
+        next(createError(500, err.message))
     })
     .finally(async () => {
         await prisma.$disconnect()
+        next()
     })
 }
-
-
-
-
-
-
-    // }).then(async () => {
-    //     //  create subscribe Role
-    //     return await prisma.role.create({
-    //         data: {
-    //             name: 'subscriber',
-    //             description: 'somebody who can only manage their profile.',
-    //             default: true
-    //         }
-    //     })
-    // })
-    // .then(async () => {
-    //     progress.push('Subscribe Role Created.')
-    //     //  create contributor Role
-    //     return await prisma.role.create({
-    //         data: {
-    //             name: 'contributor',
-    //             description: 'somebody who can write and manage their own posts but cannot publish them.'
-    //         }
-    //     })
-    // })
-    // .then(async () => {
-    //     progress.push('Contributer Role Created.')
-    //     //  create author Role
-    //     await prisma.role.create({
-    //             data: {
-    //             name: 'author',
-    //             description: 'somebody who can publish and manage their own posts.'
-    //         }
-    //     })
-    // })
-    // .then(async () => {
-    //     progress.push('Author Role Created.')
-    //     //  create editor Role
-    //     return await prisma.role.create({
-    //         data: {
-    //             name: 'editor',
-    //             description: 'somebody who can publish and manage posts including the posts of other users.'
-    //         }
-    //     })
-    // })
-    // .then(async () => {
-    //     progress.push('Editor Role Created.')
-    //     //  create admin Role
-    //     return await prisma.role.create({
-    //         data: {
-    //             name: 'admin',
-    //             description: 'somebody who has access to all the administration features within a single site.'
-    //         }
-    //     })
-    // })
-    

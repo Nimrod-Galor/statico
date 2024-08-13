@@ -9,9 +9,11 @@ import  { listContent,
     editeRole,
     bulkDelete, bulkPublish
 } from '../controllers/crudController.js'
-import {admin_post_setup, admin_dashboard} from '../controllers/adminController.js'
+import {initialize} from '../setup/initialize.js'
+import {admin_dashboard} from '../controllers/adminController.js'
 import {allRolesPermissions} from '../controllers/permissionsController.js'
-import {ensureAuthorized, filterByPermissions} from '../admin/permissions/permissions.js'
+import {ensureAuthorized, filterByPermissions, isAuthorized} from '../admin/permissions/permissions.js'
+import {sendVerificationMail} from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -31,7 +33,7 @@ router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('us
     res.render('dashboard', {user: req.user, caption: '' })
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), urlencodedParser, createUser, setAlertMessage, (req, res) => {
+router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), urlencodedParser, createUser, setAlertMessage, sendVerificationMail, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Edit User
@@ -149,6 +151,24 @@ router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissi
 
 
 // initial Setup
-router.post("/setup",urlencodedParser, admin_post_setup)
+router.post("/setup",urlencodedParser, initialize, setAlertMessage, (req, res) => {
+    res.redirect('/login')
+    // if(req.crud_response.messageType === 'success'){
+    // }else{// error
+    //     res.locals.message = results.message;
+    //     res.locals.error = req.app.get('env') === 'development' ? results : {};
+
+    //     // render the error page
+    //     res.status(results.status || 500);
+    //     res.render('error');
+    // }
+
+
+    // res.locals.permissions = {"admin_page": {
+    //         "view": isAuthorized("admin_page", "view", req.user?.roleId)
+    //     }
+    // }
+    // res.render('page', {user: req.user })
+})
 
 export default router

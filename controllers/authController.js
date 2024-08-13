@@ -1,6 +1,8 @@
+import createError from 'http-errors'
 import passport from 'passport'
 import crypto from 'crypto'
-import {createRow, deleteRow, deleteRows} from '../db.js'
+import jwt from 'jsonwebtoken'
+import {createRow, deleteRow, deleteRows, findUnique, updateRow} from '../db.js'
 
 /*  Login POST  */
 export function auth_post_login(req, res, next){
@@ -75,12 +77,38 @@ export async function auth_post_singup(req, res, next) {
       res.redirect('/login')
     }else{
       // error
-      req.localse.messages = [req.crud_response.messageBody]
-      req.localse.messageType = req.crud_response.messageType
-      req.localse.messageTitle = req.crud_response.messageTitle
+      res.locals.messages = [req.crud_response.messageBody]
+      res.locals.messageType = req.crud_response.messageType
+      res.locals.messageTitle = req.crud_response.messageTitle
       res.render('signup')
     }
   }catch(err){
     return next(err)
+  }
+}
+
+/*  verify Email*/
+export async function verifyEmail(req, res, next){
+  try {
+    const { token } = req.params;
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await findUnique('user', { email: decoded.email });
+
+    if (!user || user.verificationToken !== token || user.verificationTokenExpires < Date.now()) {
+      return next( createError(400, 'Invalid or expired token') )
+    }
+
+    user.emailVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+
+    await updateRow('user', {id: user.id})
+
+    // Send Success json
+    req.crud_response = {messageBody: `Email verified successfully!`, messageTitle: 'Email Verification', messageType: 'success'}
+  } catch (error) {
+    next( createError(500, 'Server error') );
   }
 }

@@ -1,41 +1,34 @@
-import initialize from '../setup/initialize.js'
-import createError from 'http-errors'
-// import createUser from '../../modules/createUser.js'
-import isValid from '../admin/theme/scripts/validations.js'
+// import { initialize } from '../setup/initialize.js'
 import modelsInterface from '../interface/modelsInterface.js'
-import {countsRows} from '../../db.js'
-import {isAuthorized, getPermissionFilter, getRolePermissions} from '../admin/permissions/permissions.js'
+import { countsRows } from '../../db.js'
+import { isAuthorized, getPermissionFilter, getRolePermissions } from '../admin/permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)//modelsInterface.map(item => item.name.toLowerCase())
 
 /*  Setup   */
-export async function admin_post_setup(req, res){
-    let {email, emailverified, password, username} = req.body
+// export async function admin_post_setup(req, res){
+//     let {email, emailverified, password, username} = req.body
 
-    emailverified = !! emailverified
-    // sanitize ** todo
-    // initialize statico
-    const results = await initialize(email, emailverified, password, username)
+//     emailverified = !! emailverified
+//     // sanitize ** todo
+//     // initialize statico
+//     const results = await initialize(email, emailverified, password, username)
 
-    if(results.success){
-        req.session.messages = results.message
-        req.session.messgaeTitle = 'Success'
-        req.session.messageType = 'success'
-        res.redirect('/login')
-    }else{// error
-        // res.locals.messages = [results.message]
-        // res.locals.messgaeTitle = 'Error'
-        // res.locals.messageType = 'error'
-        // res.render('/error')
-        res.locals.message = results.message;
-        res.locals.error = req.app.get('env') === 'development' ? results : {};
+//     if(results.success){
+//         req.session.messages = results.message
+//         req.session.messgaeTitle = 'Success'
+//         req.session.messageType = 'success'
+//         res.redirect('/login')
+//     }else{// error
+//         res.locals.message = results.message;
+//         res.locals.error = req.app.get('env') === 'development' ? results : {};
 
-        // render the error page
-        res.status(results.status || 500);
-        res.render('error');
-    }
-}
+//         // render the error page
+//         res.status(results.status || 500);
+//         res.render('error');
+//     }
+// }
 
 
 
@@ -112,15 +105,15 @@ export function admin_dashboard(contentType){
     }
 }
 
-function stringToBoolean(str){
-    if(str === "true"){
-        return true
-    }else if(str === "false"){
-        return false
-    }
-    return undefined
-}
+// function stringToBoolean(str){
+//     if(str === "true"){
+//         return true
+//     }else if(str === "false"){
+//         return false
+//     }
+//     return undefined
+// }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
+// function capitalizeFirstLetter(string) {
+//     return string.charAt(0).toUpperCase() + string.slice(1);
+// }

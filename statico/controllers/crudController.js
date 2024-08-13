@@ -1,9 +1,10 @@
+import createError from 'http-errors'
+import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows} from '../../db.js'
 import {isAuthorized} from '../admin/permissions/permissions.js'
-import createError from 'http-errors'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
-import crypto from 'crypto'
 
 /*  admin list content  */
 export function listContent(contentType){
@@ -109,14 +110,14 @@ function userValidations(id, email, username, password, role, emailverified){
     return true
 }
 
-function stringToBoolean(str){
-    if(str === "true"){
-        return true
-    }else if(str === "false"){
-        return false
-    }
-    return undefined
-}
+// function stringToBoolean(str){
+//     if(str === "true"){
+//         return true
+//     }else if(str === "false"){
+//         return false
+//     }
+//     return undefined
+// }
 
 /****************************************/
 /** User                                */
@@ -125,10 +126,10 @@ function stringToBoolean(str){
 /** Create User */
 export async function createUser(req, res, next){
     //  Get user data
-    let {email, username, password, role, emailverified = 'true'} = req.body
+    let {email, username, password, role, emailverified} = req.body
 
     // Convert emailverified string to boolean
-    emailverified = stringToBoolean(emailverified)
+    emailverified = emailverified ? true : false
 
     try{
         if(role == undefined){
@@ -140,11 +141,6 @@ export async function createUser(req, res, next){
             
             role = defaultRole.id
         }
-        
-        // const roles = await readRows('role', {select:{ id: true, name: true}})
-        // const selectedRole = roles.find((r) => r.name.toLowerCase() ===  role.toLowerCase())
-
-
 
         //  Validate user data
         userValidations(undefined, email, username, password, role, emailverified)
@@ -158,6 +154,12 @@ export async function createUser(req, res, next){
         // Hash passowrd
         const salt = crypto.randomBytes(16)
         const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
+
+        // Create a verification token
+        req.verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Set token and expiration date
+        const verificationTokenExpires = Date.now() + 3600000; // 1 hour
         
         //  Set new user object
         const tmpUser = {
@@ -168,7 +170,9 @@ export async function createUser(req, res, next){
           userName: username,
           role: {
             connect: {id: role}
-          }
+          },
+          verificationToken: req.verificationToken,
+          verificationTokenExpires
         }
 
         // Create new user
@@ -176,7 +180,7 @@ export async function createUser(req, res, next){
 
         // Set return message
         let msg = 'Your account has been successfully created.'
-        if(emailverified){
+        if(!emailverified){
             msg += ' An email with a verification code was just sent to: ' + email
         }
 
@@ -195,8 +199,8 @@ export async function editUser(req, res, next){
     //  Get user data
     let {id, email, username, password, role, emailverified} = req.body
 
-    // Convert emailverified string to boolean
-    emailverified = stringToBoolean(emailverified)
+    // Convert emailverified checkbox to boolean
+    emailverified = emailverified ? true : false
 
     try{
         //  Validate user data
@@ -336,15 +340,10 @@ function postValidations(id, title, body, publish, slug, metatitle, metadescript
 export async function createPage(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
-
-    if(publish){
-        // Convert publish string to boolean
-        publish = stringToBoolean(publish)
-    }else{
-        // pulish was not checked. we get undefined
-        publish = false
-    }
-
+    
+    // Convert publish checkbox to boolean
+    publish = publish ? true : false
+    
     try{
         //  Validate user data
         postValidations(undefined ,title, body, publish, slug, metatitle, metadescription)
@@ -395,13 +394,8 @@ export async function editPage(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
-    if(publish){
-        // Convert publish string to boolean
-        publish = stringToBoolean(publish)
-    }else{
-        // pulish was not checked. we get undefined
-        publish = false
-    }
+    // Convert publish checkbox to boolean
+    publish = publish ? true : false
 
     try{
         //  Validate user data
@@ -489,13 +483,8 @@ export async function createPost(req, res, next){
     //  Get user data
     let {title, body, publish, slug, metatitle, metadescription} = req.body
 
-    if(publish){
-        // Convert publish string to boolean
-        publish = stringToBoolean(publish)
-    }else{
-        // pulish was not checked. we get undefined
-        publish = false
-    }
+    // Convert publish checkbox to boolean
+    publish = publish ? true : false
 
     try{
         //  Validate user data
@@ -550,13 +539,8 @@ export async function editPost(req, res, next){
     //  Get user data
     let {id, title, body, publish, slug, metatitle, metadescription} = req.body
 
-    if(publish){
-        // Convert publish string to boolean
-        publish = stringToBoolean(publish)
-    }else{
-        // pulish was not checked. we get undefined
-        publish = false
-    }
+    // Convert publish checkbox to boolean
+    publish = publish ? true : false
 
     try{
         //  Validate user data
@@ -819,12 +803,8 @@ export async function createComment(req, res, next){
 export async function editComment(req, res, next){
     let {id, parent, comment, publish } = req.body
 
-    if(publish){
-        // Convert publish string to boolean
-        publish = stringToBoolean(publish)
-    }else{
-        publish = false
-    }
+    // Convert publish checkbox to boolean
+    publish = publish ? true : false
 
     try{
         // Validate user Data
