@@ -71,7 +71,7 @@ export async function initialize(req, res, next){
         let permissionsString = await fs.readFile(defaultfilePath, { encoding: 'utf8' });
         //  for each role replase role name with role id
         for(let i = 0; i < rolesCreated.length; i++){
-            const regex = new RegExp(rolesCreated[i].name, "g")
+            const regex = new RegExp(`"${rolesCreated[i].name}"`, "g")
             permissionsString = permissionsString.replace(regex, rolesCreated[i].id)
         }
         // create new file with updated permissions

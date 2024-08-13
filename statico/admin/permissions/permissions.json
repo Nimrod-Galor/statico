@@ -1,6 +1,6 @@
 {
     "66bb5fad07becba3df6ffa98": {
-        "66bb5fad07becba3df6ffa9c_page": {
+        "admin_page": {
             "view": {"allow": false }
         },
         "permissions_page": {
@@ -47,7 +47,7 @@
     },
 
     "66bb5fb907becba3df6ffa9e": {
-        "66bb5fad07becba3df6ffa9c_page": {
+        "admin_page": {
             "view": {"allow": true }
         },
         "permissions_page": {
@@ -72,9 +72,9 @@
             "publish": {"allow": false }
         },
         "post": {
-            "list": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
+            "list": {"allow": true, "where": { "authorId": "user.id" } },
             "create": {"allow": true },
-            "edit": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
             "delete": {"allow": false },
             "publish": {"allow": false }
         },
@@ -94,7 +94,7 @@
     },
 
     "66bb5fb907becba3df6ffa9f": {
-        "66bb5fad07becba3df6ffa9c_page": {
+        "admin_page": {
             "view": {"allow": true }
         },
         "permissions_page": {
@@ -119,17 +119,17 @@
             "publish": {"allow": false }
         },
         "post": {
-            "list": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
+            "list": {"allow": true, "where": { "authorId": "user.id" } },
             "create": {"allow": true },
-            "edit": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
             "delete": {"allow": false},
-            "publish": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } }
+            "publish": {"allow": true, "where": { "authorId": "user.id" } }
         },
         "comment": {
             "list": {"allow": true, "where": {} },
             "create": {"allow": true },
-            "edit": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
-            "delete": {"allow": true, "where": { "66bb5fb907becba3df6ffa9fId": "user.id" } },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
+            "delete": {"allow": true, "where": { "authorId": "user.id" } },
             "publish": {"allow": false }
         },
         "role": {
@@ -141,7 +141,7 @@
     },
 
     "66bb5fb907becba3df6ffa9d": {
-        "66bb5fad07becba3df6ffa9c_page": {
+        "admin_page": {
             "view": {"allow": true }
         },
         "permissions_page": {
@@ -188,7 +188,7 @@
     },
 
     "66bb5fad07becba3df6ffa9c": {
-        "66bb5fad07becba3df6ffa9c_page": {
+        "admin_page": {
             "view": {"allow": true }
         },
         "permissions_page": {
