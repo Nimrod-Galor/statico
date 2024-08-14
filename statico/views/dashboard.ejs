@@ -508,7 +508,10 @@
                                             <div class="col-sm-2">
                                                 <select class="form-select" id="bulk-action" aria-label="select bulk action">
                                                     <option value="" selected>Select bulk action</option>
-                                                    <%if(permissions[contentType].publish.allow === true){%>
+                                                    <%if(contentType === 'user' && permissions[contentType].publish.allow === true){%>
+                                                        <option value="publish">Verify</option>
+                                                        <option value="unpublish">Unverify</option>
+                                                    <%}else if(permissions[contentType].publish.allow === true){%>
                                                         <option value="publish">Publish</option>
                                                         <option value="unpublish">Unpublish</option>
                                                     <%}%>

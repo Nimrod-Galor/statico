@@ -264,7 +264,8 @@ function bulkOperation(event){
         alert("No items selected!")
         return false
     }
-    const operation = document.getElementById('bulk-action').value
+    const bulkAction = document.getElementById('bulk-action')
+    const operation = bulkAction.value
     // check if any action was selected
     if(operation === ""){
         event.preventDefault()
@@ -274,7 +275,7 @@ function bulkOperation(event){
     }
 
     const contentType = document.getElementById("contentType").value
-    let deleteMsg = `${operation} ${contentType}:`
+    let deleteMsg = `${bulkAction.options[bulkAction.selectedIndex].text} ${contentType}:`
 
     const operationPermission = operation === 'unpublish'? 'publish' : operation
     for(let i=0; i < checks.length; i++){

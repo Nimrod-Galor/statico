@@ -46,6 +46,19 @@ router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'ed
 router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), urlencodedParser, deleteUser, setAlertMessage, (req, res) => {
     res.redirect('/admin/user')
 })
+// bulk delete
+router.post("/user/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'delete'), urlencodedParser, bulkDelete('user'), setAlertMessage, (req, res) => {
+    res.redirect('/admin/user')
+})
+//bulk publish
+router.post("/user/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), urlencodedParser, bulkPublish('user', true), setAlertMessage, (req, res) => {
+    res.redirect('/admin/user')
+})
+//bulk unpublish
+router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), urlencodedParser, bulkPublish('user', false), setAlertMessage, (req, res) => {
+    res.redirect('/admin/user')
+})
+
 
 // list Pages
 router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list', '/'), filterByPermissions('page'), listContent('page'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {

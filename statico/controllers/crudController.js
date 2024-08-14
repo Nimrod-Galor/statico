@@ -1032,19 +1032,19 @@ export function bulkDelete(contentType){
             if(Array.isArray(id)){
                 messageBody = []
                 for(let i=0; i< id.length; i++){
-                    await deleteRow(contentType, {id: id[i]})
+                    await deleteRow(contentType, { id: id[i] })
                     messageBody.push(`${contentType} "${header[i]}" was successfuly deleted`)
                 }
             }else{
-                await deleteRow(contentType, {id})
+                await deleteRow(contentType, { id })
                 messageBody = `${contentType} "${header}" was successfuly deleted`
             }
 
             // Send Success json
-            req.crud_response = {messageBody, messageTitle: `${contentType} Delete`, messageType: 'success'}
+            req.crud_response = { messageBody, messageTitle: `${contentType} Delete`, messageType: 'success' }
         }catch(errorMsg){
             // Send Error json
-            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+            req.crud_response = { messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger' }
         }
         finally{
             next()
@@ -1062,24 +1062,32 @@ export function bulkPublish(contentType, publish){
             //  Validate user data
             validateBulkData(id, header)
 
-            const action = req.originalUrl.includes('unpublish') ? 'unpublish' : 'publish'
+            let action
+            let obj
+            if(contentType === 'user'){
+                action = req.originalUrl.includes('unpublish') ? 'Unverify' : 'Verify'
+                obj = { emailVerified: publish }
+            }else{
+                action = req.originalUrl.includes('unpublish') ? 'Unpublish' : 'Publish'
+                obj = { publish }
+            }
             //  Publish
             if(Array.isArray(id)){
                 messageBody = []
                 for(let i=0; i< id.length; i++){
-                    await updateRow(contentType, {id: id[i]}, {publish})
+                    await updateRow(contentType, { id: id[i] }, obj)
                     messageBody.push(`${contentType} "${header[i]}" was successfuly ${action}`)
                 }
             }else{
-                await updateRow(contentType, {id: id}, {publish})
+                await updateRow(contentType, { id: id }, obj)
                 messageBody = `${contentType} "${header}" was successfuly ${action}`
             }
 
             // Send Success json
-            req.crud_response = {messageBody, messageTitle: `${contentType} ${action}`, messageType: 'success'}
+            req.crud_response = { messageBody, messageTitle: `${contentType} ${action}`, messageType: 'success' }
         }catch(errorMsg){
             // Send Error json
-            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+            req.crud_response = { messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger' }
         }
         finally{
             next()
