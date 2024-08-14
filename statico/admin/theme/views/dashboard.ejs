@@ -186,7 +186,7 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <div id="pageEditor"></div>
-                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 0;padding: 0;border:0 none;min-height: unset;" required></textarea>
+                                    <textarea class="form-control page-body-textarea" id="page-body" name="body" minlength="4" style="height: 0;padding: 0;border:0 none;min-height: unset;" tabindex="-1" required></textarea>
                                     <label for="body">Body</label>
                                     <div class="valid-feedback">
                                         Looks good!
@@ -248,7 +248,7 @@
                     </div>
                     <!-- Post -->
                     <div id="model-post" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
-                        <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="updatePostBody();validateForm(event)" novalidate>
+                        <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="return validateForm(event)" novalidate>
                             <fieldset form="create-post">
                                 <legend class="create mb-2">Create Post</legend>
                                 <legend class="edit mb-2">Edit Post</legend>
@@ -264,7 +264,7 @@
                                     </div>    
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 0; padding: 0; border:0 none;min-height: unset;" required></textarea>
+                                    <textarea class="form-control post-body-textarea" id="post-body" name="body" minlength="4" style="height: 0; padding: 0; border:0 none;min-height: unset;" tabindex="-1" required></textarea>
                                     <label for="body">Body</label>
                                     <div id="postEditor"></div>
                                     <div class="valid-feedback">
@@ -420,7 +420,26 @@
                                 <%}%>
                                 <% modelHeaders.forEach((field) => {%>
                                     <th scope="col">
-                                        <%-field.header%>
+                                        <%if(path.endsWith('/desc/' + field.key)){%>
+                                            <a href="<%=baseUrl%>/asc/<%=field.key%>" class="asc">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
+                                                    <path d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"/>
+                                                    <path fill-rule="evenodd" d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"/>
+                                                    <path d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
+                                                </svg>
+                                        <%}else if(path.endsWith('/asc/' + field.key)){%>
+                                            <a href="<%=baseUrl%>/desc/<%=field.key%>" class="desc">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-alpha-down" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"/>
+                                                    <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
+                                                </svg>
+                                        <%}else{%>
+                                            <a href="<%=baseUrl%>/desc/<%=field.key%>">
+                                        <%}%>
+                                            <%-field.header%>
+                                            
+                                            
+                                        </a>
                                     </th>
                                 <%})%>
                                 <%if(permissions[contentType].edit.allow === true){%>
@@ -445,8 +464,8 @@
                                     <%}%>
                                     <% modelHeaders.forEach((field) => {%>
                                         <td>
-                                            <% if(field.relation){ %>
-                                                <a href="/admin/<%-field.relation + '/' + field.filter + '/' + data[field.filterKey]%>">
+                                            <% if(field.linkRelation){ %>
+                                                <a href="/admin/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
                                                     <%-data[field.key]%>
                                                 </a>
                                             <%}else if(field.key === 'slug'){%>
@@ -482,7 +501,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="<%=modelHeaders.length + 2%>">
-                                    <form action="" method="POST" id="bulk-form" onsubmit="return bulkOperation(event)">
+                                    <form action="<%=baseUrl%>" method="POST" id="bulk-form" onsubmit="return bulkOperation(event)">
                                         <input type="hidden" id="contentType" value="<%=caption%>" />
                                         <div class="row">
                                             <label for="bulk-action" class="col-sm-1 col-form-label">With selected: </label>

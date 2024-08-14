@@ -5,10 +5,10 @@ const modelsInterface = {
             {key: "userName", header: "User Name", type: "String"},
             {key: "createDate", header: "Create Date", type: "DateTime"},
             {key: "email", header: "Email", type: "String"},
-            {key: "emailVerified", header: "Verified", type: "Boolean", relation: "user", filter: "verified", filterKey: "emailVerified"},
-            {key: "posts", header: "Posts", type: "Int", relation: "post", filter: "author", filterKey: 'id'},
-            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "author", filterKey: 'id'},
-            {key: "role", header: "Role", type: "String", relation: "user", filter: "role", filterKey: "roleId"},
+            {key: "emailVerified", header: "Verified", type: "Boolean", linkRelation: "user", filter: "verified", filterKey: "emailVerified"},
+            {key: "posts", header: "Posts", type: "Int", linkRelation: "user", filter: "author", filterKey: 'id'},
+            {key: "comments", header: "Comments", type: "Int", linkRelation: "comment", filter: "author", filterKey: 'id'},
+            {key: "role", header: "Role", type: "String", linkRelation: "user", filter: "role", filterKey: "roleId", sortRelation: "role", sortKey: "name"},
         ],
         selectFields : {
             id: true,
@@ -75,8 +75,8 @@ const modelsInterface = {
             {key: "slug", header: "Slug", type: "String"},
             {key: "publish", header: "Published", type: "Boolean"},
             {key: "viewCount", header: "Views", type: "Int"},
-            {key: "author", header: "Author", type: "String", relation: "post", filter: "author", filterKey: 'authorId'},
-            {key: "comments", header: "Comments", type: "Int", relation: "comment", filter: "post", filterKey: 'id'}
+            {key: "author", header: "Author", type: "String", linkRelation: "post", filter: "author", filterKey: 'authorId', sortRelation: "author", sortKey: 'userName'},
+            {key: "comments", header: "Comments", type: "Int", linkRelation: "comment", filter: "post", filterKey: 'id'}
         ],
         selectFields: {
             id: true,
@@ -119,9 +119,9 @@ const modelsInterface = {
             {key: "comment", header: "Comment", type: "String"},
             {key: "createdAt", header: "Create Date", type: "DateTime"},
             {key: "publish", header: "Published", type: "Boolean"},
-            {key: "author", header: "Author", type: "String", relation: "user", filter: "id", filterKey: "authorId"},
-            {key: "post", header: "Post", type: "String", relation: "post", filter: "id", filterKey: "postId" },
-            {key: "replies", header: "Replies", type: "Int", relation: "comment", filter: "parent", filterKey: "id" }
+            {key: "author", header: "Author", type: "String", linkRelation: "user", filter: "id", filterKey: "authorId", sortRelation: "user", sortKey: 'userName'},
+            {key: "post", header: "Post", type: "String", linkRelation: "post", filter: "id", filterKey: "postId", sortRelation: "post", sortKey: 'title' },
+            {key: "replies", header: "Replies", type: "Int", linkRelation: "comment", filter: "parent", filterKey: "id" }
         ],
         selectFields: {
             id: true,

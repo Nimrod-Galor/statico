@@ -30,7 +30,9 @@ function setAlertMessage(req, res, next){
 
 // list Users
 router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
+    const baseUrl = `${req.baseUrl}/user`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create User
 router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), urlencodedParser, createUser, setAlertMessage, sendVerificationMailMiddleware, (req, res) => {
@@ -47,7 +49,9 @@ router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', '
 
 // list Pages
 router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list', '/'), filterByPermissions('page'), listContent('page'), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
+    const baseUrl = `${req.baseUrl}/page`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Page
 router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), urlencodedParser, createPage, setAlertMessage, (req, res) => {
@@ -76,7 +80,9 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 
 // list Posts
 router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
+    const baseUrl = `${req.baseUrl}/post`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Post
 router.post("/create/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'create'), urlencodedParser, createPost, setAlertMessage, (req, res) => {
@@ -106,7 +112,9 @@ router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 
 // list Comments
 router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthorized('comment', 'list', '/'), filterByPermissions('comment'), listContent('comment'), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
+    const baseUrl = `${req.baseUrl}/comment`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Comment
 router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), urlencodedParser, editComment, setAlertMessage, (req, res) => {
@@ -131,7 +139,9 @@ router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorize
 
 // list Roles
 router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), admin_dashboard(), (req, res) => {
-    res.render('dashboard', {user: req.user, caption: '' })
+    const baseUrl = `${req.baseUrl}/role`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Role
 router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), urlencodedParser, editeRole, setAlertMessage, (req, res) => {

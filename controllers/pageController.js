@@ -9,7 +9,8 @@ export async function getPage(req, res, next){
         const pageData = await findUnique('page', { slug })
         if(!pageData){
             // page not found
-            return next(createError(404, 'Resource not found'));
+            // move next and let post catch this slug
+            return next()
         }
 
         res.locals.permissions = {"admin_page": {

@@ -24,12 +24,42 @@ export function listContent(contentType){
         
             // build models data query string
             const where = req.where || {}
-            // const orderBy = {}
+            const orderBy = {}
             if(req.params[0]){
                 // check for extra parmas
                 const paramsArr = req.params[0].split('/')
                 for(let i=0; i<paramsArr.length;i++){
                     const param = paramsArr[i]
+                    // check if param of type sort
+                    if(param === 'desc' || param === 'asc'){
+                        // let filterOn = paramsArr[++i]
+                        let filterOn = paramsArr[++i]
+                        
+                        // check if field is relation table
+                        if(!selectedModel.selectFields[filterOn]){// count
+                            orderBy[filterOn] = {
+                                "_count" : param
+                            }
+                        }else if(typeof selectedModel.selectFields[filterOn] === 'object'){// relation
+                            const field = selectedModel.displayFields.find(field => field.key === filterOn)
+                            orderBy[field.sortRelation]= {
+                                [field.sortKey] : param
+                            }
+                        }else{
+                            switch(filterOn){// some fields are computed by prisma. see db.js
+                                case 'createDate':
+                                    filterOn = 'createdAt'
+                                break
+                                case 'updated':
+                                    filterOn = 'updatedAt'
+                                break
+                            }
+                            orderBy[filterOn] = param
+                        }
+
+                        continue
+                    }
+
                     // check if param of type filter 
                     const filter = selectedModel.filters.find(f => f.name == param)
                     if(filter){
@@ -51,7 +81,7 @@ export function listContent(contentType){
                 "take": 10,
                 where,
                 "select": selectedModel.selectFields,
-                "orderBy": {}
+                orderBy
             }
             //  Get models data
             let modelsData = await readRows(contentType, query)

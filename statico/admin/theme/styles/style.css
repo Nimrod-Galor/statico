@@ -99,6 +99,24 @@
     text-transform: capitalize;
 }
 
+/*  content table   */
+.bi-sort-alpha-down{
+    display: none;
+}
+
+a.asc .bi-sort-alpha-down-alt{
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.bi-sort-alpha-down-alt{
+    display: none;
+}
+
+a.desc .bi-sort-alpha-down{
+    display: inline-block;
+    margin-right: 15px;
+}
 
 /*  forms   */
 .ck.ck-toolbar>.ck-toolbar__items button.ck-source-editing-button{
