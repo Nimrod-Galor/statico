@@ -1,7 +1,57 @@
 import createError from 'http-errors'
 import he from 'he'
-import {findUnique} from '../db.js'
+import {findUnique, readRows} from '../db.js'
 import {isAuthorized} from '../statico/permissions/permissions.js'
+
+export async function post_search(req, res, next){
+    const { search } = req.body
+    
+    const where = {
+        OR: [
+            { title: { contains: search } },
+            { body: { contains: search } },
+            { author: { 
+                    userName: {contains: search } 
+                }
+            }
+        ]
+    }
+
+    const select = {
+        id: true,
+        createDate: true,
+        slug: true,
+        title: true,
+        body: true,
+        author: {
+            select: {
+                userName: true
+            }
+        }
+    }
+
+    const query = {
+        "skip": req.query.page ? (req.query.page - 1) * 10 : 0,
+        "take": 10,
+        where,
+        select
+    }
+    
+    try{
+        const results = await readRows('post', query)
+
+        for(let i=0; i < results.length; i++){
+            results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
+        }
+
+        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+
+        res.render('search_results', { user: req.user, results })
+    }catch(err){
+        console.log(err.message)
+        next(err)
+    }
+}
 
 export function get_index(req, res){
     const postData = {}

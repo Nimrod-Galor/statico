@@ -1,7 +1,9 @@
 import express from 'express'
-import { get_index, get_postById, get_postBySlug } from '../controllers/postController.js'
+import { post_search, get_index, get_postById, get_postBySlug } from '../controllers/postController.js'
 
 const router = express.Router();
+
+router.post('/post/search', post_search)
 
 router.get('/post/:postId', get_postById)
 
