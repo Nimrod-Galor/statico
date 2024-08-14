@@ -1094,3 +1094,51 @@ export function bulkPublish(contentType, publish){
         }
     }
 }
+
+// Bulk Delete user
+export async function bulkDeleteUser(req, res, next){
+    //  Get user data
+    let {id, header} = req.body
+    let messageBody = ''
+    try{
+        //  Validate user data
+        validateBulkData(id, header)
+
+        //  Delete
+        if(Array.isArray(id)){
+            messageBody = []
+            for(let i=0; i< id.length; i++){
+                // Delete all user Comments
+                await deleteRows('comment', { authorId: id[i] })
+
+                // Delete all user Posts
+                await deleteRows('post', { authorId: id[i] })
+
+                //  Delete user
+                await deleteRow('user', { id: id[i] })
+
+                messageBody.push(`User "${header[i]}" was successfuly deleted`)
+            }
+        }else{
+            // Delete all user Comments
+            await deleteRows('comment', { authorId: id })
+
+            // Delete all user Posts
+            await deleteRows('post', { authorId: id })
+
+            //  Delete user
+            await deleteRow('user', { id })
+
+            messageBody = `User "${header}" was successfuly deleted`
+        }
+
+        // Send Success json
+        req.crud_response = { messageBody, messageTitle: `User Delete`, messageType: 'success' }
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = { messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger' }
+    }
+    finally{
+        next()
+    }
+}

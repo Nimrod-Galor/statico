@@ -7,7 +7,7 @@ import  { listContent,
     createPost, editPost, deletePost,
     editComment, deleteComment,
     editeRole,
-    bulkDelete, bulkPublish
+    bulkDelete, bulkPublish, bulkDeleteUser
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
 import { admin_dashboard } from '../controllers/adminController.js'
@@ -47,7 +47,7 @@ router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', '
     res.redirect('/admin/user')
 })
 // bulk delete
-router.post("/user/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'delete'), urlencodedParser, bulkDelete('user'), setAlertMessage, (req, res) => {
+router.post("/user/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'delete'), urlencodedParser, bulkDeleteUser, setAlertMessage, (req, res) => {
     res.redirect('/admin/user')
 })
 //bulk publish
