@@ -106,3 +106,16 @@ fieldset.comment-voting{
     border: none;
     border-radius: unset;
 }
+
+/*  Profile */
+
+.profile fieldset{max-width: unset;}
+
+.profile legend{
+    padding: 0 3%;
+    color: blue;
+}
+
+.muted{
+    color: rgba(var(--bs-body-color-rgb),.65);
+}

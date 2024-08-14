@@ -46,7 +46,7 @@ app.use(session({
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
     store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
-    cookie: { maxAge: 1000 * 60 * 30 } // 30 minutes session expiry by default
+    cookie: { maxAge: 1000 * 60 * 90 } // 90 minutes session expiry by default
 }))
 
 app.use(passport.authenticate('session'))
