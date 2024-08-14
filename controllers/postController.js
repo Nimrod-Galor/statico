@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import he from 'he'
 import {findUnique} from '../db.js'
-import {isAuthorized} from '../statico/admin/permissions/permissions.js'
+import {isAuthorized} from '../statico/permissions/permissions.js'
 
 export function get_index(req, res){
     const postData = {}

@@ -2,9 +2,9 @@ import createError from 'http-errors'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
-import { isAuthorized } from '../admin/permissions/permissions.js'
+import { isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
-import isValid from '../admin/theme/scripts/validations.js'
+import isValid from '../theme/scripts/validations.js'
 
 /*  admin list content  */
 export function listContent(contentType){

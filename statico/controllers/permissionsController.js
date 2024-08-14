@@ -1,6 +1,6 @@
  
-import permissions from '../admin/permissions/permissions.json' assert { type: "json" }
-import { getRolePermissions } from '../admin/permissions/permissions.js'
+import permissions from '../permissions/permissions.json' assert { type: "json" }
+import { getRolePermissions } from '../permissions/permissions.js'
 import { readRows } from '../../db.js'
 
 export function setRoleLocalsPermissions(req, res, next){

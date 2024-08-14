@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import {findUnique} from '../db.js'
-import {isAuthorized} from '../statico/admin/permissions/permissions.js'
+import {isAuthorized} from '../statico/permissions/permissions.js'
 
 export async function getPage(req, res, next){
     const slug = req.params.slug || 'home'

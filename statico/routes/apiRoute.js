@@ -7,7 +7,7 @@ import  {   listContent, createUser, editUser, deleteUser,
             countComments, listComments, createComment, editComment, deleteComment, likeComment, dislikeComment,
             listRoles, editeRole
         } from '../controllers/crudController.js'
-import {ensureAuthorized, filterByPermissions} from '../admin/permissions/permissions.js'
+import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()

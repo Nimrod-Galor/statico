@@ -1,6 +1,6 @@
 import modelsInterface from '../interface/modelsInterface.js'
 import { countsRows } from '../../db.js'
-import { isAuthorized, getPermissionFilter } from '../admin/permissions/permissions.js'
+import { isAuthorized, getPermissionFilter } from '../permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)
