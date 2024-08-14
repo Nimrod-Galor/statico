@@ -1,8 +1,8 @@
 import createError from 'http-errors'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-import {findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows} from '../../db.js'
-import {isAuthorized} from '../admin/permissions/permissions.js'
+import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
+import { isAuthorized } from '../admin/permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 import isValid from '../admin/theme/scripts/validations.js'
 
@@ -140,15 +140,6 @@ function userValidations(id, email, username, password, role, emailverified){
     return true
 }
 
-// function stringToBoolean(str){
-//     if(str === "true"){
-//         return true
-//     }else if(str === "false"){
-//         return false
-//     }
-//     return undefined
-// }
-
 /****************************************/
 /** User                                */
 /****************************************/
@@ -236,19 +227,6 @@ export async function editUser(req, res, next){
     try{
         //  Validate user data
         userValidations(id, email, username, password, role, emailverified)
-
-        // redundant will throw error
-        // // Validate role exists
-        // const selectedRole = await findUnique('role', {id: role})
-        // if(!selectedRole){
-        //     throw new Error('Invalid Role')
-        // }
-
-        // // Validate user exists
-        // const selectedUser = await findUnique('user', {id})
-        // if(!selectedUser){
-        //     throw new Error('Invalid User')
-        // }
 
         //  Set user object
         const tmpUser = {
@@ -467,7 +445,6 @@ export async function editPage(req, res, next){
             tmpPage.slug = slug
         }
 
-        
         // Update Page
         await updateRow('page', {id: selectedPage.id}, tmpPage)
 

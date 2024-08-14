@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import passport from 'passport'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-import {createRow, deleteRow, deleteRows, findUnique, updateRow} from '../db.js'
+import { createRow, deleteRow, deleteRows, findUnique, updateRow } from '../db.js'
 
 /*  Login POST  */
 export function auth_post_login(req, res, next){
@@ -10,6 +10,7 @@ export function auth_post_login(req, res, next){
     if (err) {
       return next(err)
     }
+
     if (!user) {
       //  Set alert message
       req.session.messages = [info.message]
@@ -20,7 +21,7 @@ export function auth_post_login(req, res, next){
 
     try{
       // Clear all old tokens for this user before generating a new one
-      deleteRows('RememberMeToken', {userId: user.id})
+      deleteRows('RememberMeToken', { userId: user.id })
     }catch(err){
       return next(err)
     }
@@ -48,13 +49,12 @@ export function auth_post_login(req, res, next){
   })(req, res, next)
 }
 
-
 /*  Logout  */
 export async function auth_logout(req, res, next) {
   // clear remember me coockie
   res.clearCookie('remember_me')
-  // delete remember me token
   try{
+    // delete remember me token
     await deleteRow('RememberMeToken', {userId: req.user.id})
   }catch(err){
     // no token do nothing
@@ -64,11 +64,10 @@ export async function auth_logout(req, res, next) {
       if (err) {
         return next(err)
       }
-      res.redirect('/admin')
+      res.redirect('/')
     })
   }
 }
-
 
 /*  Signup POST */
 export async function auth_post_singup(req, res, next) {

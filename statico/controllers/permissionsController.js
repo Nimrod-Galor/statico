@@ -1,6 +1,23 @@
  
 import permissions from '../admin/permissions/permissions.json' assert { type: "json" }
-import {readRows} from '../../db.js'
+import { getRolePermissions } from '../admin/permissions/permissions.js'
+import { readRows } from '../../db.js'
+
+export function setRoleLocalsPermissions(req, res, next){
+    // Get permissions
+    const permissions = getRolePermissions(req.user.roleId)
+    // update authorId -> user.id with current user id
+    for (const [contentType, typePermissions] of Object.entries(permissions)) {
+        for (const [key, operation] of Object.entries(typePermissions)) {
+            if("where" in operation && "authorId" in operation.where){
+                operation.where.authorId = req.user.id
+            }
+        }
+    }
+
+    res.locals.permissions = permissions
+    next()
+}
 
 export async function allRolesPermissions(req, res, next){
     const rolesOrder = {

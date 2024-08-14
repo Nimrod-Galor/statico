@@ -7,162 +7,106 @@ const prisma = new PrismaClient().$extends({
         needs: { createdAt: true },
         compute(user) {
           return new Date(user.createdAt).toLocaleString()
-        },
-      },
+        }
+      }
     },
     post: {
       createDate: {
         needs: { createdAt: true },
         compute(post) {
           return new Date(post.createdAt).toLocaleString()
-        },
+        }
       },
       updated: {
         needs: { updatedAt: true },
         compute(post) {
           return new Date(post.updatedAt).toLocaleString()
-        },
-      },
+        }
+      }
     },
     comment: {
       createdAt: {
         needs: { createdAt: true },
         compute(post) {
           return new Date(post.createdAt).toLocaleString()
-        },
+        }
       }
     }
-  },
+  }
 })
 
-
-function disconnect(){
-  prisma.$disconnect()
-}
-
 /*  Create */
-async function createRow(collectionName, data){
-  console.log("create row")
-  const res = await prisma[collectionName].create({data})
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-
-  return res
+export async function createRow(collectionName, data){
+  return await prisma[collectionName].create({data})
 }
 
-/*  Read rows */
+/*  Read multiple rows */
 export async function readRows(collectionName, data = '') {
-  const res = await prisma[collectionName].findMany(data)
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+  return await prisma[collectionName].findMany(data)
 }
 
-/*  Read row */
-async function readRow(collectionName, data = '') {
-  const res = await prisma[collectionName].findFirstOrThrow(data)
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+/*  Read single row */
+export async function readRow(collectionName, data = '') {
+  return await prisma[collectionName].findFirstOrThrow(data)
 }
 
 /*  Update  */
-async function updateRow(collectionName, where, data){
-  const res = await prisma[collectionName].update({
+export async function updateRow(collectionName, where, data){
+  return await prisma[collectionName].update({
     where,
     data
   })
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-
-  return res
 }
 
-/*  DELETE  */
-async function deleteRow(collectionName, where){
-  await prisma[collectionName].delete({
+/*  Delet single  */
+export async function deleteRow(collectionName, where){
+  return await prisma[collectionName].delete({
     where
   })
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
 }
 
 /*  Delete Many */
-async function deleteRows(collectionName, where){
-  await prisma[collectionName].deleteMany({
+export async function deleteRows(collectionName, where){
+  return await prisma[collectionName].deleteMany({
     where
   })
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
 }
 
 /*  Count Rows */
-async function countRows(collectionName, where){
-  const res = await prisma[collectionName].count({ where })
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+export async function countRows(collectionName, where){
+  return await prisma[collectionName].count({ where })
 }
 
-
 /*  Count Multiple Rows*/
-async function countsRows(collectionsName, where){
-  //const res = await prisma[collectionName].count()
+export async function countsRows(collectionsName, where){
   let parr = []
   for(let i=0; i<collectionsName.length; i++){
-    parr.push(prisma[collectionsName[i]].count({where: where[i]}))
+    parr.push(prisma[collectionsName[i]].count({ where: where[i] }))
   }
-  const res = await Promise.all(parr)
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+  return await Promise.all(parr)
 }
 
 /*  Count relations */
-async function countRelations(collectionsName, select){
+export async function countRelations(collectionsName, select){
   let parr = []
   for(let i=0; i<collectionsName.length; i++){
-    const res = await prisma[collectionsName[i]].findMany({
-      select: {
-        _count: {
-          select: select[i]
-        },
-      },
-    })
+    parr.push(await prisma[collectionsName[i]].findMany({
+        select: {
+          _count: {
+            select: select[i]
+          }
+        }
+      })
+    )
   }
   return await Promise.all(parr)
 }
 
 /*  Find Unique */
-async function findUnique(collectionName, where, select){
-  const obj = {
-    where
-  }
+export async function findUnique(collectionName, where, select){
+  const obj = { where }
   if(select){
     obj.select = select
   }
-  const res = await prisma[collectionName].findUnique(obj)
-  .catch(err => {throw new Error(err)})
-  // .finally(async () => {
-  //   await prisma.$disconnect()
-  // })
-  return res
+  return await prisma[collectionName].findUnique(obj)
 }
-
-export {findUnique, readRow, createRow, updateRow, deleteRow, deleteRows, countRows, countsRows, countRelations, disconnect}

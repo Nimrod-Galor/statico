@@ -8,15 +8,11 @@ export async function getPage(req, res, next){
         //  Get page data
         const pageData = await findUnique('page', { slug })
         if(!pageData){
-            // page not found
-            // move next and let post catch this slug
+            // page not found. move to next middleware and let post catch this slug.
             return next()
         }
 
-        res.locals.permissions = {"admin_page": {
-                "view": isAuthorized("admin_page", "view", req.user?.roleId)
-            }
-        }
+        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
         res.render('page', { user: req.user,  pageData })
     }catch(err){

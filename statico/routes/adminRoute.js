@@ -9,11 +9,11 @@ import  { listContent,
     editeRole,
     bulkDelete, bulkPublish
 } from '../controllers/crudController.js'
-import {initialize} from '../setup/initialize.js'
-import {admin_dashboard} from '../controllers/adminController.js'
-import {allRolesPermissions} from '../controllers/permissionsController.js'
-import {ensureAuthorized, filterByPermissions, isAuthorized} from '../admin/permissions/permissions.js'
-import {sendVerificationMailMiddleware} from '../controllers/mailController.js'
+import { initialize } from '../setup/initialize.js'
+import { admin_dashboard } from '../controllers/adminController.js'
+import { allRolesPermissions, setRoleLocalsPermissions } from '../controllers/permissionsController.js'
+import { ensureAuthorized, filterByPermissions } from '../admin/permissions/permissions.js'
+import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 // create application/x-www-form-urlencoded parser
@@ -29,7 +29,7 @@ function setAlertMessage(req, res, next){
 }
 
 // list Users
-router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
+router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -48,7 +48,7 @@ router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', '
 })
 
 // list Pages
-router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list', '/'), filterByPermissions('page'), listContent('page'), admin_dashboard(), (req, res) => {
+router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list', '/'), filterByPermissions('page'), listContent('page'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/page`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -79,7 +79,7 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 })
 
 // list Posts
-router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), admin_dashboard(), (req, res) => {
+router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/post`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -111,7 +111,7 @@ router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 
 
 // list Comments
-router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthorized('comment', 'list', '/'), filterByPermissions('comment'), listContent('comment'), admin_dashboard(), (req, res) => {
+router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthorized('comment', 'list', '/'), filterByPermissions('comment'), listContent('comment'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/comment`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -138,7 +138,7 @@ router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorize
 })
 
 // list Roles
-router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), admin_dashboard(), (req, res) => {
+router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/role`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -149,36 +149,13 @@ router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'ed
 })
 
 // Permission Page
-router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
+router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), setRoleLocalsPermissions, admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
     res.render('permissions', {user: req.user, caption: '' })
 })
-
-
-// get content (list content for dashboard)
-// router.get(["/:contentType?", "/:contentType?/*"], ensureLoggedIn('/login'), ensureAuthorized('admin_page', 'view', '/'), listContent(), admin_dashboard(), (req, res) => {
-//     res.render('dashboard', {user: req.user, caption: '' })
-// })
-
 
 // initial Setup
 router.post("/setup",urlencodedParser, initialize, setAlertMessage, (req, res) => {
     res.redirect('/login')
-    // if(req.crud_response.messageType === 'success'){
-    // }else{// error
-    //     res.locals.message = results.message;
-    //     res.locals.error = req.app.get('env') === 'development' ? results : {};
-
-    //     // render the error page
-    //     res.status(results.status || 500);
-    //     res.render('error');
-    // }
-
-
-    // res.locals.permissions = {"admin_page": {
-    //         "view": isAuthorized("admin_page", "view", req.user?.roleId)
-    //     }
-    // }
-    // res.render('page', {user: req.user })
 })
 
 export default router

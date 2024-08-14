@@ -39,10 +39,7 @@ export async function get_postBySlug(req, res, next){
             return next(createError(404, 'Resource not found'));
         }
 
-        res.locals.permissions = {"admin_page": {
-                "view": isAuthorized("admin_page", "view", req.user?.roleId)
-            }
-        }
+        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
         postData.body = he.decode(postData.body)
         res.render('post', { user: req.user, postData })

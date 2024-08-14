@@ -12,7 +12,6 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
 import {errorPage} from './controllers/pageController.js'
-// import {isAuthorized} from './statico/admin/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
@@ -35,9 +34,9 @@ app.set('view engine', 'ejs')
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-// public
+// public static files
 app.use(express.static(path.join(__dirname, 'public')))
-// admin
+// admin static files
 app.use(express.static(path.join(__dirname, 'statico/admin/theme')))
 
 app.use(cookieParser())
@@ -54,28 +53,24 @@ app.use(passport.authenticate('session'))
 
 async function authenticateUser(email, password, done) {
     try{
-        // const user = await getBy('user', {email})
         const user = await readRow('user', {where: { email, emailVerified: true } })
-
         if (email != user.email) {
             return done(null, false, { message: 'Incorrect username or password.' })
         }
 
         const newPassword = crypto.pbkdf2Sync(password, Buffer.from(user.salt, 'hex'), 100000, 64, 'sha512')
         const oldPassword = Buffer.from(user.password, 'hex')
-
         if (!crypto.timingSafeEqual(oldPassword, newPassword)) {
             return done(null, false, { message: 'Incorrect username or password.' })
         }
 
         return done(null, user)
-
     }catch(err){//NotFoundError: No User found
         return done(null, false, { message: 'Incorrect username or password.' })
     }
 }
   
-passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser))
+passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser))
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
