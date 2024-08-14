@@ -149,8 +149,10 @@ export async function createUser(req, res, next){
     //  Get user data
     let {email, username, password, role, emailverified} = req.body
 
-    // Convert emailverified string to boolean
-    emailverified = emailverified ? true : false
+    // sendVerificationMail will determine if send verification 
+    req.sendVerificationMail = emailverified ? true : false
+    // in admin form user select "Send verification email". if selected emailverifed is false
+    emailverified = emailverified ? false : true
 
     try{
         if(role == undefined){

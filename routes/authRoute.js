@@ -32,7 +32,10 @@ router.get('/signup', ensureLogIn.ensureLoggedOut('/'), (req, res, next) => {
 })
 
 /* POST /signup */
-router.post('/signup', createUser, sendVerificationMailMiddleware, auth_post_singup)
+router.post('/signup',(req, res, next) => {
+    req.body.emailverified = true
+    next()
+}, createUser, sendVerificationMailMiddleware, auth_post_singup)
 
 /*  Email verification  */
 router.get('/verify/:token', verifyEmail, setAlertMessage, (req, res, next) => {

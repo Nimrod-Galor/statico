@@ -24,11 +24,13 @@ async function sendMail(from, to, subject, text, html){
 }
 
 export function sendVerificationMailMiddleware(req, res, next){
-    //  Get user data
-    let {email, username} = req.body
-    const verificationToken = req.verificationToken
-    const host = req.host
-    sendVerificationMail(email, username, host, verificationToken)
+    if(req.sendVerificationMail === true){
+        //  Get user data
+        let {email, username} = req.body
+        const verificationToken = req.verificationToken
+        const host = req.host
+        sendVerificationMail(email, username, host, verificationToken)
+    }
     next()
 }
 
