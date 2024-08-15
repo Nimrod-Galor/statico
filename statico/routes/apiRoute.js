@@ -18,15 +18,15 @@ router.get(["/users", "users?/*"], ensureLoggedIn('/json-alert/login'), ensureAu
     res.json(req.crud_response)
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', 'create'), createUser, (req, res, next) => {
+router.post("/create/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', 'create'), userValidation(), createUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', 'edit'), editUser, (req, res, next) => {
+router.post("/edit/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', 'edit'), userValidation(), editUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete User
-router.delete("/delete/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', '_user'), deleteUser, (req, res, next) => {
+router.delete("/delete/user", ensureLoggedIn('/json-alert/login'), ensureAuthorized('user', '_user'), deleteValidation(), deleteUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 
@@ -36,15 +36,15 @@ router.get(["/pages", "pages?/*"], ensureLoggedIn('/json-alert/login'), ensureAu
     res.json(req.crud_response)
 })
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'create'), createPage, (req, res, next) => {
+router.post("/create/page", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'create'), postValidation(), createPage, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit Page
-router.post("/edit/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'edit'), editPage, (req, res, next) => {
+router.post("/edit/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'edit'), postValidation(), editPage, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete Page
-router.delete("/delete/page", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'delete'), deletePage, (req, res, next) => {
+router.delete("/delete/page", ensureLoggedIn('/json-alert/login'), ensureAuthorized('page', 'delete'), deleteValidation(), deletePage, (req, res, next) => {
     res.json(req.crud_response)
 })
 
@@ -54,55 +54,55 @@ router.get(["/posts", "posts?/*"], ensureLoggedIn('/json-alert/login'), ensureAu
     res.json(req.crud_response)
 })
 //  Create Post
-router.post("/create/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'create'), createPost, (req, res, next) => {
+router.post("/create/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'create'), postValidation(), createPost, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Edit Post
-router.post("/edit/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'edit'), editPost, (req, res, next) => {
+router.post("/edit/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'edit'), postValidation(), editPost, (req, res, next) => {
     res.json(req.crud_response)
 })
 //  Delete Post
-router.delete("/delete/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'delete'), deletePost, (req, res, next) => {
+router.delete("/delete/post", ensureLoggedIn('/json-alert/login'), ensureAuthorized('post', 'delete'), deleteValidation(), deletePost, (req, res, next) => {
     res.json(req.crud_response)
 })
 
 /*  Comment    */
 // Count Comments
-router.post("/count/comments", countComments, (req, res, next) => {
+router.post("/count/comments", postIdValidation(), countComments, (req, res, next) => {
     res.json(req.crud_response)
 })
 // List Comments
-router.post("/comments", listComments, (req, res, next) => {
+router.post("/comments", commentsListValidation(), listComments, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Create Comment
-router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'create'), createComment, (req, res, next) => {
+router.post("/create/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'create'), commentValidation(), createComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Edit Comment
-router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'edit'), editComment, (req, res, next) => {
+router.post("/edit/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'edit'), commentValidation(), editComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Delete Comment
-router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'delete'), deleteComment, (req, res, next) => {
+router.post("/delete/comment", ensureLoggedIn('/json-alert/logintocomment'), ensureAuthorized('comment', 'delete'), deleteValidation(), deleteComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Like Comment
-router.post("/like/comment", ensureLoggedIn('/json-alert/logintocomment'), likeComment, (req, res, next) => {
+router.post("/like/comment", ensureLoggedIn('/json-alert/logintocomment'), postIdValidation(), likeComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 // Dislike Comment
-router.post("/dislike/comment", ensureLoggedIn('/json-alert/logintocomment'), dislikeComment, (req, res, next) => {
+router.post("/dislike/comment", ensureLoggedIn('/json-alert/logintocomment'), postIdValidation(), dislikeComment, (req, res, next) => {
     res.json(req.crud_response)
 })
 
 /*  Role    */
 // List Roles
-router.post("/roles", ensureLoggedIn('/json-alert/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
+router.get("/roles", ensureLoggedIn('/json-alert/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 // update role
-router.post("/edit/role", ensureLoggedIn('/json-alert/login'), ensureAuthorized('role', 'edit'), editeRole, (req, res, next) => {
+router.post("/edit/role", ensureLoggedIn('/json-alert/login'), ensureAuthorized('role', 'edit'), roleValidation(), editeRole, (req, res, next) => {
     res.json(req.crud_response)
 })
 
