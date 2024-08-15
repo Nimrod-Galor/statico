@@ -41,7 +41,7 @@ const userValidation = () => [
         .optional(),
     body('password')
         .trim()
-        .isLength({ min: 8, max: 32 }).withMessage('Password must be at least 6 characters long')
+        .isStrongPassword().withMessage('Password must contain at least one number and one special character and one uppercase and lowercase letter, and at least 8 or more characters')//minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1
         .escape(),
     body('username')
         .trim()
@@ -65,15 +65,15 @@ const postValidation = () => [
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('title')
         .trim()
-        .isAlphanumeric()
+        .isLength({ min: 3, max: 128 }).withMessage('Title must be at least 3 characters and max 128.')
         .escape(),
     body('body')
-        .notEmpty()
+        .notEmpty().withMessage('Body can not be empty.')
         .escape(),
     body('publish')
         .optional(),
     body('slug')
-        .isSlug(),
+        .isSlug().withMessage('Invalid Slug'),
     body('metatitle')
         .optional({ checkFalsy: true }),
     body('metadescription')
@@ -110,9 +110,11 @@ const roleValidation = () => [
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('name')
         .trim()
-        .isAlphanumeric(),
+        .isLength({ min: 3 }).withMessage('Role name must be at least 3 characters.')
+        .isAlphanumeric().withMessage('Role name must be Alphanumeric.'),
     body('description')
         .trim()
-        .isAlphanumeric()
+        .isLength({ min: 3 }).withMessage('Role description must be at least 3 characters.')
+        .isAlphanumeric().withMessage('Role description must be Alphanumeric.')
 ]
 export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation}

@@ -51,7 +51,7 @@
                 </svg>
                 <span class="fs-4"> Statico</span>
             </a>
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search">
+            <form action="/post/search" method="POST" class="col-12 col-lg-auto mb-3 mb-lg-0" role="search">
                 <div class="input-group">
                     <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
@@ -107,17 +107,23 @@
                     </div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="signup-password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
+                    <input type="password" class="form-control" id="signup-password" name="password" placeholder="Password" pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}" required>
                     <label for="signup-password">Password</label>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
                     <div class="invalid-feedback">
-                        Please enter a valid password that is at least 8 characters
+                        Password must contain 8-32 characters:
+                        <ol>
+                            <li>one number</li>
+                            <li>one special character</li>
+                            <li>one uppercase letter</li>
+                            <li>one lowercase letter</li>
+                        </ol>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="confirmPassword" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" oninput="confirmPasswords()" required>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="confirmPassword" pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}" oninput="confirmPasswords()" required>
                     <label for="signup-confirmPassword">Confirm Password</label>
                     <div class="valid-feedback">
                         Looks good!

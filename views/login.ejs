@@ -51,7 +51,7 @@
                 </svg>
                 <span class="fs-4"> Statico</span>
             </a>
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search">
+            <form action="/post/search" method="POST" class="col-12 col-lg-auto mb-3 mb-lg-0" role="search">
                 <div class="input-group">
                     <input name="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
@@ -97,13 +97,13 @@
                     </div>  
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="login-password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
+                    <input type="password" class="form-control" id="login-password" name="password" placeholder="Password" pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}" required>
                     <label for="login-password">Password</label>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
                     <div class="invalid-feedback">
-                        Please choose a username that is at least 6 characters.
+                        Invalid Password
                     </div>
                 </div>
 

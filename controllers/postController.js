@@ -44,7 +44,13 @@ export async function post_search(req, res, next){
         if(documentsCount > 0){
             results = await readRows('post', query)
             for(let i=0; i < results.length; i++){
-                results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
+                if(results[i].title.includes(search) || results[i].title.includes(search)){
+                    // result in title or author
+                    results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
+                }else{
+                    // result in body
+                    results[i].body = he.decode(results[i].body).split('</p>').find(p => p.includes(search)).substring(3)
+                }
             }
         }
 

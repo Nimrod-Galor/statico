@@ -128,13 +128,19 @@
                                     </label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="password" class="form-control" id="user-password" name="password" placeholder="Password" pattern="(?=.*?[0-9])(?=.*?[A-Za-z]).{8,32}" required>
+                                    <input type="password" class="form-control" id="user-password" name="password" placeholder="Password" pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}" required>
                                     <label for="user-password">Password</label>
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
                                     <div class="invalid-feedback">
-                                        Please enter a valid password that is at least 8 characters
+                                        Password must contain 8-32 characters:
+                                        <ol>
+                                            <li>one number</li>
+                                            <li>one special character</li>
+                                            <li>one uppercase letter</li>
+                                            <li>one lowercase letter</li>
+                                        </ol>
                                     </div>
                                 </div>
                                 <div class="form-floating mb-3">
