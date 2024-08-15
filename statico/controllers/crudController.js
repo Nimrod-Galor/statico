@@ -682,7 +682,7 @@ export async function createComment(req, res, next){
         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
         return next()
     }
-    const {post, parent, body } = matchedData(req, { includeOptionals: true });
+    const {post, parent, comment } = matchedData(req, { includeOptionals: true });
 
     try{
         // Set new Comment object
@@ -693,7 +693,7 @@ export async function createComment(req, res, next){
             author: {
                 connect: {id: req.user.id}
             },
-            comment: body
+            comment
         }
 
         if(parent){

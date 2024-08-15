@@ -28,6 +28,7 @@ const userValidation = () => [
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('email')
+        .if((value, { req }) => !req.body.id)  // Only validate if id is empty
         .isEmail().withMessage('Enter a valid email address')
         // .normalizeEmail()
         .custom(async value => {
@@ -36,7 +37,8 @@ const userValidation = () => [
             if(existingUser){
                 throw new Error('An account with that email address already exists')
             }
-        }),
+        })
+        .normalizeEmail(),
     body('emailverified')
         .optional(),
     body('password')
@@ -83,11 +85,15 @@ const postValidation = () => [
 /*  Comments    */
 const commentValidation = () => [
     body('id')
-        .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
+        .optional({ checkFalsy: true })
+        .isMongoId().withMessage('Comment ID must be a valid MongoDB ObjectId'),
+    body('post')
+        .optional({ checkFalsy: true })
+        .isMongoId().withMessage('Post ID must be a valid MongoDB ObjectId'),
     body('parent')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('Parent ID must be a valid MongoDB ObjectId'),
-    body('body')
+    body('comment')
         .notEmpty()
         .escape(),
     body('publish')

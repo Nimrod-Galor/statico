@@ -9,6 +9,7 @@ import crypto from 'crypto'
 import {findUnique, readRow} from './db.js'
 import cookieParser from 'cookie-parser'
 
+
 // import helmet from 'helmet'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
@@ -38,6 +39,7 @@ app.set('view engine', 'ejs')
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+
 // public static files
 app.use(express.static(path.join(__dirname, 'public')))
 // admin static files

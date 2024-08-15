@@ -224,7 +224,7 @@ async function postComment(event){
 }
 
 function alertComment(data, activeForm){
-    activeForm.querySelector('.top-alert-type').classList.add(`alert-${data.messageType}`)
+    activeForm.querySelector('.top-alert-type').classList = `alert top-alert-type alert-${data.messageType}`
     activeForm.querySelector('.top-alert-title').innerText = data.messageTitle
     activeForm.querySelector('.top-alert-body').innerHTML = `<li>${data.messageBody}</li>`
     activeForm.querySelector('.top-alert').classList.add('open')

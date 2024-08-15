@@ -170,7 +170,7 @@ function topAlert(type, title, body){
 }
 
 function populateRoleList(selectedRoleName = '-'){
-    fetchData('/api/roles', 'GET', {})
+    fetchData('/api/roles', 'GET')
     .then((data) => {
         if(data.messageType === 'data'){
             const roleSelect = document.getElementById('user-role')
