@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import he from 'he'
-import {findUnique, readRows} from '../db.js'
-import {isAuthorized} from '../statico/permissions/permissions.js'
+import { findUnique, readRows, countRows} from '../db.js'
+import { isAuthorized } from '../statico/permissions/permissions.js'
 
 export async function post_search(req, res, next){
     const { search } = req.body
@@ -38,15 +38,22 @@ export async function post_search(req, res, next){
     }
     
     try{
-        const results = await readRows('post', query)
+        const documentsCount = await countRows('post', where)
 
-        for(let i=0; i < results.length; i++){
-            results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
+        let results = []
+        if(documentsCount > 0){
+            results = await readRows('post', query)
+            for(let i=0; i < results.length; i++){
+                results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
+            }
         }
+
+        const numberOfPages = Math.ceil(documentsCount / 10)
+        const currentPage = parseInt(req.query.page) || 1
 
         res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
-        res.render('search_results', { user: req.user, results })
+        res.render('search_results', { user: req.user, results, documentsCount, numberOfPages, currentPage })
     }catch(err){
         console.log(err.message)
         next(err)

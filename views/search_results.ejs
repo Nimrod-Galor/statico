@@ -90,26 +90,51 @@
         </div>
 
         <main>
-            <%for(let i=0; i < results.length; i++){%>
-                <div class="search-item my-4">
-                    <div class="search-item-title">
-                        <a href="/<%=results[i].slug%>">
-                            <%=results[i].title%>
-                        </a>
-                    </div>
-                    <div class="d-flex justify-content-start muted">
-                        <div class="search-item-author me-5 fw-light">
-                            <%=results[i].author.userName%>
+            <div class="search-result-info">found <%=documentsCount%> results:</div>
+            <div class="search-results">
+                <%for(let i=0; i < results.length; i++){%>
+                    <div class="search-item my-4">
+                        <div class="search-item-title">
+                            <a href="/<%=results[i].slug%>">
+                                <%=results[i].title%>
+                            </a>
                         </div>
-                        <div class="search-item-createDate fw-lighter">
-                            <%=results[i].createDate%>
+                        <div class="d-flex justify-content-start muted">
+                            <div class="search-item-author me-5 fw-light">
+                                <%=results[i].author.userName%>
+                            </div>
+                            <div class="search-item-createDate fw-lighter">
+                                <%=results[i].createDate%>
+                            </div>
+                        </div>
+                        <div class="search-item-body">
+                            <%=results[i].body%>
                         </div>
                     </div>
-                    <div class="search-item-body">
-                        <%=results[i].body%>
-                    </div>
-                </div>
-            <%}%>
+                <%}%>
+            </div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item<%-currentPage===1 ? ' disabled' : ''%>">
+                        <a class="page-link" href="?page=1">Previous</a>
+                    </li>
+                    <%for(let i=1;i<=numberOfPages;i++){%>
+                        <%if(i===currentPage){%>
+                            <li class="page-item active" aria-current="page">
+                        <%}else{%>
+                                <li class="page-item">
+                        <%}%>
+                            <a class="page-link" href="?page=<%=i%>">
+                                <%=i%>
+                            </a>
+                        </li>
+                    <%}%>
+                    <li class="page-item<%-currentPage===numberOfPages ? ' disabled' : ''%>">
+                        <a class="page-link" href="?page=<%=(currentPage+1)%>">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </main>
     </div>
 
