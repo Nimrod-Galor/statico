@@ -1,6 +1,5 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-// import bodyParser from 'body-parser'
 import  {   listContent, createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
             createPost, editPost, deletePost,

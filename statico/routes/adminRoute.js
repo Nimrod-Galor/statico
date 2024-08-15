@@ -1,6 +1,5 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-// import bodyParser from 'body-parser'
 import  { listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
@@ -16,12 +15,10 @@ import { ensureAuthorized, filterByPermissions } from '../permissions/permission
 import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
-// create application/x-www-form-urlencoded parser
-// const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
 function setAlertMessage(req, res, next){
-    //  Set alert message
+    //  Set alert message session
     req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
     req.session.messageType = req.crud_response.messageType
     req.session.messageTitle = req.crud_response.messageTitle
