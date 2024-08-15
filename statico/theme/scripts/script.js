@@ -221,13 +221,13 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function encodeHTML(str) {
-    return str.replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
-}
+// function encodeHTML(str) {
+//     return str.replace(/&/g, '&amp;')
+//               .replace(/</g, '&lt;')
+//               .replace(/>/g, '&gt;')
+//               .replace(/"/g, '&quot;')
+//               .replace(/'/g, '&#39;');
+// }
 
 function decodeHTML(str) {
     const shadowTextArea = document.createElement('textarea');

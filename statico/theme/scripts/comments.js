@@ -26,8 +26,8 @@ function commentsReOrder(event){
 }
 
 async function countComments(){
-    const postid = document.getElementById('post-id').value
-    const dataToSend = {postid}
+    const id = document.getElementById('post-id').value
+    const dataToSend = {id}
     await fetchData('api/count/comments', "POST", dataToSend)
     .then(data => {
         if(data.messageType === 'data'){
@@ -200,7 +200,7 @@ async function postComment(event){
     const dataToSend = Object.fromEntries(formData);
 
     // encode body
-    dataToSend.body = encodeHTML(dataToSend.body)
+    // dataToSend.body = encodeHTML(dataToSend.body)
 
     // disabel fieldset
     activeForm[0].disabled = true

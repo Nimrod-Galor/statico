@@ -598,7 +598,7 @@
         .then( newEditor => {
             const textarea = document.getElementById('page-body')
             newEditor.model.document.on( 'change:data', () => {
-                textarea.value = encodeHTML(newEditor.getData())
+                textarea.value = newEditor.getData()
             } );
             window.pageEditor = newEditor
         })
@@ -625,7 +625,7 @@
         .then( newEditor => {
             const textarea = document.getElementById('post-body')
             newEditor.model.document.on( 'change:data', () => {
-                textarea.value = encodeHTML(newEditor.getData())
+                textarea.value = newEditor.getData()
             } );
             window.postEditor = newEditor
         })

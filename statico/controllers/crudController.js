@@ -1,10 +1,10 @@
 import createError from 'http-errors'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
 import { isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
-import isValid from '../theme/scripts/validations.js'
 
 /*  admin list content  */
 export function listContent(contentType){
@@ -106,39 +106,6 @@ export function listContent(contentType){
     }
 }
 
-function userValidations(id, email, username, password, role, emailverified){
-    // Validate user Data
-    let errorMsg = []
-
-    if(id != undefined){
-        if(!isValid(id, "objectid")){
-            errorMsg.push('Invalid User')
-        }
-    }
-    if( !isValid(email, "Email")){
-        errorMsg.push('Invalid Email address')
-    }
-    if(!isValid(emailverified, "Boolean")){
-        errorMsg.push('Invalid Credentials')
-    }
-    if(!isValid(username, "username")){
-        errorMsg.push('Invalid User name')
-    }
-    if(password != ""){// this field is optional
-        if(!isValid(password, "Password")){
-            errorMsg.push('Invalid Password')
-        }
-    }
-    if(!isValid(role, "objectid")){
-        errorMsg.push('Invalid Role')
-    }
-
-    if(errorMsg.length != 0){
-        throw new Error(errorMsg.join("</li><li>"))
-    }
-
-    return true
-}
 
 /****************************************/
 /** User                                */
@@ -146,8 +113,14 @@ function userValidations(id, email, username, password, role, emailverified){
 
 /** Create User */
 export async function createUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {email, username, password, role, emailverified} = req.body
+    let {email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
 
     // sendVerificationMail will determine if send verification 
     req.sendVerificationMail = emailverified ? true : false
@@ -163,15 +136,6 @@ export async function createUser(req, res, next){
             })
             
             role = defaultRole.id
-        }
-
-        //  Validate user data
-        userValidations(undefined, email, username, password, role, emailverified)
-
-        // Check if user exists
-        const existsUser = await findUnique('user', {email})
-        if(existsUser){
-            throw new Error('An account with that email address already exists')
         }
 
         // Hash passowrd
@@ -220,16 +184,20 @@ export async function createUser(req, res, next){
 }
 
 export async function editUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let {id, email, username, password, role, emailverified} = req.body
+    let {id, email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
 
     // Convert emailverified checkbox to boolean
     emailverified = emailverified ? true : false
 
     try{
-        //  Validate user data
-        userValidations(id, email, username, password, role, emailverified)
-
         //  Set user object
         const tmpUser = {
             email,
@@ -263,24 +231,20 @@ export async function editUser(req, res, next){
     }
 }
 
-function validateDeleteData(id, header){
-    //  Validate user data
-    if(!isValid(id, "objectid")){
-        throw new Error('Invalid User')
-    }
-
-    if(!isValid(header, "body")){
-        throw new Error('Invalid Header')
-    }
-}
-
 export async function deleteUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let {id, header} = req.body
+    let {id, header} = matchedData(req, { includeOptionals: true });
 
     try{
         //  Validate user data
-        validateDeleteData(id, header)
+        // validateDeleteData(id, header)
 
         // Delete all user Comments
         await deleteRows('comment', {authorId: id})
@@ -306,59 +270,21 @@ export async function deleteUser(req, res, next){
 /** Page                                */
 /****************************************/
 
-// Validations for Post and Page
-function postValidations(id, title, body, publish, slug, metatitle, metadescription){
-    let errorMsg = []
-
-    if(id != undefined){
-        if(typeof(id) === "object"){
-            for(let i=0; i< id.length; i++){
-                if(!isValid(id[i], "objectid")){
-                    throw new Error('Invalid User')
-                }
-            }
-        }else if(!isValid(id, "objectid")){
-            throw new Error('Invalid User')
-        }
-    }
-    if( !isValid(title, "Title")){
-        errorMsg.push('Invalid Title')
-    }
-    if(!isValid(body, "Body")){
-        errorMsg.push('Invalid Body')
-    }
-    if(!isValid(publish, "Boolean")){
-        errorMsg.push('Invalid Credentials')
-    }
-    if(slug != '' && !isValid(slug, "Slug")){
-        errorMsg.push('Invalid Slug')
-    }
-    if(metatitle != '' && !isValid(metatitle, "metatitle")){
-        errorMsg.push('Invalid Meta Title')
-    }
-    if(metadescription != '' && !isValid(metadescription, "metadescription")){
-        errorMsg.push('Invalid Meta Description')
-    }
-
-    if(errorMsg.length != 0){
-        throw new Error(errorMsg.join("</li><li>"))
-    }
-
-    return true
-}
-
 /*  Create Page */
 export async function createPage(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {title, body, publish, slug, metatitle, metadescription} = req.body
+    let {title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
     
     // Convert publish checkbox to boolean
     publish = publish ? true : false
     
     try{
-        //  Validate user data
-        postValidations(undefined ,title, body, publish, slug, metatitle, metadescription)
-
         if(slug != ''){
             // check if slug exist
             const pageWithSlug = await findUnique('page', {slug})
@@ -402,16 +328,19 @@ export async function createPage(req, res, next){
 
 /*  Edit Page */
 export async function editPage(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {id, title, body, publish, slug, metatitle, metadescription} = req.body
+    let {id, title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        //  Validate user data
-        postValidations(id, title, body, publish, slug, metatitle, metadescription)
-
         // Validate user Post
         const selectedPage = await findUnique('page', {id})
         if(!selectedPage){
@@ -463,13 +392,16 @@ export async function editPage(req, res, next){
 
 /*  Delete Page */
 export async function deletePage(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {id, header} = req.body
+    let {id, header} = matchedData(req, { includeOptionals: true });
 
     try{
-        //  Validate user data
-        validateDeleteData(id, header)
-
         await deleteRow('page', {id})
 
         // Send Success json
@@ -490,16 +422,19 @@ export async function deletePage(req, res, next){
 
 /*  Create Post */
 export async function createPost(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {title, body, publish, slug, metatitle, metadescription} = req.body
+    let {title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        //  Validate user data
-        postValidations(undefined ,title, body, publish, slug, metatitle, metadescription)
-
         if(slug != ''){
             // check if slug exist
             const postWithSlug = await findUnique('post', {slug})
@@ -546,16 +481,19 @@ export async function createPost(req, res, next){
 
 /*  Edit Post */
 export async function editPost(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {id, title, body, publish, slug, metatitle, metadescription} = req.body
+    let {id, title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        //  Validate user data
-        postValidations(id, title, body, publish, slug, metatitle, metadescription)
-
         // Validate user Post
         const selectedPost = await findUnique('post', {id})
         if(!selectedPost){
@@ -611,13 +549,16 @@ export async function editPost(req, res, next){
 
 /*  Delete Post */
 export async function deletePost(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
      //  Get user data
-     let {id, header} = req.body
+     let {id, header} = matchedData(req, { includeOptionals: true });
 
      try{
-         //  Validate user data
-         validateDeleteData(id, header)
- 
          // Delete all Post Comments
          await deleteRows('comment', {postId: id})
  
@@ -632,36 +573,6 @@ export async function deletePost(req, res, next){
      }
      finally{
         next()
-    }
-}
-
-/****************************************/
-/** Comments                            */
-/****************************************/
-function commentValidation(postid, parent, body, publish = false){
-    // Validate user Data
-    let errorMsg = []
-
-    if(!isValid(postid, "objectid")){
-        errorMsg.push('Invalid Post')
-    }
-
-    if(parent && parent != ''){
-        if(!isValid(parent, "objectid")){
-            errorMsg.push('Invalid Comment')
-        }
-    }
-
-    if(!isValid(body, "body")){
-        errorMsg.push('Invalid Comment')
-    }
-    
-    if(!isValid(publish, "Boolean")){
-        errorMsg.push('Invalid Credentials')
-    }
-
-    if(errorMsg.length != 0){
-        throw new Error(errorMsg.join("</li><li>"))
     }
 }
 
@@ -706,22 +617,15 @@ async function fetchAllComments(parentId, flaten, publish) {
 
 /*  Get comments    */
 export async function listComments(req, res, next){
-    const {post, page = 1, order} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {post, page = 1, order} = matchedData(req, { includeOptionals: true });
     const commentsPerPage = 5
     try{
-        // validate User data
-        if(!isValid(post, "objectid")){
-            throw new Error('Invalid Post')
-        }
-
-        if(!isValid(page, "number")){
-            throw new Error('Invalid Page Number')
-        }
-
-        if(!isValid(order, "string")){
-            throw new Error('Invalid Order')
-        }
-
         const query = {
             "skip": parseInt(page - 1) * commentsPerPage,
             "take": commentsPerPage,
@@ -772,12 +676,15 @@ export async function listComments(req, res, next){
 
 /*  Create Comment  */
 export async function createComment(req, res, next){
-    const {post, parent, body } = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {post, parent, body } = matchedData(req, { includeOptionals: true });
 
     try{
-        // Validate user Data
-        commentValidation(post, parent, body)
-
         // Set new Comment object
         const tmpComment = {
             post: {
@@ -811,15 +718,19 @@ export async function createComment(req, res, next){
 
 /*  Edit Comment    */
 export async function editComment(req, res, next){
-    let {id, parent, comment, publish } = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
+    let {id, parent, comment, publish } = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        // Validate user Data
-        commentValidation(id, parent, comment, publish)
-
         const tmpComment = {
             comment,
             publish
@@ -842,12 +753,15 @@ export async function editComment(req, res, next){
 
 /*  Delete Comment and replies*/
 export async function deleteComment(req, res, next){
-    const {id, header} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {id, header} = matchedData(req, { includeOptionals: true });
 
     try {
-        // Validate User data
-        validateDeleteData(id, header)
-
         // get comment to delete
         const commentsToDelete = [await findUnique('comment', {id})]
         // Fetch all comments and replies recursively
@@ -870,15 +784,17 @@ export async function deleteComment(req, res, next){
 
 /*  Count Comments  */
 export async function countComments(req, res, next){
-    const {postid} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {id} = matchedData(req, { includeOptionals: true });
 
     try {
-        if(!isValid(postid, "objectid")){
-            throw new Error('Invalid Post')
-        }
-
         const messageBody = await countRows('comment', {
-            postId: postid,
+            postId: id,
             publish: true,
             parent: null
         })
@@ -895,13 +811,15 @@ export async function countComments(req, res, next){
 
 /*  Like Comments  */
 export async function likeComment(req, res, next){
-    const {id} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {id} = matchedData(req, { includeOptionals: true });
 
     try {
-        if(!isValid(id, "objectid")){
-            throw new Error('Invalid Post')
-        }
-
         await updateRow('comment', {id}, { likes: { increment: 1 } })
 
         req.crud_response = {messageBody: `Like Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
@@ -916,13 +834,15 @@ export async function likeComment(req, res, next){
 
 /*  dislike Comments  */
 export async function dislikeComment(req, res, next){
-    const {id} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {id} = matchedData(req, { includeOptionals: true });
 
     try {
-        if(!isValid(id, "objectid")){
-            throw new Error('Invalid Post')
-        }
-
         await updateRow('comment', {id}, { dislikes: { increment: 1 } })
 
         req.crud_response = {messageBody: `Dislike Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
@@ -957,33 +877,17 @@ export async function listRoles(req, res, next){
     }
 }
 
-function roleValidations(id, name, description){
-    // Validate user Data
-    let errorMsg = []
-
-    if(!isValid(id, "objectid")){
-        errorMsg.push('Invalid Role')
-    }
-    if( !isValid(name, "username")){
-        errorMsg.push('Invalid Name')
-    }
-    if(!isValid(description, "metadescription")){
-        errorMsg.push('Invalid Description')
-    }
-    
-    if(errorMsg.length != 0){
-        throw new Error(errorMsg.join("</li><li>"))
-    }
-
-    return true
-}
 // Edit Role
 export async function editeRole(req, res, next){
-    const {id, name, description} = req.body
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    const {id, name, description} = matchedData(req, { includeOptionals: true });
 
     try {
-        roleValidations(id, name, description)
-
         await updateRow('role', {id}, { name, description })
 
         req.crud_response = {messageBody: `Rolet ${name} was successfuly updated`, messageTitle: 'Role updated', messageType: 'success'}
@@ -996,40 +900,19 @@ export async function editeRole(req, res, next){
     }
 }
 
-
-/*  Bulk operations */
-function validateBulkData(id, header){
-    if(Array.isArray(id)){
-        for(let i=0; i< id.length; i++){
-            if(!isValid(id[i], "objectid")){
-                throw new Error('Invalid User')
-            }
-
-            if(!isValid(header[i], "body")){
-                throw new Error('Invalid Header')
-            }
-        }
-    }else{
-        if(!isValid(id, "objectid")){
-            throw new Error('Invalid User')
-        }
-
-        if(!isValid(header, "body")){
-            throw new Error('Invalid Header')
-        }
-    }
-}
-
 // Delete
 export function bulkDelete(contentType){
     return async function(req, res, next){
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            //  Send Error json
+            req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
         //  Get user data
-        let {id, header} = req.body
+        let {id, header} = matchedData(req, { includeOptionals: true });
         let messageBody = ''
         try{
-            //  Validate user data
-            validateBulkData(id, header)
-
             //  Delete
             if(Array.isArray(id)){
                 messageBody = []
@@ -1057,13 +940,16 @@ export function bulkDelete(contentType){
 // Update publish
 export function bulkPublish(contentType, publish){
     return async function(req, res, next){
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            //  Send Error json
+            req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
         //  Get user data
-        let {id, header} = req.body
+        let {id, header} = matchedData(req, { includeOptionals: true });
         let messageBody = ''
         try{
-            //  Validate user data
-            validateBulkData(id, header)
-
             let action
             let obj
             if(contentType === 'user'){
@@ -1099,13 +985,16 @@ export function bulkPublish(contentType, publish){
 
 // Bulk Delete user
 export async function bulkDeleteUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
     //  Get user data
-    let {id, header} = req.body
+    let {id, header} = matchedData(req, { includeOptionals: true });
     let messageBody = ''
     try{
-        //  Validate user data
-        validateBulkData(id, header)
-
         //  Delete
         if(Array.isArray(id)){
             messageBody = []

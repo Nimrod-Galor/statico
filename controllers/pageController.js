@@ -1,4 +1,5 @@
 import createError from 'http-errors'
+import he from 'he'
 import {findUnique} from '../db.js'
 import {isAuthorized} from '../statico/permissions/permissions.js'
 
@@ -13,6 +14,9 @@ export async function getPage(req, res, next){
         }
 
         res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+
+        //unescape body
+        pageData.body = he.decode(pageData.body)
 
         res.render('page', { user: req.user,  pageData })
     }catch(err){

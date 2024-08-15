@@ -31,13 +31,13 @@ function validateForm(event){
 }
 
 // Function to encode HTML entities
-function encodeHTML(str) {
-    return str.replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
-}
+// function encodeHTML(str) {
+//     return str.replace(/&/g, '&amp;')
+//               .replace(/</g, '&lt;')
+//               .replace(/>/g, '&gt;')
+//               .replace(/"/g, '&quot;')
+//               .replace(/'/g, '&#39;');
+// }
 
 const shadowTextArea = document.createElement('textarea');
 
