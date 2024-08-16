@@ -117,7 +117,7 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-start">
                     <li class="page-item<%-currentPage===1 ? ' disabled' : ''%>">
-                        <a class="page-link" href="?page=1">Previous</a>
+                        <a class="page-link" href="?search=<%=search%>&page=1">Previous</a>
                     </li>
                     <%for(let i=1;i<=numberOfPages;i++){%>
                         <%if(i===currentPage){%>
@@ -125,13 +125,13 @@
                         <%}else{%>
                                 <li class="page-item">
                         <%}%>
-                            <a class="page-link" href="?page=<%=i%>">
+                            <a class="page-link" href="?search=<%=search%>&page=<%=i%>">
                                 <%=i%>
                             </a>
                         </li>
                     <%}%>
                     <li class="page-item<%-currentPage===numberOfPages ? ' disabled' : ''%>">
-                        <a class="page-link" href="?page=<%=(currentPage+1)%>">Next</a>
+                        <a class="page-link" href="?search=<%=search%>&page=<%=(currentPage+1)%>">Next</a>
                     </li>
                 </ul>
             </nav>

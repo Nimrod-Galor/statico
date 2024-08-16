@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, query } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
 
 /*  Global  */
@@ -144,4 +144,17 @@ const roleValidation = () => [
         .isLength({ min: 3 }).withMessage('Role description must be at least 3 characters.')
         // .isAlphanumeric().withMessage('Role description must be Alphanumeric.')
 ]
-export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation}
+
+/*  Search  */
+const searchValidation = () => [
+    query('search')
+        .trim()
+        .notEmpty().withMessage('Search can not must be empty string.')
+        .isAlphanumeric().withMessage('Search must be Alphanumeric.'),
+    query('page')
+        .optional()
+        .trim()
+        .isNumeric().withMessage('Invalid Page number.')
+        
+]
+export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation}
