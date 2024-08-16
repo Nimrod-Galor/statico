@@ -30,6 +30,8 @@ export async function search_controller(req, res, next){
         const numberOfPages = Math.ceil(documentsCount / 10)
         if(page >= numberOfPages){
             page = numberOfPages
+        }else if(page < 1){
+            page = 1
         }
         const currentPage = parseInt(page) || 1
 
