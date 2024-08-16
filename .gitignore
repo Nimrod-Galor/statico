@@ -1,3 +1,6 @@
+# internal documents directories
+documents/
+
 # Logs
 logs
 *.log

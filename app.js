@@ -9,8 +9,6 @@ import crypto from 'crypto'
 import {findUnique, readRow} from './db.js'
 import cookieParser from 'cookie-parser'
 
-
-// import helmet from 'helmet'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
@@ -31,10 +29,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'statico/views')])
 app.set('view engine', 'ejs')
-
-
-// app.use(helmet());
-
 
 app.use(logger('dev'))
 app.use(express.json())
