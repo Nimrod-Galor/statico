@@ -1,6 +1,6 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { userValidation, deleteValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation } from '../controllers/validations.js'
+import { userValidation, deleteValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation } from '../controllers/formValidations.js'
 import  { listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,

@@ -58,9 +58,13 @@ function editItemClick(contentType, data){
         }
     }
 
-    if(contentType === 'user' && document.getElementById('user-role').length === 0){
-        // update role list
-        populateRoleList(selectedRoleName)
+    if(contentType === 'user'){
+        // update checkbox lable
+        document.querySelector("label[for=user-emailverified]").innerHTML = 'Verified user'
+        if(document.getElementById('user-role').length === 0){
+            // update role list
+            populateRoleList(selectedRoleName)
+        }
     }
 
     openModelView(`model-${contentType}`)
@@ -111,9 +115,13 @@ function createItemClick(contentType, fields){
         }
     }
 
-    if(contentType === 'user' && document.getElementById('user-role').length === 0){
-        // update role list
-        populateRoleList()
+    if(contentType === 'user'){
+        // update checkbox lable
+        document.querySelector("label[for=user-emailverified]").innerHTML = 'Send verification email'
+        if(document.getElementById('user-role').length === 0){
+            // update role list
+            populateRoleList()
+        }
     }
 
     openModelView(`model-${contentType}`)

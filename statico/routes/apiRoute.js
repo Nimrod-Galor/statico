@@ -1,5 +1,5 @@
 import express from 'express'
-import { userValidation, deleteValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation } from '../controllers/validations.js'
+import { userValidation, deleteValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation } from '../controllers/formValidations.js'
 import ensureLogIn from 'connect-ensure-login'
 import  {   listContent, createUser, editUser, deleteUser,
             createPage, editPage, deletePage,
