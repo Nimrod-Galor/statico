@@ -8,45 +8,50 @@ export async function search_controller(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
         //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
+        // req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next(createError(result.errors.map(err => err.msg).join()))
     }
     //  Get user data
-    const { search, page } = matchedData(req, { includeOptionals: true });
-        
-    const where = {
-        OR: [
-            { title: { contains: search } },
-            { body: { contains: search } },
-            { author: { 
-                    userName: {contains: search } 
-                }
-            }
-        ]
-    }
-
-    const select = {
-        id: true,
-        createDate: true,
-        slug: true,
-        title: true,
-        body: true,
-        author: {
-            select: {
-                userName: true
-            }
-        }
-    }
-
-    const query = {
-        "skip": page ? (page - 1) * 10 : 0,
-        "take": 10,
-        where,
-        select
-    }
+    let { search, page } = matchedData(req, { includeOptionals: true });
     
     try{
+        const where = {
+            OR: [
+                { title: { contains: search } },
+                { body: { contains: search } },
+                { author: { 
+                        userName: {contains: search } 
+                    }
+                }
+            ]
+        }
+
         const documentsCount = await countRows('post', where)
+        const numberOfPages = Math.ceil(documentsCount / 10)
+        if(page >= numberOfPages){
+            page = numberOfPages
+        }
+        const currentPage = parseInt(page) || 1
+
+        const select = {
+            id: true,
+            createDate: true,
+            slug: true,
+            title: true,
+            body: true,
+            author: {
+                select: {
+                    userName: true
+                }
+            }
+        }
+    
+        const query = {
+            "skip": page ? (page - 1) * 10 : 0,
+            "take": 10,
+            where,
+            select
+        }
 
         let results = []
         if(documentsCount > 0){
@@ -62,8 +67,7 @@ export async function search_controller(req, res, next){
             }
         }
 
-        const numberOfPages = Math.ceil(documentsCount / 10)
-        const currentPage = parseInt(page) || 1
+        
 
         res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
