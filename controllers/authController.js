@@ -4,6 +4,20 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { createRow, deleteRow, deleteRows, findUnique, updateRow } from '../db.js'
 
+
+/** API login */
+export function api_login(req, res, next){
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err || !user) {
+      return res.status(400).json({ message: info ? info.message : 'Login failed' })
+    }
+
+    const token = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    return res.json({ token })
+  })(req, res, next)
+}
+
+
 /*  Login POST  */
 export function auth_post_login(req, res, next){
   passport.authenticate('local', (err, user, info) => {
@@ -31,20 +45,18 @@ export function auth_post_login(req, res, next){
         return next(err)
       }
 
-      if (req.body.remember) {
-        const token = crypto.randomBytes(32).toString('hex')
-
+      if (req.body.remember) {  
         try{
+          const token = crypto.randomBytes(32).toString('hex')
           const newToken = createRow('RememberMeToken', { token, userId: req.user.id })
           res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
-          return res.redirect('/'); // Redirect to the home page
+          // return res.redirect('/'); // Redirect to the home page
         }catch(err){
           return next(err)
         }
-      }else{
-        return res.redirect('/'); // Redirect to the home page
       }
-      
+
+      return res.redirect('/'); // Redirect to the home page
     })
   })(req, res, next)
 }

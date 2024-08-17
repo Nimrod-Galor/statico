@@ -5,6 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import crypto from 'crypto'
 import {findUnique, readRow} from './db.js'
 import cookieParser from 'cookie-parser'
@@ -112,6 +113,25 @@ app.use(async (req, res, next) => {
         next(err)
     }
 })
+
+// jws
+const jwsOpts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.JWT_SECRET,
+}
+
+passport.use(new JwtStrategy(jwsOpts, async (jwt_payload, done) => {
+    try {
+        const user = await findUnique('user', {id: jwt_payload.id } )
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+        }
+    } catch (err) {
+        return done(err, false);
+    }
+}))
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {
