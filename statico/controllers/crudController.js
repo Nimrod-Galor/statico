@@ -18,8 +18,7 @@ export function listContent(contentType){
         
             // check we didnt get here by mistake
             if(selectedModel === undefined){
-                next(createError(404, 'Resource not found'))
-                return
+                return next(createError(404, 'Resource not found'))
             }
         
             // build models data query string

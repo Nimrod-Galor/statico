@@ -1,5 +1,5 @@
 import { body, query } from 'express-validator'
-import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
+import { findUnique } from '../../db.js'
 
 /*  Global  */
 
