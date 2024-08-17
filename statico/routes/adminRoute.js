@@ -17,7 +17,7 @@ import { sendVerificationMailMiddleware } from '../controllers/mailController.js
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
 
-function setAlertMessage(req, res, next){
+function setSessionMessages(req, res, next){
     //  Set alert message session
     req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
     req.session.messageType = req.crud_response.messageType
@@ -34,27 +34,27 @@ router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('us
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), createUser, setAlertMessage, sendVerificationMailMiddleware, (req, res) => {
+router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), createUser, setSessionMessages, sendVerificationMailMiddleware, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), editUser, setAlertMessage, (req, res) => {
+router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), editUser, setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Delete User
-router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), deleteUser, setAlertMessage, (req, res) => {
+router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), deleteUser, setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 // bulk delete
-router.post("/user/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'delete'), bulkValidation(), bulkDeleteUser, setAlertMessage, (req, res) => {
+router.post("/user/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'delete'), bulkValidation(), bulkDeleteUser, setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 //bulk publish
-router.post("/user/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), bulkValidation(), bulkPublish('user', true), setAlertMessage, (req, res) => {
+router.post("/user/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), bulkValidation(), bulkPublish('user', true), setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 //bulk unpublish
-router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), bulkValidation(), bulkPublish('user', false), setAlertMessage, (req, res) => {
+router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('user', 'edit'), bulkValidation(), bulkPublish('user', false), setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 
@@ -66,27 +66,27 @@ router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('pa
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), createPage, setAlertMessage, (req, res) => {
+router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), createPage, setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Edit Page
-router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), editPage, setAlertMessage, (req, res) => {
+router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), editPage, setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Delete Page
-router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), deletePage, setAlertMessage, (req, res) => {
+router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), deletePage, setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 // bulk delete
-router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'delete'), bulkValidation(), bulkDelete('page'), setAlertMessage, (req, res) => {
+router.post("/page/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'delete'), bulkValidation(), bulkDelete('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //bulk publish
-router.post("/page/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), bulkValidation(), bulkPublish('page', true), setAlertMessage, (req, res) => {
+router.post("/page/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), bulkValidation(), bulkPublish('page', true), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //bulk unpublish
-router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), bulkValidation(), bulkPublish('page', false), setAlertMessage, (req, res) => {
+router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('page', 'edit'), bulkValidation(), bulkPublish('page', false), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 
@@ -97,27 +97,27 @@ router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorize
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Post
-router.post("/create/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'create'), postValidation(), createPost, setAlertMessage, (req, res) => {
+router.post("/create/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'create'), postValidation(), createPost, setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 //  Edit Post
-router.post("/edit/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'edit'), postValidation(), editPost, setAlertMessage, (req, res) => {
+router.post("/edit/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'edit'), postValidation(), editPost, setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 //  Delete Post
-router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'delete'), deleteValidation(), deletePost, setAlertMessage, (req, res) => {
+router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'delete'), deleteValidation(), deletePost, setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 // bulk delete
-router.post("/post/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'delete'), bulkValidation(), bulkDelete('post'), setAlertMessage, (req, res) => {
+router.post("/post/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'delete'), bulkValidation(), bulkDelete('post'), setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 //bulk publish
-router.post("/post/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', true), setAlertMessage, (req, res) => {
+router.post("/post/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', true), setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 //bulk unpublish
-router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', false), setAlertMessage, (req, res) => {
+router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', false), setSessionMessages, (req, res) => {
     res.redirect('/admin/post')
 })
 
@@ -129,23 +129,23 @@ router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthoriz
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Comment
-router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), commentValidation(), editComment, setAlertMessage, (req, res) => {
+router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), commentValidation(), editComment, setSessionMessages, (req, res) => {
     res.redirect('/admin/comment')
 })
 // Delete Comment
-router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'delete'), deleteValidation(), deleteComment, setAlertMessage, (req, res) => {
+router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'delete'), deleteValidation(), deleteComment, setSessionMessages, (req, res) => {
     res.redirect('/admin/comment')
 })
 // bulk delete
-router.post("/comment/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'delete'), bulkValidation(), bulkDelete('comment'), setAlertMessage, (req, res) => {
+router.post("/comment/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'delete'), bulkValidation(), bulkDelete('comment'), setSessionMessages, (req, res) => {
     res.redirect('/admin/comment')
 })
 //bulk publish
-router.post("/comment/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', true), setAlertMessage, (req, res) => {
+router.post("/comment/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', true), setSessionMessages, (req, res) => {
     res.redirect('/admin/comment')
 })
 //bulk unpublish
-router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', false), setAlertMessage, (req, res) => {
+router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', false), setSessionMessages, (req, res) => {
     res.redirect('/admin/comment')
 })
 
@@ -156,7 +156,7 @@ router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('ro
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Role
-router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), editeRole, setAlertMessage, (req, res) => {
+router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), editeRole, setSessionMessages, (req, res) => {
     res.redirect('/admin/role')
 })
 
@@ -166,7 +166,7 @@ router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissi
 })
 
 // initial Setup
-router.post("/setup", initialize, setAlertMessage, (req, res) => {
+router.post("/setup", initialize, setSessionMessages, (req, res) => {
     res.redirect('/login')
 })
 

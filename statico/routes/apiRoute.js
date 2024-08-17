@@ -34,7 +34,7 @@ router.post("/edit/user", passport.authenticate('jwt', { session: false }), ensu
     res.json(req.crud_response)
 })
 //  Delete User
-router.delete("/delete/user", passport.authenticate('jwt', { session: false }), ensureAuthorized('user', '_user'), deleteValidation(), deleteUser, (req, res, next) => {
+router.delete("/delete/user", passport.authenticate('jwt', { session: false }), ensureAuthorized('user', 'delete'), deleteValidation(), deleteUser, (req, res, next) => {
     res.json(req.crud_response)
 })
 

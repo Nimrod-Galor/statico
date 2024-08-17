@@ -114,6 +114,8 @@ export function listContent(contentType){
 export async function createUser(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
+        // dont send varification Email
+        req.sendVerificationMail = false
         //  Send Error json
         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
         return next()
@@ -174,6 +176,8 @@ export async function createUser(req, res, next){
         // Send Success json
         req.crud_response = {messageBody: msg, messageTitle: 'Success', messageType: 'success'}
     }catch(errorMsg){
+        // dont send varification Email
+        req.sendVerificationMail = false
         //  Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
     }

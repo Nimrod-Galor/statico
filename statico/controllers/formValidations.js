@@ -5,9 +5,13 @@ import { findUnique } from '../../db.js'
 
 const deleteValidation = () => [
     body('id')
+        .trim()
+        .notEmpty().withMessage('ID can not be empty.')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
-    // body('header')
-    //     .isAlphanumeric()
+    body('header')
+        .trim()
+        .notEmpty().withMessage('Header can not be empty.')
+        .isLength({ min: 3, max: 128 }).withMessage('Header must be at 3 to 128 characters.')
 ]
 
 const bulkValidation = () => [
@@ -35,6 +39,8 @@ const bulkValidation = () => [
 
 const postIdValidation = () => [
     body('id')
+        .trim()
+        .notEmpty().withMessage('ID can not be empty.')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
 ]
 
@@ -149,7 +155,7 @@ const roleValidation = () => [
 const searchValidation = () => [
     query('search')
         .trim()
-        .notEmpty().withMessage('Search can not must be empty string.')
+        .notEmpty().withMessage('Search can not be empty string.')
         .isAlphanumeric().withMessage('Search must be Alphanumeric.'),
     query('page')
         .optional()

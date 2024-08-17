@@ -20,7 +20,7 @@ import postRouter from './routes/postRoute.js'
 import authRouter from './routes/authRoute.js'
 import adminRouter from './statico/routes/adminRoute.js'
 import apiRouter from './statico/routes/apiRoute.js'
-import jsonAlerts from './statico/routes/jsonalerts.js'
+// import jsonAlerts from './statico/routes/jsonalerts.js'
 
 const app = express()
 
@@ -104,7 +104,7 @@ app.use('/admin', adminRouter)
 app.use('/', authRouter)
 app.use('/', pageRouter)
 app.use('/', postRouter)
-app.use('/json-alert', jsonAlerts)
+// app.use('/json-alert', jsonAlerts)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
