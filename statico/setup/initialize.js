@@ -3,17 +3,19 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import fs, { unlink } from 'node:fs/promises'
 import { PrismaClient } from '@prisma/client'
-// import { error } from 'console'
 import crypto from 'crypto'
+import { updatePermissions } from '../permissions/permissions.js'
 import { sendVerificationMail } from '../controllers/mailController.js'
 
 const prisma = new PrismaClient()
 
 export async function initialize(req, res, next){
+    
     let {email, emailverified, password, username} = req.body
     const progress = []
+    
     // check for defaul roles
-    return await prisma.role.count()
+    await prisma.role.count()
     .then(async (roles) => {
         // console.log('roles', roles)
         if(roles > 0){
@@ -66,18 +68,21 @@ export async function initialize(req, res, next){
 
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
-        const defaultfilePath = path.join( __dirname, '..', 'admin', 'permissions', 'default.permissions.json')
+        const defaultfilePath = path.join( __dirname, '..', 'permissions', 'default.permissions.json')
         // read permissions file
         let permissionsString = await fs.readFile(defaultfilePath, { encoding: 'utf8' });
         //  for each role replase role name with role id
         for(let i = 0; i < rolesCreated.length; i++){
             const regex = new RegExp(`"${rolesCreated[i].name}"`, "g")
-            permissionsString = permissionsString.replace(regex, rolesCreated[i].id)
+            permissionsString = permissionsString.replace(regex, `"${rolesCreated[i].id}"`)
         }
         // create new file with updated permissions
-        const filePath = path.join( __dirname, '..', 'admin', 'permissions', 'permissions.json')
-        
+        const filePath = path.join( __dirname, '..', 'permissions', 'permissions.json')
+        // update permissions JSON file
         await fs.writeFile(filePath, permissionsString)
+
+        // update permision app Variable
+        updatePermissions(JSON.parse(permissionsString))
         
         const adminRole = rolesCreated[4]
         // return admin role to create admin user

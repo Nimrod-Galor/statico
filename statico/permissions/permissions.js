@@ -1,5 +1,20 @@
 import createError from 'http-errors'
-import permissions from './permissions.json' assert { type: "json" }
+// import permissions from './permissions.json' assert { type: "json" }
+import { readFile } from 'fs/promises';
+
+var permissions = {}
+readFile("./statico/permissions/permissions.json", "utf8")
+.then(data => {
+    console.log("reading permisions file")
+    permissions = JSON.parse(data)
+})
+.catch(err => {
+    console.log(err)
+})
+
+export function updatePermissions(newPermissionsObj){
+    permissions = newPermissionsObj
+}
 
 export function isAuthorized(contentType, key, roleId){
     try{
@@ -47,3 +62,5 @@ export function filterByPermissions(contentType){
 export function getRolePermissions(roleId){
     return structuredClone(permissions[roleId])
 }
+
+export { permissions }

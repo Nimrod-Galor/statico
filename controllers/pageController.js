@@ -7,20 +7,19 @@ import {isAuthorized} from '../statico/permissions/permissions.js'
 export async function search_controller(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        //  Send Error json
-        // req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
         return next(createError(result.errors.map(err => err.msg).join()))
     }
+
     //  Get user data
     let { search, page } = matchedData(req, { includeOptionals: true });
-    
+
     try{
         const where = {
             OR: [
                 { title: { contains: search } },
                 { body: { contains: search } },
                 { author: { 
-                        userName: {contains: search } 
+                        userName: { contains: search } 
                     }
                 }
             ]
@@ -69,11 +68,9 @@ export async function search_controller(req, res, next){
             }
         }
 
-        
-
         res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
-        res.render('search_results', { user: req.user, results, documentsCount, numberOfPages, currentPage, search })
+        res.render('search', { user: req.user, results, documentsCount, numberOfPages, currentPage, search })
     }catch(err){
         console.log(err.message)
         next(err)

@@ -1,5 +1,5 @@
 {
-    "66bb5fad07becba3df6ffa98": {
+    "66c062f9c60b1c5818d15563": {
         "admin_page": {
             "view": {"allow": false }
         },
@@ -46,7 +46,7 @@
         }
     },
 
-    "66bb5fb907becba3df6ffa9e": {
+    "66c06306c60b1c5818d15569": {
         "admin_page": {
             "view": {"allow": true }
         },
@@ -93,7 +93,7 @@
         }
     },
 
-    "66bb5fb907becba3df6ffa9f": {
+    "66c06305c60b1c5818d15567": {
         "admin_page": {
             "view": {"allow": true }
         },
@@ -105,7 +105,7 @@
         },
 
         "user": {
-            "list": {"allow": true, "where": { "roleId": "66bb5fb907becba3df6ffa9f"} },
+            "list": {"allow": true, "where": { "roleId": "66c06305c60b1c5818d15567"} },
             "create": {"allow": false },
             "edit": {"allow": false },
             "delete": {"allow": false },
@@ -140,7 +140,7 @@
         }
     },
 
-    "66bb5fb907becba3df6ffa9d": {
+    "66c06305c60b1c5818d15568": {
         "admin_page": {
             "view": {"allow": true }
         },
@@ -152,7 +152,7 @@
         },
 
         "user": {
-            "list": {"allow": true, "where": { "OR": [ { "roleId": "66bb5fb907becba3df6ffa9f" }, { "roleId": "66bb5fb907becba3df6ffa9d" }, { "roleId": "66bb5fb907becba3df6ffa9e"}  ] } },
+            "list": {"allow": true, "where": { "OR": [ { "roleId": "66c06305c60b1c5818d15567" }, { "roleId": "66c06305c60b1c5818d15568" }, { "roleId": "66c06306c60b1c5818d15569"}  ] } },
             "create": {"allow": false },
             "edit": {"allow": false },
             "delete": {"allow": false },
@@ -187,7 +187,7 @@
         }
     },
 
-    "66bb5fad07becba3df6ffa9c": {
+    "66c06306c60b1c5818d1556a": {
         "admin_page": {
             "view": {"allow": true }
         },
