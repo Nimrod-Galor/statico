@@ -73,6 +73,7 @@ const userValidation = () => [
         .isLength({ min: 3 }).withMessage('Username must be at least 3 characters long')
         .escape(),
     body('role')
+        .optional()
         .custom(async value => {
             // check role exists
             const roleExists = await findUnique('role', { id: value })

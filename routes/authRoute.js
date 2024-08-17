@@ -1,5 +1,6 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
+import { userValidation } from '../controllers/formValidations.js'
 import { createUser } from '../statico/controllers/crudController.js'
 import { auth_post_login, auth_logout, auth_post_singup, verifyEmail } from '../controllers/authController.js'
 import { sendVerificationMailMiddleware } from '../statico/controllers/mailController.js'
@@ -35,7 +36,7 @@ router.get('/signup', ensureLogIn.ensureLoggedOut('/'), (req, res, next) => {
 router.post('/signup',(req, res, next) => {
     req.body.emailverified = true
     next()
-}, createUser, sendVerificationMailMiddleware, auth_post_singup)
+}, userValidation(), createUser, sendVerificationMailMiddleware, auth_post_singup)
 
 /*  Email verification  */
 router.get('/verify/:token', verifyEmail, setAlertMessage, (req, res, next) => {
