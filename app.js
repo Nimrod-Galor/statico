@@ -6,13 +6,13 @@ import { fileURLToPath } from 'url'
 import passport from 'passport'
 import './statico/strategy/localStrategy.js';  // Import the Local strategy
 import './statico/strategy/jwtStrategy.js';    // Import the JWT strategy
-import {findUnique, readRow} from './db.js'
+import { findUnique } from './db.js'
 import cookieParser from 'cookie-parser'
 
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
-import {errorPage} from './controllers/pageController.js'
+import { errorPage } from './controllers/pageController.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
