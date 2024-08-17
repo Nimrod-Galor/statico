@@ -60,10 +60,6 @@ export function filterByPermissions(contentType){
     }
 }
 
-// export function getRolePermissions(roleId){
-//     return structuredClone(permissions[roleId])
-// }
-
 export function setRoleLocalsPermissions(req, res, next){
     // Get permissions
     const tmpPermissions = structuredClone(permissions[req.user.roleId])

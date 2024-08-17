@@ -3,8 +3,6 @@ import { get_index, get_postById, get_postBySlug } from '../controllers/postCont
 
 const router = express.Router();
 
-
-
 router.get('/post/:postId', get_postById)
 
 router.get('/:slug', get_postBySlug)

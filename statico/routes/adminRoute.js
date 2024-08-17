@@ -11,7 +11,6 @@ import  { listContent,
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
 import { admin_dashboard } from '../controllers/adminController.js'
-// import { allRolesPermissions, setRoleLocalsPermissions } from '../controllers/permissionsController.js'
 import { ensureAuthorized, filterByPermissions, allRolesPermissions, setRoleLocalsPermissions } from '../permissions/permissions.js'
 import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
