@@ -4,9 +4,8 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import passport from 'passport'
-import LocalStrategy from 'passport-local'
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import crypto from 'crypto'
+import './statico/strategy/localStrategy.js';  // Import the Local strategy
+import './statico/strategy/jwtStrategy.js';    // Import the JWT strategy
 import {findUnique, readRow} from './db.js'
 import cookieParser from 'cookie-parser'
 
@@ -52,38 +51,7 @@ app.use(session({
 
 app.use(passport.authenticate('session'))
 
-async function authenticateUser(email, password, done) {
-    try{
-        const user = await readRow('user', {where: { email, emailVerified: true } })
-        if (email != user.email) {
-            return done(null, false, { message: 'Incorrect username or password.' })
-        }
 
-        const newPassword = crypto.pbkdf2Sync(password, Buffer.from(user.salt, 'hex'), 100000, 64, 'sha512')
-        const oldPassword = Buffer.from(user.password, 'hex')
-        if (!crypto.timingSafeEqual(oldPassword, newPassword)) {
-            return done(null, false, { message: 'Incorrect username or password.' })
-        }
-
-        return done(null, user)
-    }catch(err){//NotFoundError: No User found
-        return done(null, false, { message: 'Incorrect username or password.' })
-    }
-}
-  
-passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser))
-
-passport.serializeUser(function(user, cb) {
-    process.nextTick(function() {
-        cb(null, { id: user.id, username: user.userName, roleId: user.roleId })
-    })
-})
-
-passport.deserializeUser(function(user, cb) {
-    process.nextTick(function() {
-        return cb(null, user)
-    })
-})
 
 // Remember me
 app.use(async (req, res, next) => {
@@ -114,24 +82,7 @@ app.use(async (req, res, next) => {
     }
 })
 
-// jws
-const jwsOpts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET,
-}
 
-passport.use(new JwtStrategy(jwsOpts, async (jwt_payload, done) => {
-    try {
-        const user = await findUnique('user', {id: jwt_payload.id } )
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
-    } catch (err) {
-        return done(err, false);
-    }
-}))
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {

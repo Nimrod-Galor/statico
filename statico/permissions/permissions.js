@@ -6,7 +6,6 @@ import { readFile } from 'fs/promises';
 var permissions = {}
 await readFile("./statico/permissions/permissions.json", "utf8")
 .then(data => {
-    console.log("reading permisions file")
     permissions = JSON.parse(data)
 })
 .catch(err => {
