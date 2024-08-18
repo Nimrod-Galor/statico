@@ -32,10 +32,9 @@ Key Features:
     
 
 ## Install and Setup:
-1. **Download or Clone:** the repository from GitHub.
-2. **Run npm install**
+1. **Download or Clone:** the repository from GitHub. Run npm install.
 2. **Database Setup:** Create a MongoDB database, update the .env file with DB connection string and SMTP credentials.
-3. **Initial Setup:** Run Nodejs and go to home page (localhost:3000 by default)this starts the setup script, which asks for admin email and password, initializes the site, and creates default pages.
+3. **Initial Setup:** Run Nodejs and go to home page (localhost:3000 by default) this starts the setup script, which asks for admin email and password, initializes the site, and creates default pages.
 4. **Content Management:** Update the site’s content using the built-in content management tools.
 
 Once configured, the product is ready to be deployed on any web server, making it accessible to the public. Unlike competitors, this CMS does not burden developers with unnecessary complexity, ensuring ease of adoption.
