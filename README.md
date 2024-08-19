@@ -39,7 +39,7 @@ Key Features:
 	"EMAIL_USER" and "EMAIL_PASSWORD" with you SMTP credentials
 	"SESSION_SECRET" and "JWT_SECRET" with your secret
 4. open all .ejs files in views and static/views directories and replace "Statico" with the name of your site.
-5. in statico/controllers directory open mailController.js update line 39 with your admin Email
+5. in statico/controllers directory open mailController.js update 'sendVerificationMail' function with your admin Email and Email verifiction template.
 6. in terminal run: npm install
 7. in terminal run: npm run dev
 8. open localhost:3000 in you browser.
