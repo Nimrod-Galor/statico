@@ -39,10 +39,11 @@ Key Features:
 	"EMAIL_USER" and "EMAIL_PASSWORD" with you SMTP credentials
 	"SESSION_SECRET" and "JWT_SECRET" with your secret
 4. open all .ejs files in views and static/views directories and replace "Statico" with the name of your site.
-5. in terminal run: npm install
-6. in terminal run: npm run dev
-7. open localhost:3000 in you browser.
-8. **Content Management:** Update the site’s content using the built-in content management tools.
+5. in statico/controllers directory open mailController.js update line 39 with your admin Email
+6. in terminal run: npm install
+7. in terminal run: npm run dev
+8. open localhost:3000 in you browser.
+9. **Content Management:** Update the site’s content using the built-in content management tools.
 
 Once configured, the product is ready to be deployed on any web server, making it accessible to the public. Unlike competitors, this CMS does not burden developers with unnecessary complexity, ensuring ease of adoption.
 Market Strategy
