@@ -32,16 +32,17 @@ Key Features:
     
 
 ## Install and Setup:
-1. rename default.env to .env
-2. open .env file and update variables:
+1. download or clone repository
+2. rename default.env to .env
+3. open .env file and update variables:
 	"DATABASE_URL" with your DB connection string.
 	"EMAIL_USER" and "EMAIL_PASSWORD" with you SMTP credentials
 	"SESSION_SECRET" and "JWT_SECRET" with your secret
-3. open all .ejs files in views and static/views directories and replace "Statico" with the name of your site.
-4. in terminal run: npm install
-5. in terminal run: npm run dev
-6. open localhost:3000 in you browser.
-7. **Content Management:** Update the site’s content using the built-in content management tools.
+4. open all .ejs files in views and static/views directories and replace "Statico" with the name of your site.
+5. in terminal run: npm install
+6. in terminal run: npm run dev
+7. open localhost:3000 in you browser.
+8. **Content Management:** Update the site’s content using the built-in content management tools.
 
 Once configured, the product is ready to be deployed on any web server, making it accessible to the public. Unlike competitors, this CMS does not burden developers with unnecessary complexity, ensuring ease of adoption.
 Market Strategy
