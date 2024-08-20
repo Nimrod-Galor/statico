@@ -40,7 +40,7 @@ export function auth_post_login(req, res, next){
       return next(err)
     }
       
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) {
         return next(err)
       }
@@ -48,7 +48,7 @@ export function auth_post_login(req, res, next){
       if (req.body.remember) {  
         try{
           const token = crypto.randomBytes(32).toString('hex')
-          const newToken = createRow('RememberMeToken', { token, userId: req.user.id })
+          await createRow('RememberMeToken', { token, userId: req.user.id })
           res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
           // return res.redirect('/'); // Redirect to the home page
         }catch(err){
