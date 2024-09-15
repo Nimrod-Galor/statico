@@ -122,7 +122,7 @@ export async function initialize(req, res, next){
         await prisma.user.create({data: adminUser})
         // Verification mail
         if(!emailverified){
-            const host = req.host
+            const host = req.hostname
             sendVerificationMail(email, username, host, verificationToken)
             progress.push(`Email verification code sent to: ${email}.`)
         }

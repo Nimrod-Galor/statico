@@ -3,7 +3,7 @@ import { findUnique } from '../../db.js'
 
 /*  Global  */
 
-const deleteValidation = () => [
+export const deleteValidation = () => [
     body('id')
         .trim()
         .notEmpty().withMessage('ID can not be empty.')
@@ -14,7 +14,7 @@ const deleteValidation = () => [
         .isLength({ min: 3, max: 128 }).withMessage('Header must be at 3 to 128 characters.')
 ]
 
-const bulkValidation = () => [
+export const bulkValidation = () => [
     // Custom sanitizer to ensure 'ids' is always an array
     body('id').customSanitizer(value => {
             // Coerce to an array if it's a single value
@@ -37,7 +37,7 @@ const bulkValidation = () => [
     //     .isAlphanumeric().withMessage('Header must be Alphanumeric')
 ]
 
-const postIdValidation = () => [
+export const postIdValidation = () => [
     body('id')
         .trim()
         .notEmpty().withMessage('ID can not be empty.')
@@ -45,7 +45,7 @@ const postIdValidation = () => [
 ]
 
 /*  User    */
-const userValidation = () => [
+export const userValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
@@ -86,7 +86,7 @@ const userValidation = () => [
 
 
 /*  Post    */
-const postValidation = () => [
+export const postValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
@@ -111,7 +111,7 @@ const postValidation = () => [
 ]
 
 /*  Comments    */
-const commentValidation = () => [
+export const commentValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('Comment ID must be a valid MongoDB ObjectId'),
@@ -128,7 +128,7 @@ const commentValidation = () => [
         .optional()
 ]
 
-const commentsListValidation = () => [
+export const commentsListValidation = () => [
     body('post')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('page')
@@ -139,7 +139,7 @@ const commentsListValidation = () => [
 
 
 /*  Role    */
-const roleValidation = () => [
+export const roleValidation = () => [
     body('id')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('name')
@@ -153,7 +153,7 @@ const roleValidation = () => [
 ]
 
 /*  Search  */
-const searchValidation = () => [
+export const searchValidation = () => [
     query('search')
         .trim()
         .notEmpty().withMessage('Search can not be empty string.')
@@ -164,4 +164,18 @@ const searchValidation = () => [
         .isNumeric().withMessage('Invalid Page number.')
         
 ]
-export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation}
+
+export const emailValidation = () => [
+    body('email')
+        .isEmail().withMessage('Enter a valid email address')
+        .normalizeEmail()   
+]
+
+export const resetPasswordValidation = () => [
+    body('password')
+        .trim()
+        .isStrongPassword().withMessage('Password must contain at least one number and one special character and one uppercase and lowercase letter, and at least 8 or more characters')//minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1
+        .escape()
+]
+
+// export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation}
